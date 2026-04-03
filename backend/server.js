@@ -30,8 +30,10 @@ app.use(
         process.env.FRONTEND_URL || 'http://localhost:5173',
         'https://clubquiz.vercel.app',
       ];
-      
-      if (allowedOrigins.some((o) => origin.startsWith(o))) {
+
+      // Allow any subdomains of vercel.app during deployment
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.some((o) => origin.startsWith(o)) || origin.endsWith('.vercel.app')) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
