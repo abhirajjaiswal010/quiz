@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-[#e0e9ff] antialiased min-h-screen;
+    background-color: #0e0929;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(146, 172, 255, 0.12), transparent),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(146, 172, 255, 0.05), transparent);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+ .btn-primary {
+  @apply inline-flex items-center justify-center gap-2 
+  px-6 py-3 rounded-xl 
+  bg-[#92acff] text-[#0e0929] 
+  font-bold text-sm 
+  transition-all duration-200 
+  active:scale-95 
+  disabled:opacity-50 disabled:cursor-not-allowed 
+  shadow-lg border border-white/20;
+
+  
+}
+
+.btn-primary:hover {
+  @apply bg-transparent border-white text-white;
+
+
+}
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-200 font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg;
+  }
+
+  .card {
+    @apply bg-[#09061a] backdrop-blur-sm border border-[#1d1d2e] rounded-2xl shadow-xl;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl bg-[#09061a] border-[#1d1d2e] focus:border-[#92acff] focus:ring-2 focus:ring-[#92acff]/10 outline-none text-[#92acff] placeholder-[#5e5e6e] transition-all duration-200 text-sm;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-slate-300 mb-1.5;
+  }
+
+  .error-text {
+    @apply text-xs text-red-400 mt-1.5 flex items-center gap-1;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Animated gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #ffffff 0%, #92acff 60%, #7a96ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: width 1s linear;
+}
+
+/* Option button hover state */
+.option-btn {
+  @apply relative w-full text-left px-5 py-4 rounded-xl border-2 border-[#1d1d2e] bg-[#09061a] hover:border-[#92acff] transition-all duration-200 text-[#92acff] text-sm font-medium cursor-pointer;
+}
+
+.option-btn.selected {
+  @apply border-[#92acff] bg-[#000fcc] text-[#e0e9ff];
+}
+
+.option-btn.correct {
+  @apply border-emerald-500 bg-[#064e3b] text-emerald-200;
+}
+
+.option-btn.incorrect {
+  @apply border-red-500 bg-[#450a0a] text-red-200;
+}
+
+/* Shimmer loading */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Rank badge colors */
+.rank-1 { @apply bg-[#92acff] text-[#09061a] border-[#7a96ff]; }
+.rank-2 { @apply bg-[#1d1d2e] text-[#92acff] border-[#2d2d3e]; }
+.rank-3 { @apply bg-[#09061a] text-[#7a96ff] border-[#0e0929]; }
+
+/* ── Smiley Breathing Circle ──────────────────────────────────────────────── */
+
+/* Core white circle */
+.smiley-core { transition: transform 3.6s cubic-bezier(0.33, 0.0, 0.66, 1.0), box-shadow 3.6s ease; }
+.smiley-core.breathe-in   { transform: scale(1.18); box-shadow: 0 0 60px rgba(139,92,246,0.50), 0 0 120px rgba(99,102,241,0.20); }
+.smiley-core.breathe-hold { transform: scale(1.20); box-shadow: 0 0 70px rgba(139,92,246,0.45), 0 0 130px rgba(99,102,241,0.18); }
+.smiley-core.breathe-out  { transform: scale(1.00); box-shadow: 0 0 30px rgba(139,92,246,0.25), 0 0  60px rgba(99,102,241,0.10); }
+
+/* Ring 1 – closest */
+.smiley-ring.ring1 { transition: transform 3.6s cubic-bezier(0.33, 0.0, 0.66, 1.0) 0.15s, opacity 3.6s ease 0.15s; }
+.smiley-ring.ring1.breathe-in   { transform: scale(1.16); opacity: 0.90; }
+.smiley-ring.ring1.breathe-hold { transform: scale(1.18); opacity: 0.85; }
+.smiley-ring.ring1.breathe-out  { transform: scale(1.00); opacity: 0.55; }
+
+/* Ring 2 */
+.smiley-ring.ring2 { transition: transform 3.6s cubic-bezier(0.33, 0.0, 0.66, 1.0) 0.32s, opacity 3.6s ease 0.32s; }
+.smiley-ring.ring2.breathe-in   { transform: scale(1.14); opacity: 0.75; }
+.smiley-ring.ring2.breathe-hold { transform: scale(1.16); opacity: 0.70; }
+.smiley-ring.ring2.breathe-out  { transform: scale(1.00); opacity: 0.40; }
+
+/* Ring 3 */
+.smiley-ring.ring3 { transition: transform 3.6s cubic-bezier(0.33, 0.0, 0.66, 1.0) 0.52s, opacity 3.6s ease 0.52s; }
+.smiley-ring.ring3.breathe-in   { transform: scale(1.12); opacity: 0.55; }
+.smiley-ring.ring3.breathe-hold { transform: scale(1.14); opacity: 0.50; }
+.smiley-ring.ring3.breathe-out  { transform: scale(1.00); opacity: 0.25; }
+
+/* Ring 4 – outermost */
+.smiley-ring.ring4 { transition: transform 3.6s cubic-bezier(0.33, 0.0, 0.66, 1.0) 0.75s, opacity 3.6s ease 0.75s; }
+.smiley-ring.ring4.breathe-in   { transform: scale(1.10); opacity: 0.35; }
+.smiley-ring.ring4.breathe-hold { transform: scale(1.12); opacity: 0.30; }
+.smiley-ring.ring4.breathe-out  { transform: scale(1.00); opacity: 0.15; }
+
+
+/* ── Motivational text fade ─────────────────────────────────────────────────── */
+@keyframes fade-msg {
+  0%   { opacity: 0; transform: translateY(6px); }
+  12%  { opacity: 1; transform: translateY(0);   }
+  88%  { opacity: 1; transform: translateY(0);   }
+  100% { opacity: 0; transform: translateY(-6px);}
+}
+
+.motivational-text {
+  animation: fade-msg 6s ease-in-out forwards;
+}

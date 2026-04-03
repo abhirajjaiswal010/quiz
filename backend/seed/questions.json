@@ -1,0 +1,127 @@
+[
+  {
+    "question": "Which data structure uses LIFO (Last In, First Out) order?",
+    "options": ["Queue", "Stack", "Linked List", "Tree"],
+    "answer": "Stack"
+  },
+  {
+    "question": "What is the time complexity of binary search on a sorted array?",
+    "options": ["O(n)", "O(n²)", "O(log n)", "O(1)"],
+    "answer": "O(log n)"
+  },
+  {
+    "question": "Which of the following is NOT a JavaScript primitive type?",
+    "options": ["String", "Boolean", "Object", "Number"],
+    "answer": "Object"
+  },
+  {
+    "question": "What does SQL stand for?",
+    "options": [
+      "Structured Query Language",
+      "Sequential Query Logic",
+      "Simple Query Layer",
+      "Standard Query List"
+    ],
+    "answer": "Structured Query Language"
+  },
+  {
+    "question": "Which HTTP method is used to update a resource in REST APIs?",
+    "options": ["GET", "POST", "PUT", "DELETE"],
+    "answer": "PUT"
+  },
+  {
+    "question": "What does the \"DOM\" stand for in web development?",
+    "options": [
+      "Document Object Model",
+      "Data Object Map",
+      "Document Order Module",
+      "Dynamic Object Method"
+    ],
+    "answer": "Document Object Model"
+  },
+  {
+    "question": "Which sorting algorithm has the best average-case time complexity?",
+    "options": ["Bubble Sort", "Insertion Sort", "Merge Sort", "Selection Sort"],
+    "answer": "Merge Sort"
+  },
+  {
+    "question": "In OOP, what is encapsulation?",
+    "options": [
+      "Inheriting properties from parent class",
+      "Hiding internal details and exposing only necessary parts",
+      "Creating multiple methods with same name",
+      "Defining abstract methods"
+    ],
+    "answer": "Hiding internal details and exposing only necessary parts"
+  },
+  {
+    "question": "What is the output of: console.log(typeof null) in JavaScript?",
+    "options": ["null", "undefined", "object", "string"],
+    "answer": "object"
+  },
+  {
+    "question": "Which protocol is used for secure data transfer on the web?",
+    "options": ["HTTP", "FTP", "HTTPS", "SMTP"],
+    "answer": "HTTPS"
+  },
+  {
+    "question": "Which layer of the OSI model is responsible for routing?",
+    "options": ["Physical", "Data Link", "Network", "Transport"],
+    "answer": "Network"
+  },
+  {
+    "question": "What does RAM stand for?",
+    "options": [
+      "Random Access Memory",
+      "Read Access Memory",
+      "Rapid Application Module",
+      "Remote Access Method"
+    ],
+    "answer": "Random Access Memory"
+  },
+  {
+    "question": "Which of the following is an example of a NoSQL database?",
+    "options": ["MySQL", "PostgreSQL", "MongoDB", "SQLite"],
+    "answer": "MongoDB"
+  },
+  {
+    "question": "What command is used to initialize a Git repository?",
+    "options": ["git start", "git init", "git create", "git new"],
+    "answer": "git init"
+  },
+  {
+    "question": "What does CSS stand for?",
+    "options": [
+      "Cascading Style Sheets",
+      "Computer Style System",
+      "Creative Style Syntax",
+      "Coded Style Selector"
+    ],
+    "answer": "Cascading Style Sheets"
+  },
+  {
+    "question": "What is 2^10 (2 to the power of 10)?",
+    "options": ["512", "1024", "2048", "256"],
+    "answer": "1024"
+  },
+  {
+    "question": "In Boolean algebra, what is the result of A AND (NOT A)?",
+    "options": ["1", "0", "A", "Undefined"],
+    "answer": "0"
+  },
+  {
+    "question": "How many bits are in a byte?",
+    "options": ["4", "16", "8", "32"],
+    "answer": "8"
+  },
+  {
+    "question": "What is the hexadecimal equivalent of decimal 255?",
+    "options": ["FE", "FA", "FF", "EF"],
+    "answer": "FF"
+  },
+  {
+    "question": "Which of these is a primary key property in a database?",
+    "options": ["Can be NULL", "Must be mkc", "Can repeat", "Optional field"],
+    "answer": "Must be mkc"
+  }
+]
