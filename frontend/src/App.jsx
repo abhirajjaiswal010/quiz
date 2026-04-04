@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { QuizProvider, useQuiz } from './context/QuizContext'
+import { SocketProvider } from './context/SocketContext'
 import RegistrationPage from './pages/RegistrationPage'
 import QuizPage from './pages/QuizPage'
 import WaitingPage from './pages/WaitingPage'
@@ -25,18 +26,20 @@ function AppRoutes() {
 
 export default function App() {
   return (
-    <Router>
-      <QuizProvider>
-        <Toaster position="top-center" toastOptions={{ 
-          style: { 
-            background: '#0f172a', 
-            color: '#fff', 
-            border: '1px solid #1e293b',
-            borderRadius: '12px'
-          } 
-        }} />
-        <AppRoutes />
-      </QuizProvider>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <SocketProvider>
+        <QuizProvider>
+          <Toaster position="top-center" toastOptions={{ 
+            style: { 
+              background: '#0f172a', 
+              color: '#fff', 
+              border: '1px solid #1e293b',
+              borderRadius: '12px'
+            } 
+          }} />
+          <AppRoutes />
+        </QuizProvider>
+      </SocketProvider>
     </Router>
   )
 }

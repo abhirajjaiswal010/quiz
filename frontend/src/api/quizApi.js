@@ -25,10 +25,10 @@ const getAdminHeaders = (key) => ({ headers: { 'x-admin-key': key } })
 /** ─── Quiz System APIs (Exact Flow) ───────────────────────────────────────────── */
 
 // 1. Admin creates a quiz
-export const createQuiz = (key, quizId, duration) => api.post('/create-quiz', { quizId, duration }, getAdminHeaders(key))
+export const createQuiz = (key, quizId, duration, allowTabSwitching) => api.post('/create-quiz', { quizId, duration, allowTabSwitching }, getAdminHeaders(key))
 
 // 2. Admin starts quiz
-export const startQuiz = (key, quizId) => api.post('/start-quiz', { quizId }, getAdminHeaders(key))
+export const startQuiz = (key, quizId, allowTabSwitching) => api.post('/start-quiz', { quizId, allowTabSwitching }, getAdminHeaders(key))
 
 // 3. Admin stops quiz
 export const stopQuiz = (key, quizId) => api.post('/stop-quiz', { quizId }, getAdminHeaders(key))

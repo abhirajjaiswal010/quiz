@@ -1,9 +1,43 @@
+import { useState, useEffect } from 'react'
 import { LayoutDashboard, Zap, BookOpen, Radio, Moon, Users, Pencil, Trash2, LogOut } from 'lucide-react'
 import logo from '../assets/logo.png'
 
+function formatAdminTime(seconds) {
+  if (seconds <= 0) return 'EXPIRED';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+const AdminTimer = ({ startedAt, duration }) => {
+  const [timeLeft, setTimeLeft] = useState(0);
+
+  useEffect(() => {
+    const calculate = () => {
+      const start = new Date(startedAt).getTime();
+      const now = Date.now();
+      const elapsed = Math.floor((now - start) / 1000);
+      const total = duration * 60;
+      setTimeLeft(Math.max(0, total - elapsed));
+    };
+
+    calculate();
+    const interval = setInterval(calculate, 1000);
+    return () => clearInterval(interval);
+  }, [startedAt, duration]);
+
+  const color = timeLeft > 300 ? 'text-emerald-400' : timeLeft > 60 ? 'text-amber-400' : 'text-red-400';
+
+  return (
+    <span className={`font-mono font-black text-xl tabular-nums ${color}`}>
+      {formatAdminTime(timeLeft)}
+    </span>
+  );
+};
+
 export default function AdminDashboard({
   tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop, 
-  duration, setDuration,
+  duration, setDuration, allowTabSwitching, setAllowTabSwitching,
   loading, status, participantCount, sessionInfo, leaderboard, handleLogout,
   questions, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion
 }) {
@@ -54,6 +88,15 @@ export default function AdminDashboard({
                      <label className="label">Mins</label>
                      <input type="number" value={duration} onChange={e => setDuration(e.target.value)} className="input-field bg-[#0f0f0f]/20 border border-white/20 text-white py-2 text-sm focus:border-white transition-colors" />
                   </div>
+                  <div className="flex-col flex items-center justify-center pt-5">
+                    <label className="text-[9px] text-slate-500 uppercase font-bold mb-1 tracking-tight">Allow Tab</label>
+                    <button 
+                      onClick={() => setAllowTabSwitching(!allowTabSwitching)}
+                      className={`w-12 h-6 rounded-full transition-all duration-300 relative ${allowTabSwitching ? 'bg-emerald-500' : 'bg-slate-700'}`}
+                    >
+                      <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${allowTabSwitching ? 'left-7' : 'left-1'}`} />
+                    </button>
+                  </div>
                   <button onClick={fetchStatus} className="btn-primary bg-[#4FB3FF] mt-7 text-white whitespace-nowrap h-[38px] flex items-center">Fetch</button>
                 </div>
                 <div className="pt-4 grid grid-cols-1 gap-3">
@@ -89,6 +132,18 @@ export default function AdminDashboard({
                 {sessionInfo && (
                   <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest border-b border-white/5 pb-2">Session Details</p>
+                    
+                    {/* Live Timer Section */}
+                    {status && sessionInfo.quizDetails?.startedAt && (
+                      <div className="flex justify-between items-center bg-brand-500/10 p-3 rounded-xl border border-brand-500/20 mb-4">
+                        <span className="text-brand-400 text-xs font-bold uppercase">Time Remaining</span>
+                        <AdminTimer 
+                          startedAt={sessionInfo.quizDetails.startedAt} 
+                          duration={sessionInfo.quizDetails.duration} 
+                        />
+                      </div>
+                    )}
+
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-slate-400">Total Questions</span>
                       <span className="text-white font-bold">{sessionInfo.totalQuestions}</span>
@@ -100,6 +155,12 @@ export default function AdminDashboard({
                     <div className="flex justify-between items-center text-sm">
                       <span className="text-slate-400">Created At</span>
                       <span className="text-white text-[11px]">{new Date(sessionInfo.createdAt).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm border-t border-white/5 pt-2">
+                       <span className="text-slate-400 text-xs">Anti-Cheat Mode</span>
+                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${allowTabSwitching ? 'bg-amber-500/10 text-amber-500' : 'bg-emerald-500/10 text-emerald-500'}`}>
+                         {allowTabSwitching ? 'Disabled (Allowed)' : 'Enabled (Locked)'}
+                       </span>
                     </div>
                   </div>
                 )}

@@ -7,9 +7,14 @@ const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const errorHandler = require('./middleware/errorHandler');
 
+const http = require('http'); // Add this for socket.io
+const { initSocket } = require('./socket'); // Import our separate socket logic
+
 const quizRoutes = require('./routes/quizRoutes');
 
 const app = express();
+const server = http.createServer(app); // Create an HTTP server from express app
+initSocket(server); // Initialize socket.io with the server
 
 // ─── Security Middleware ────────────────────────────────────────────────────
 app.use(helmet());
@@ -80,7 +85,7 @@ const startServer = async () => {
     });
     console.log('✅ MongoDB connected');
     
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`🚀 Production-grade API live on port ${PORT} [${process.env.NODE_ENV}]`);
     });
   } catch (err) {

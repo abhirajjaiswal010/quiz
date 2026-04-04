@@ -128,49 +128,70 @@ export default function LeaderboardPage() {
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">
               Quiz Completed!
             </h1>
-            <p className="text-white font-semibold mb-6">
+            <p className="text-white font-semibold mb-4">
               Well done, <span className="text-white font-semibold">{result.name}</span>!
             </p>
 
+            {myRank && (
+              <div className="mb-8 animate-bounce-slow">
+                <span className="text-white/50 text-xs font-bold uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
+                <span className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                  #{myRank}
+                </span>
+              </div>
+            )}
+
             {/* Score Card */}
-            <div className="inline-flex gap-6 md:gap-10 bg-[#0F0F0F]/80 backdrop-blur-sm border border-white rounded-2xl px-8 py-5">
-              <div className="text-center">
-                <div className="font-display text-4xl font-black text-white">
+            <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-[#0F0F0F]/80 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-5 shadow-2xl">
+              {/* Correct */}
+              <div className="text-center px-1">
+                <div className="font-display text-4xl font-black text-[#98E19A]">
                   {result.score}
-                  <span className="text-white-500 text-2xl font-normal">/{result.total}</span>
+                  <span className="text-white/20 text-xl font-normal ml-0.5">/{result.total}</span>
                 </div>
-                <div className="text-xs text-white-500 mt-1">Score</div>
+                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Correct</div>
               </div>
-              <div className="w-px bg-white" />
-              <div className="text-center">
-                <div className="font-display text-4xl font-black text-brand-400">
-                  {totalQuestions > 0
-                    ? Math.round((result.score / totalQuestions) * 100)
-                    : result.total
-                    ? Math.round((result.score / result.total) * 100)
-                    : '—'}
-                  <span className="text-2xl font-normal">%</span>
+
+              <div className="w-px h-10 bg-white/10" />
+
+              {/* Wrong */}
+              <div className="text-center px-1">
+                <div className="font-display text-4xl font-black text-[#FF7575]">
+                  {(result.attempted || result.score) - result.score}
                 </div>
-                <div className="text-xs text-white-500 mt-1">Accuracy</div>
+                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Wrong</div>
               </div>
-              <div className="w-px bg-white" />
-              <div className="text-center">
-                <div className="font-display text-4xl font-black text-accent-400">
-                  {formatTime(result.timeTaken)}
+
+              <div className="w-px h-10 bg-white/10" />
+
+              {/* Attempted */}
+              <div className="text-center px-1">
+                <div className="font-display text-4xl font-black text-[#4FB3FF]">
+                  {result.attempted || result.score}
                 </div>
-                <div className="text-xs text-white  -500 mt-1">Time Taken</div>
+                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Attempted</div>
               </div>
-              {myRank && (
-                <>
-                  <div className="w-px bg-white hidden md:block" />
-                  <div className="text-center hidden md:block">
-                    <div className="font-display text-4xl font-black text-amber-400">
-                      #{myRank}
-                    </div>
-                    <div className="text-xs text-white-500 mt-1">Your Rank</div>
-                  </div>
-                </>
-              )}
+
+              <div className="w-px h-10 bg-white/10" />
+
+              {/* Skipped */}
+              <div className="text-center px-1">
+                <div className="font-display text-4xl font-black text-slate-400">
+                  {result.total - (result.attempted || result.score)}
+                </div>
+                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Skipped</div>
+              </div>
+
+              <div className="w-px h-10 bg-white/10 hidden sm:block" />
+
+              {/* Accuracy */}
+              <div className="text-center px-1">
+                <div className="font-display text-4xl font-black text-amber-400">
+                  {result.total > 0 ? Math.round((result.score / result.total) * 100) : '—'}
+                  <span className="text-xl font-normal ml-0.5">%</span>
+                </div>
+                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Accuracy</div>
+              </div>
             </div>
 
             <div className="mt-4 text-sm text-slate-500 flex flex-col items-center gap-2">

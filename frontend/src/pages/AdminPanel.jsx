@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import * as quizApi from '../api/quizApi'
+import { useSocket } from '../context/SocketContext'
 import { toast } from 'react-hot-toast'
 import { Lock } from 'lucide-react'
 import Threads from '../components/thread'
@@ -8,6 +9,7 @@ import AdminDashboard from './AdminDashboard'
 export default function AdminPanel() {
   const [adminKey, setAdminKey] = useState(localStorage.getItem('adminKey') || '')
   const [isAuthorized, setIsAuthorized] = useState(false)
+  const socket = useSocket()
 
   const [tab, setTab] = useState('control') // control | questions
   const [quizId, setQuizId] = useState('')
@@ -16,6 +18,7 @@ export default function AdminPanel() {
   const [participantCount, setParticipantCount] = useState(0)
   const [sessionInfo, setSessionInfo] = useState(null)
   const [duration, setDuration] = useState(15) // Default 15 mins
+  const [allowTabSwitching, setAllowTabSwitching] = useState(false)
 
   // Questions state
   const [questions, setQuestions] = useState([])
@@ -62,6 +65,10 @@ export default function AdminPanel() {
         quizDetails: data.quizDetails
       })
 
+      if (data.quizDetails?.allowTabSwitching !== undefined) {
+        setAllowTabSwitching(data.quizDetails.allowTabSwitching)
+      }
+
       // Always fetch leaderboard data to show live results
       const lbData = await quizApi.getLeaderboard(quizId)
       setLeaderboard(lbData.results || [])
@@ -73,23 +80,46 @@ export default function AdminPanel() {
     }
   }, [quizId])
 
-  // ── Auto Polling for live updates ─────────────────────────────────────────
+  // ── WebSocket Live Updates ───────────────────────────────────────────────
+  useEffect(() => {
+    if (!socket || !isAuthorized || !quizId || status === null) return;
+
+    const normalizedId = quizId.toUpperCase();
+    socket.emit('adminJoin', normalizedId);
+
+    socket.on('participantJoined', (data) => {
+      setParticipantCount(data.participantCount);
+      if (data.name) toast.success(`${data.name} joined!`, { id: 'join-alert' });
+    });
+
+    socket.on('resultSubmitted', (data) => {
+      setLeaderboard(data.results);
+      setParticipantCount(data.participantCount);
+    });
+
+    return () => {
+      socket.off('participantJoined');
+      socket.off('resultSubmitted');
+    };
+  }, [socket, isAuthorized, quizId, status]);
+
+  // ── Polling Fallback (Slow) ───────────────────────────────────────────────
   useEffect(() => {
     let interval;
     if (isAuthorized && quizId && status !== null) {
       interval = setInterval(() => {
-        fetchStatus(true); // Silent polling
-      }, 3000);
+        fetchStatus(true); // Silent slow fallback
+      }, 20000); // 20s fallback
     }
     return () => clearInterval(interval);
-  }, [isAuthorized, quizId, status, fetchStatus])
+  }, [isAuthorized, quizId, status, fetchStatus]);
 
   const handleCreate = async () => {
     if (!quizId) return toast.error('Enter a quizId')
     const normalizedId = quizId.trim().toUpperCase()
     setLoading(true)
     try {
-      await quizApi.createQuiz(adminKey, normalizedId, duration)
+      await quizApi.createQuiz(adminKey, normalizedId, duration, allowTabSwitching)
       toast.success('Quiz created')
       fetchStatus()
     } catch (err) {
@@ -102,7 +132,7 @@ export default function AdminPanel() {
   const handleStart = async () => {
     setLoading(true)
     try {
-      await quizApi.startQuiz(adminKey, quizId)
+      await quizApi.startQuiz(adminKey, quizId, allowTabSwitching)
       toast.success('Quiz STARTED')
       fetchStatus()
     } catch (err) {
@@ -215,6 +245,8 @@ export default function AdminPanel() {
       handleStop={handleStop}
       duration={duration}
       setDuration={setDuration}
+      allowTabSwitching={allowTabSwitching}
+      setAllowTabSwitching={setAllowTabSwitching}
       loading={loading}
       status={status}
       participantCount={participantCount}

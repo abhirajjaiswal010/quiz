@@ -32,6 +32,14 @@ const resultSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    attempted: {
+      type: Number,
+      default: 0,
+    },
+    total: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

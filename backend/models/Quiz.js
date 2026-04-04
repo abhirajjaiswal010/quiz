@@ -23,6 +23,14 @@ const quizSchema = new mongoose.Schema(
       type: Number,
       default: 15, // Default 15 minutes
     },
+    startedAt: {
+      type: Date,
+      default: null,
+    },
+    allowTabSwitching: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

@@ -4,11 +4,12 @@ const Participant = require('../models/Participant');
 const Result = require('../models/Result');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
+const { getIO } = require('../socket'); // Import our socket logic
 
 // 1. Admin creates a quiz and generates a unique quizId
 // POST /api/create-quiz
 exports.createQuiz = asyncHandler(async (req, res, next) => {
-  const { duration } = req.body;
+  const { duration, allowTabSwitching } = req.body;
   const quizId = req.body.quizId?.trim().toUpperCase();
   if (!quizId) return next(new ErrorResponse('quizId is required', 400));
 
@@ -18,8 +19,13 @@ exports.createQuiz = asyncHandler(async (req, res, next) => {
   const quiz = await Quiz.create({ 
     quizId, 
     isActive: false, 
-    duration: duration || 15 
+    duration: duration || 15,
+    allowTabSwitching: !!allowTabSwitching
   });
+
+  // Notify any connected admins
+  getIO().to(`ADMIN_${quizId}`).emit('quizCreated', quiz);
+
   res.status(201).json({ success: true, quiz });
 });
 
@@ -27,8 +33,21 @@ exports.createQuiz = asyncHandler(async (req, res, next) => {
 // POST /api/start-quiz
 exports.startQuiz = asyncHandler(async (req, res, next) => {
   const quizId = req.body.quizId?.trim().toUpperCase();
-  const quiz = await Quiz.findOneAndUpdate({ quizId }, { isActive: true }, { new: true });
+  const { allowTabSwitching } = req.body;
+  
+  const quiz = await Quiz.findOneAndUpdate(
+    { quizId }, 
+    { isActive: true, startedAt: Date.now(), allowTabSwitching: !!allowTabSwitching }, 
+    { new: true }
+  );
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
+
+  // Sync!
+  const questions = await Question.find({}, { answer: 0 });
+  getIO().to(quizId).emit('quizStarted', { 
+    quizId, questions, duration: quiz.duration, allowTabSwitching: quiz.allowTabSwitching 
+  });
+
   res.status(200).json({ success: true, isActive: true });
 });
 
@@ -36,8 +55,12 @@ exports.startQuiz = asyncHandler(async (req, res, next) => {
 // POST /api/stop-quiz
 exports.stopQuiz = asyncHandler(async (req, res, next) => {
   const quizId = req.body.quizId?.trim().toUpperCase();
-  const quiz = await Quiz.findOneAndUpdate({ quizId }, { isActive: false }, { new: true });
+  const quiz = await Quiz.findOneAndUpdate({ quizId }, { isActive: false, startedAt: null }, { new: true });
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
+
+  // Sync!
+  getIO().to(quizId).emit('quizStopped', { quizId });
+
   res.status(200).json({ success: true, isActive: false });
 });
 
@@ -61,6 +84,11 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
   }
 
   await Participant.create({ name, roll: roll.toUpperCase(), quizId });
+
+  // Update Admin dashboard
+  const participantCount = await Participant.countDocuments({ quizId });
+  getIO().to(`ADMIN_${quizId}`).emit('participantJoined', { participantCount, name, roll: roll.toUpperCase() });
+
   res.status(200).json({ success: true, message: 'Joined successfully' });
 });
 
@@ -113,6 +141,7 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   // Calculate score on backend
   const questionsDB = await Question.find({});
   let score = 0;
+  let attempted = 0;
   
   const questionMap = {};
   questionsDB.forEach(q => { questionMap[q._id.toString()] = q.answer; });
@@ -120,6 +149,8 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   if (Array.isArray(answers)) {
     answers.forEach(ans => {
       if (ans && ans.questionId && questionMap[ans.questionId]) {
+        if (ans.selected) attempted++; // Count as attempted
+
         if (ans.selected === questionMap[ans.questionId]) {
           score += 1;
         }
@@ -132,11 +163,21 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
     roll: roll.toUpperCase(),
     quizId,
     score,
-    timeTaken
+    timeTaken,
+    attempted,
+    total: questionsDB.length
   });
 
   // Remove from participants
   await Participant.deleteOne({ roll: roll.toUpperCase(), quizId });
+
+  // Live leaderboard update
+  const results = await Result.find({ quizId }).sort({ score: -1, timeTaken: 1 });
+  const participantCount = await Participant.countDocuments({ quizId });
+
+  const io = getIO();
+  io.to(`ADMIN_${quizId}`).emit('resultSubmitted', { results, participantCount });
+  io.to(quizId).emit('leaderboardUpdate', { results });
 
   res.status(201).json({ success: true, result, totalQuestions: questionsDB.length });
 });
