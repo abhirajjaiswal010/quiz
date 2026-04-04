@@ -19,6 +19,10 @@ const quizSchema = new mongoose.Schema(
         ref: 'Question',
       },
     ],
+    duration: {
+      type: Number,
+      default: 15, // Default 15 minutes
+    },
   },
   { timestamps: true }
 );

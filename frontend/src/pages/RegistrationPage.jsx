@@ -36,13 +36,13 @@ export default function RegistrationPage() {
       await joinQuiz({
         name: form.name.trim(),
         roll: form.roll.trim().toUpperCase(),
-        quizId: form.quizId.trim()
+        quizId: form.quizId.trim().toUpperCase()
       })
 
       goToWaiting({
         name: form.name.trim(),
         roll: form.roll.trim().toUpperCase(),
-        quizId: form.quizId.trim()
+        quizId: form.quizId.trim().toUpperCase()
       })
       toast.success('Joined successfully!')
     } catch (err) {
@@ -53,7 +53,7 @@ export default function RegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-2 animate-fade-in bg-[#0F0F0F] relative overflow-hidden">
+    <div className="min-h-screen flex flex-col items-start md:items-center  md:justify-center px-4 pt-[4.5rem]  md:py-6 bg-[#0F0F0F]">
       <TargetCursor
         spinDuration={2}
         hideDefaultCursor

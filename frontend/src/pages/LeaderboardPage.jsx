@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useQuiz } from '../context/QuizContext'
 import { getLeaderboard } from '../api/quizApi'
+import confetti from 'canvas-confetti'
 import { Trophy, Medal, PartyPopper, BarChart3, Lock, Flag, Loader2, Flame, Star, ThumbsUp, BookOpen as BookIcon } from 'lucide-react'
 
 const DEPARTMENTS = ['All', 'CSE', 'IT', 'ECE', 'ME', 'CE', 'EEE', 'MCA', 'MBA', 'OTHER']
@@ -12,9 +13,9 @@ function formatTime(seconds) {
 }
 
 function RankBadge({ rank }) {
-  if (rank === 1) return <Trophy className="text-white" size={24} />
-  if (rank === 2) return <Medal className="text-white" size={22} />
-  if (rank === 3) return <Medal className="text-white opacity-80" size={20} />
+  if (rank === 1) return <Trophy className="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" size={24} />
+  if (rank === 2) return <Trophy className="text-slate-200 drop-shadow-[0_0_8px_rgba(226,232,240,0.4)]" size={22} />
+  if (rank === 3) return <Trophy className="text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]" size={20} />
   return (
     <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 text-sm font-bold">
       {rank}
@@ -65,8 +66,7 @@ export default function LeaderboardPage() {
   }, [student?.quizId])
 
   useEffect(() => {
-    // Only fetch if quiz is officially over
-    if (!isQuizActive && student?.quizId) {
+    if (student?.quizId) {
       fetchLeaderboard()
 
       const interval = setInterval(() => {
@@ -76,6 +76,30 @@ export default function LeaderboardPage() {
       return () => clearInterval(interval)
     }
   }, [fetchLeaderboard, isQuizActive, student?.quizId])
+
+  // ── Confetti Effect (on mount if result exists) ──────────────────────────
+  useEffect(() => {
+    if (result) {
+      const duration = 3 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        // since particles fall down, start a bit higher than random
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+      }, 250);
+    }
+  }, [result]) // Fires once when result is available on this page mount
 
   const handleRefresh = () => {
     setRefreshing(true)
@@ -87,10 +111,10 @@ export default function LeaderboardPage() {
     : null
 
   return (
-    <div className="min-h-screen animate-fade-in">
+    <div className="min-h-screen animate-fade-in bg-[#0F0F0F]">
       {/* ── Result Banner ── */}
       {result && (
-        <div className="bg-gradient-to-r from-brand-900/80 to-brand-800/50 border-b border-brand-700/50">
+        <div className="bg-[#4FB3FF] border-b border-[#4FB3FF]/50">
           <div className="max-w-4xl mx-auto px-4 py-10 text-center animate-slide-up">
             <div className="flex justify-center mb-4">
               {result.score === result.total ? (
@@ -104,20 +128,20 @@ export default function LeaderboardPage() {
             <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">
               Quiz Completed!
             </h1>
-            <p className="text-slate-300 mb-6">
-              Well done, <span className="text-brand-300 font-semibold">{result.name}</span>!
+            <p className="text-white font-semibold mb-6">
+              Well done, <span className="text-white font-semibold">{result.name}</span>!
             </p>
 
             {/* Score Card */}
-            <div className="inline-flex gap-6 md:gap-10 bg-slate-950/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl px-8 py-5">
+            <div className="inline-flex gap-6 md:gap-10 bg-[#0F0F0F]/80 backdrop-blur-sm border border-white rounded-2xl px-8 py-5">
               <div className="text-center">
                 <div className="font-display text-4xl font-black text-white">
                   {result.score}
-                  <span className="text-slate-500 text-2xl font-normal">/{result.total}</span>
+                  <span className="text-white-500 text-2xl font-normal">/{result.total}</span>
                 </div>
-                <div className="text-xs text-slate-500 mt-1">Score</div>
+                <div className="text-xs text-white-500 mt-1">Score</div>
               </div>
-              <div className="w-px bg-slate-700" />
+              <div className="w-px bg-white" />
               <div className="text-center">
                 <div className="font-display text-4xl font-black text-brand-400">
                   {totalQuestions > 0
@@ -127,23 +151,23 @@ export default function LeaderboardPage() {
                     : '—'}
                   <span className="text-2xl font-normal">%</span>
                 </div>
-                <div className="text-xs text-slate-500 mt-1">Accuracy</div>
+                <div className="text-xs text-white-500 mt-1">Accuracy</div>
               </div>
-              <div className="w-px bg-slate-700" />
+              <div className="w-px bg-white" />
               <div className="text-center">
                 <div className="font-display text-4xl font-black text-accent-400">
                   {formatTime(result.timeTaken)}
                 </div>
-                <div className="text-xs text-slate-500 mt-1">Time Taken</div>
+                <div className="text-xs text-white  -500 mt-1">Time Taken</div>
               </div>
               {myRank && (
                 <>
-                  <div className="w-px bg-slate-700 hidden md:block" />
+                  <div className="w-px bg-white hidden md:block" />
                   <div className="text-center hidden md:block">
                     <div className="font-display text-4xl font-black text-amber-400">
                       #{myRank}
                     </div>
-                    <div className="text-xs text-slate-500 mt-1">Your Rank</div>
+                    <div className="text-xs text-white-500 mt-1">Your Rank</div>
                   </div>
                 </>
               )}
@@ -156,17 +180,17 @@ export default function LeaderboardPage() {
                 </span>
               )}
               {result.score >= result.total * 0.8 && result.score < result.total && (
-                <span className="flex items-center gap-2 text-white">
+                <span className="flex items-center gap-2 text-white font-semibold">
                   <Star size={16} /> Excellent work!
                 </span>
               )}
               {result.score >= result.total * 0.6 && result.score < result.total * 0.8 && (
-                <span className="flex items-center gap-2 text-white">
+                <span className="flex items-center gap-2 text-white font-semibold ">
                   <ThumbsUp size={16} /> Good job!
                 </span>
               )}
               {result.score < result.total * 0.6 && (
-                <span className="flex items-center gap-2 text-white">
+                <span className="flex items-center gap-2 text-white font-semibold">
                   <BookIcon size={16} /> Keep practicing!
                 </span>
               )}
@@ -176,7 +200,7 @@ export default function LeaderboardPage() {
       )}
 
       {/* ── Leaderboard Section ── */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8 ">
         {/* Header Row */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
           <div className="flex-1">
@@ -204,7 +228,7 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        {isQuizActive ? (
+        {false ? (
           <div className="card p-16 text-center border-amber-500/10 bg-amber-500/5 animate-pulse">
             <div className="flex justify-center mb-6 opacity-80">
               <Lock className="text-white" size={64} />
@@ -264,7 +288,7 @@ export default function LeaderboardPage() {
                             <tr
                               key={entry.roll}
                               className={`transition-colors duration-150 ${isCurrentUser
-                                ? 'bg-brand-950/40 border-l-2 border-l-brand-500'
+                                ? 'bg-[#4FB3FF]/10 border-l-2 border-l-[#4FB3FF]'
                                 : 'hover:bg-slate-800/30'
                                 }`}
                             >
@@ -284,7 +308,7 @@ export default function LeaderboardPage() {
                                       {entry.name}
                                       {isCurrentUser && <span className="ml-1.5 text-xs text-brand-500">(You)</span>}
                                     </p>
-                                    <p className="text-xs text-slate-600 truncate">{entry.roll}</p>
+                                    <p className="text-xs text-white font-medium truncate">{entry.roll}</p>
                                   </div>
                                 </div>
                               </td>

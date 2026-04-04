@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useQuiz } from '../context/QuizContext'
 import { submitQuiz } from '../api/quizApi'
 
-const QUIZ_DURATION = 15 * 60 // 15 minutes in seconds
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -11,10 +10,10 @@ function formatTime(seconds) {
 }
 
 export default function QuizPage() {
-  const { student, questions, answers, selectAnswer, completeQuiz } = useQuiz()
+  const { student, questions, answers, selectAnswer, completeQuiz, quizDuration } = useQuiz()
 
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(QUIZ_DURATION)
+  const [timeLeft, setTimeLeft] = useState(quizDuration * 60)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)

@@ -14,6 +14,8 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(null)
   const [participantCount, setParticipantCount] = useState(0)
+  const [sessionInfo, setSessionInfo] = useState(null)
+  const [duration, setDuration] = useState(15) // Default 15 mins
 
   // Questions state
   const [questions, setQuestions] = useState([])
@@ -48,28 +50,46 @@ export default function AdminPanel() {
   }
 
   // ── Session Control ───────────────────────────────────────────────────────
-  const fetchStatus = useCallback(async () => {
+  const fetchStatus = useCallback(async (silent = false) => {
     if (!quizId) return
     try {
       const data = await quizApi.getQuizStatus(quizId)
       setStatus(data.isActive)
       setParticipantCount(data.participantCount || 0)
+      setSessionInfo({
+        totalQuestions: data.totalQuestions,
+        createdAt: data.createdAt,
+        quizDetails: data.quizDetails
+      })
 
-      if (!data.isActive) {
-        const lbData = await quizApi.getLeaderboard(quizId)
-        setLeaderboard(lbData.results || [])
-      }
+      // Always fetch leaderboard data to show live results
+      const lbData = await quizApi.getLeaderboard(quizId)
+      setLeaderboard(lbData.results || [])
     } catch (err) {
-      setStatus(null)
-      toast.error(err.message || 'Quiz not found')
+      if (!silent) {
+        setStatus(null)
+        toast.error(err.message || 'Quiz not found')
+      }
     }
   }, [quizId])
 
+  // ── Auto Polling for live updates ─────────────────────────────────────────
+  useEffect(() => {
+    let interval;
+    if (isAuthorized && quizId && status !== null) {
+      interval = setInterval(() => {
+        fetchStatus(true); // Silent polling
+      }, 3000);
+    }
+    return () => clearInterval(interval);
+  }, [isAuthorized, quizId, status, fetchStatus])
+
   const handleCreate = async () => {
     if (!quizId) return toast.error('Enter a quizId')
+    const normalizedId = quizId.trim().toUpperCase()
     setLoading(true)
     try {
-      await quizApi.createQuiz(adminKey, quizId)
+      await quizApi.createQuiz(adminKey, normalizedId, duration)
       toast.success('Quiz created')
       fetchStatus()
     } catch (err) {
@@ -193,9 +213,12 @@ export default function AdminPanel() {
       handleCreate={handleCreate}
       handleStart={handleStart}
       handleStop={handleStop}
+      duration={duration}
+      setDuration={setDuration}
       loading={loading}
       status={status}
       participantCount={participantCount}
+      sessionInfo={sessionInfo}
       leaderboard={leaderboard}
       handleLogout={handleLogout}
       questions={questions}

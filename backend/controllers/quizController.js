@@ -8,20 +8,25 @@ const ErrorResponse = require('../utils/errorResponse');
 // 1. Admin creates a quiz and generates a unique quizId
 // POST /api/create-quiz
 exports.createQuiz = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.body;
+  const { duration } = req.body;
+  const quizId = req.body.quizId?.trim().toUpperCase();
   if (!quizId) return next(new ErrorResponse('quizId is required', 400));
 
   const existing = await Quiz.findOne({ quizId });
   if (existing) return next(new ErrorResponse('quizId already exists', 400));
 
-  const quiz = await Quiz.create({ quizId, isActive: false });
+  const quiz = await Quiz.create({ 
+    quizId, 
+    isActive: false, 
+    duration: duration || 15 
+  });
   res.status(201).json({ success: true, quiz });
 });
 
 // 2. Admin starts quiz
 // POST /api/start-quiz
 exports.startQuiz = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.body;
+  const quizId = req.body.quizId?.trim().toUpperCase();
   const quiz = await Quiz.findOneAndUpdate({ quizId }, { isActive: true }, { new: true });
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
   res.status(200).json({ success: true, isActive: true });
@@ -30,7 +35,7 @@ exports.startQuiz = asyncHandler(async (req, res, next) => {
 // 3. Admin stops quiz
 // POST /api/stop-quiz
 exports.stopQuiz = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.body;
+  const quizId = req.body.quizId?.trim().toUpperCase();
   const quiz = await Quiz.findOneAndUpdate({ quizId }, { isActive: false }, { new: true });
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
   res.status(200).json({ success: true, isActive: false });
@@ -39,7 +44,8 @@ exports.stopQuiz = asyncHandler(async (req, res, next) => {
 // 4. Students join the quiz
 // POST /api/join-quiz
 exports.joinQuiz = asyncHandler(async (req, res, next) => {
-  const { name, roll, quizId } = req.body;
+  const { name, roll } = req.body;
+  const quizId = req.body.quizId?.trim().toUpperCase();
 
   // Validate quizId exists
   const quiz = await Quiz.findOne({ quizId });
@@ -61,18 +67,27 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
 // 5. Get quiz status (polling)
 // GET /api/quiz-status?quizId=
 exports.getQuizStatus = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.query;
+  const quizId = req.query.quizId?.trim().toUpperCase();
   const quiz = await Quiz.findOne({ quizId });
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
 
   const participantCount = await Participant.countDocuments({ quizId });
-  res.status(200).json({ success: true, isActive: quiz.isActive, participantCount });
+  const totalQuestions = await Question.countDocuments(); // Or quiz specific questions if implemented
+
+  res.status(200).json({ 
+    success: true, 
+    isActive: quiz.isActive, 
+    participantCount,
+    totalQuestions,
+    createdAt: quiz.createdAt,
+    quizDetails: quiz
+  });
 });
 
 // 6. Fetch questions (Only when isActive = true)
 // GET /api/questions?quizId=
 exports.getQuestions = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.query;
+  const quizId = req.query.quizId?.trim().toUpperCase();
   const quiz = await Quiz.findOne({ quizId });
   
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
@@ -85,7 +100,8 @@ exports.getQuestions = asyncHandler(async (req, res, next) => {
 // 7. Submit quiz
 // POST /api/submit
 exports.submitQuiz = asyncHandler(async (req, res, next) => {
-  const { name, roll, quizId, answers, timeTaken } = req.body;
+  const { name, roll, answers, timeTaken } = req.body;
+  const quizId = req.body.quizId?.trim().toUpperCase();
 
   const quiz = await Quiz.findOne({ quizId });
   if (!quiz || !quiz.isActive) return next(new ErrorResponse('Quiz is not active', 403));
@@ -128,11 +144,10 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
 // 8. Leaderboard (only after quiz ends)
 // GET /api/leaderboard?quizId=
 exports.getLeaderboard = asyncHandler(async (req, res, next) => {
-  const { quizId } = req.query;
+  const quizId = req.query.quizId?.trim().toUpperCase();
   const quiz = await Quiz.findOne({ quizId });
 
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
-  if (quiz.isActive) return next(new ErrorResponse('Leaderboard only visible after quiz ends', 403));
 
   const [results, totalQuestions] = await Promise.all([
     Result.find({ quizId }).sort({ score: -1, timeTaken: 1 }),

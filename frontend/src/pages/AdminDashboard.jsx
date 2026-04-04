@@ -3,7 +3,8 @@ import logo from '../assets/logo.png'
 
 export default function AdminDashboard({
   tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop, 
-  loading, status, participantCount, leaderboard, handleLogout,
+  duration, setDuration,
+  loading, status, participantCount, sessionInfo, leaderboard, handleLogout,
   questions, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion
 }) {
     return (
@@ -44,10 +45,16 @@ export default function AdminDashboard({
             <h2 className="text-xl font-bold text-white mb-6">Manage Quiz Session</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               <div className="space-y-4">
-                <label className="label">Unique Quiz ID</label>
                 <div className="flex gap-2">
-                  <input type="text" value={quizId} onChange={e => setQuizId(e.target.value)} placeholder="e.g. hackathon-24" className="input-field bg-[#0f0f0f]/20 border border-white/20 uppercase text-white py-2 text-sm focus:border-white transition-colors" />
-                  <button onClick={fetchStatus} className="btn-primary bg-[#4FB3FF] text-white whitespace-nowrap">Fetch</button>
+                  <div className="flex-1">
+                    <label className="label">Unique Quiz ID</label>
+                    <input type="text" value={quizId} onChange={e => setQuizId(e.target.value)} placeholder="e.g. hack-24" className="input-field bg-[#0f0f0f]/20 border border-white/20 uppercase text-white py-2 text-sm focus:border-white transition-colors" />
+                  </div>
+                  <div className="w-24">
+                     <label className="label">Mins</label>
+                     <input type="number" value={duration} onChange={e => setDuration(e.target.value)} className="input-field bg-[#0f0f0f]/20 border border-white/20 text-white py-2 text-sm focus:border-white transition-colors" />
+                  </div>
+                  <button onClick={fetchStatus} className="btn-primary bg-[#4FB3FF] mt-7 text-white whitespace-nowrap h-[38px] flex items-center">Fetch</button>
                 </div>
                 <div className="pt-4 grid grid-cols-1 gap-3">
                   <button onClick={handleCreate} disabled={loading} className="btn-primary w-full bg-white ">Create New Quiz</button>
@@ -78,11 +85,29 @@ export default function AdminDashboard({
                     <Users size={28} />
                   </div>
                 </div>
+
+                {sessionInfo && (
+                  <div className="p-5 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+                    <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest border-b border-white/5 pb-2">Session Details</p>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Total Questions</span>
+                      <span className="text-white font-bold">{sessionInfo.totalQuestions}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Time Limit</span>
+                      <span className="text-white font-bold">{sessionInfo.quizDetails.duration} mins</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-slate-400">Created At</span>
+                      <span className="text-white text-[11px]">{new Date(sessionInfo.createdAt).toLocaleString()}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          {status === false && leaderboard.length > 0 && (
+          {leaderboard.length > 0 && (
             <div className="card p-8 animate-slide-up">
               <h3 className="text-xl font-bold text-white mb-6">Session Leaderboard</h3>
               <div className="overflow-x-auto">

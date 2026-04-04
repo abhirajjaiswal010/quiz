@@ -23,6 +23,7 @@ export const QuizProvider = ({ children }) => {
   const [phase, setPhase] = useState('register')
   const [isQuizActive, setIsQuizActive] = useState(false)
   const [participantCount, setParticipantCount] = useState(0)
+  const [quizDuration, setQuizDuration] = useState(15) // Minutes
 
   // ── Persistence ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -62,14 +63,15 @@ export const QuizProvider = ({ children }) => {
         const data = await getQuizStatus(student.quizId)
         setIsQuizActive(data.isActive)
         setParticipantCount(data.participantCount || 0)
+        if (data.totalQuestions && data.quizDetails?.duration) {
+           setQuizDuration(data.quizDetails.duration)
+        }
 
         // Auto-start if waiting and quiz becomes active
         if (data.isActive && phase === 'waiting') {
-           // Fetch questions
            const { getQuestions } = await import('../api/quizApi');
            const qData = await getQuestions(student.quizId);
-           setQuestions(qData.questions);
-           updatePhase('quiz')
+           startQuiz(student, qData.questions);
         }
 
         // Auto-end if quiz stops
@@ -100,9 +102,28 @@ export const QuizProvider = ({ children }) => {
     updatePhase('waiting')
   }, [updatePhase])
 
+  // ── Shuffling Utility ───────────────────────────────────────────────────
+  const shuffleArray = (array) => {
+    const newArr = [...array]
+    for (let i = newArr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArr[i], newArr[j]] = [newArr[j], newArr[i]]
+    }
+    return newArr
+  }
+
   const startQuiz = useCallback((studentData, loadedQuestions) => {
+    // 1. Shuffle the order of questions
+    let randomizedQuestions = shuffleArray(loadedQuestions)
+
+    // 2. Shuffle the options within each question
+    randomizedQuestions = randomizedQuestions.map(q => ({
+      ...q,
+      options: shuffleArray(q.options)
+    }))
+
     setStudent(studentData)
-    setQuestions(loadedQuestions)
+    setQuestions(randomizedQuestions)
     setAnswers({})
     updatePhase('quiz')
   }, [updatePhase])
@@ -138,6 +159,7 @@ export const QuizProvider = ({ children }) => {
         phase,
         isQuizActive,
         participantCount,
+        quizDuration,
         startQuiz,
         goToWaiting,
         selectAnswer,
