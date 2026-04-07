@@ -1,29 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const quizController = require('../controllers/quizController');
+const adminController = require('../controllers/adminController');
+const studentController = require('../controllers/studentController');
+const questionController = require('../controllers/questionController');
+const leaderboardController = require('../controllers/leaderboardController');
 const adminOnly = require('../middleware/adminOnly');
 
-// ─── ADMIN APIs ─────────────────────────────────────────────────────────────
-router.post('/create-quiz', adminOnly, quizController.createQuiz);
-router.post('/start-quiz', adminOnly, quizController.startQuiz);
-router.post('/stop-quiz', adminOnly, quizController.stopQuiz);
+// ─── ADMIN APIs (Quiz Lifecycle & History) ──────────────────────────────────
+router.post('/create-quiz', adminOnly, adminController.createQuiz);
+router.post('/start-quiz', adminOnly, adminController.startQuiz);
+router.post('/stop-quiz', adminOnly, adminController.stopQuiz);
+router.get('/admin/verify', adminOnly, adminController.verifyAdmin);
+router.get('/admin/quizzes', adminOnly, adminController.getAllQuizzes);
+router.delete('/admin/quizzes/:quizId', adminOnly, adminController.deleteQuiz);
 
-// Question Management (Admin)
-router.get('/admin/verify', adminOnly, quizController.verifyAdmin);
-router.get('/admin/questions', adminOnly, quizController.getAdminQuestions);
-router.get('/admin/quizzes', adminOnly, quizController.getAllQuizzes);
-router.delete('/admin/quizzes/:quizId', adminOnly, quizController.deleteQuiz);
-router.post('/admin/questions', adminOnly, quizController.addQuestion);
-router.post('/admin/questions/upload', adminOnly, quizController.uploadQuestions);
-router.put('/admin/questions/:id', adminOnly, quizController.updateQuestion);
-router.delete('/admin/questions/:id', adminOnly, quizController.deleteQuestion);
+// ─── ADMIN APIs (Question Master) ───────────────────────────────────────────
+router.get('/admin/questions', adminOnly, questionController.getAdminQuestions);
+router.post('/admin/questions', adminOnly, questionController.addQuestion);
+router.post('/admin/questions/upload', adminOnly, questionController.uploadQuestions);
+router.put('/admin/questions/:id', adminOnly, questionController.updateQuestion);
+router.delete('/admin/questions/:id', adminOnly, questionController.deleteQuestion);
 
 // ─── STUDENT APIs ───────────────────────────────────────────────────────────
-router.post('/join-quiz', quizController.joinQuiz);
-router.post('/save-progress', quizController.saveProgress);
-router.get('/quiz-status', quizController.getQuizStatus);
-router.get('/questions', quizController.getQuestions);
-router.post('/submit', quizController.submitQuiz);
-router.get('/leaderboard', quizController.getLeaderboard);
+router.post('/join-quiz', studentController.joinQuiz);
+router.post('/save-progress', studentController.saveProgress);
+router.get('/quiz-status', adminController.getQuizStatus); // Shared status polling
+router.get('/questions', studentController.getQuestions);
+router.post('/submit', studentController.submitQuiz);
+router.get('/leaderboard', leaderboardController.getLeaderboard);
 
 module.exports = router;
