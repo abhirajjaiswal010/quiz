@@ -9,6 +9,7 @@
     "seed": "node seed/seedQuestions.js"
   },
   "dependencies": {
+    "axios": "^1.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.3",
@@ -17,7 +18,8 @@
     "helmet": "^7.1.0",
     "mongoose": "^8.2.3",
     "morgan": "^1.10.0",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
