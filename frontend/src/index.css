@@ -28,7 +28,7 @@
  .btn-primary {
   @apply inline-flex items-center justify-center gap-2 
   px-6 py-3 rounded-xl 
-  bg-[#92acff] text-[#0e0929] 
+  bg-[#4fb3ff] text-[#0e0929] 
   font-bold text-sm 
   transition-all duration-200 
   active:scale-95 
