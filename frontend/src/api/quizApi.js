@@ -38,6 +38,8 @@ export const verifyAdmin = (key) => api.get('/admin/verify', getAdminHeaders(key
 
 /** ─── Question Management (Admin) ───────────────────────────────────────────── */
 export const getAdminQuestions = (key) => api.get('/admin/questions', getAdminHeaders(key))
+export const getAllQuizzes = (key) => api.get('/admin/quizzes', getAdminHeaders(key))
+export const deleteQuiz = (key, quizId) => api.delete(`/admin/quizzes/${quizId}`, getAdminHeaders(key))
 export const addQuestion = (key, data) => api.post('/admin/questions', data, getAdminHeaders(key))
 export const uploadQuestions = (key, questions) => api.post('/admin/questions/upload', { questions }, getAdminHeaders(key))
 export const updateQuestion = (key, id, data) => api.put(`/admin/questions/${id}`, data, getAdminHeaders(key))

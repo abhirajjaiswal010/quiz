@@ -25,7 +25,8 @@ export default function AdminPanel() {
 
   // Questions state
   const [questions, setQuestions] = useState([])
-  const [qForm, setQForm] = useState({ question: '', options: ['', '', '', ''], answer: '' })
+  const [quizzes, setQuizzes] = useState([])
+  const [qForm, setQForm] = useState({ question: '', options: ['', '', '', ''], answer: 0 })
   const [editingId, setEditingId] = useState(null)
 
   // Leaderboard state
@@ -56,10 +57,11 @@ export default function AdminPanel() {
   }
 
   // ── Session Control ───────────────────────────────────────────────────────
-  const fetchStatus = useCallback(async (silent = false) => {
-    if (!quizId) return
+  const fetchStatus = useCallback(async (manualId = null, silent = false) => {
+    const idToUse = manualId || quizId
+    if (!idToUse) return
     try {
-      const data = await quizApi.getQuizStatus(quizId)
+      const data = await quizApi.getQuizStatus(idToUse)
       setStatus(data.isActive)
       setParticipantCount(data.participantCount || 0)
       setParticipants(data.participants || [])
@@ -74,7 +76,7 @@ export default function AdminPanel() {
       }
 
       // Always fetch leaderboard data to show live results
-      const lbData = await quizApi.getLeaderboard(quizId)
+      const lbData = await quizApi.getLeaderboard(idToUse)
       setLeaderboard(lbData.results || [])
     } catch (err) {
       if (!silent) {
@@ -176,6 +178,15 @@ export default function AdminPanel() {
     }
   }, [adminKey])
 
+  const fetchQuizzes = useCallback(async () => {
+    try {
+      const res = await quizApi.getAllQuizzes(adminKey)
+      setQuizzes(res.quizzes)
+    } catch (err) {
+      console.error('Fetch quizzes failed:', err)
+    }
+  }, [adminKey])
+
   const handleSaveQuestion = async (e) => {
     e.preventDefault()
     setLoading(true)
@@ -187,7 +198,7 @@ export default function AdminPanel() {
         await quizApi.addQuestion(adminKey, qForm)
         toast.success('Added')
       }
-      setQForm({ question: '', options: ['', '', '', ''], answer: '' })
+      setQForm({ question: '', options: ['', '', '', ''], answer: 0 })
       setEditingId(null)
       fetchQuestions()
     } catch (err) {
@@ -205,6 +216,23 @@ export default function AdminPanel() {
       fetchQuestions()
     } catch (err) {
       toast.error(err.message)
+    }
+  }
+
+  const handleDeleteQuiz = async (quizId) => {
+    if (!window.confirm(`Are you sure you want to delete quiz session ${quizId}? This will delete all student results for this session.`)) return
+    try {
+      setLoading(true)
+      await quizApi.deleteQuiz(adminKey, quizId)
+      toast.success('Quiz session deleted')
+      fetchQuizzes()
+      if (quizId === quizId) { // if current quiz is deleted, reset status
+         setStatus(null)
+      }
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -305,12 +333,15 @@ export default function AdminPanel() {
       leaderboard={leaderboard}
       handleLogout={handleLogout}
       questions={questions}
+      quizzes={quizzes}
+      fetchQuizzes={fetchQuizzes}
       qForm={qForm}
       setQForm={setQForm}
       handleSaveQuestion={handleSaveQuestion}
       editingId={editingId}
       setEditingId={setEditingId}
       handleDeleteQuestion={handleDeleteQuestion}
+      handleDeleteQuiz={handleDeleteQuiz}
       handleBulkUpload={handleBulkUpload}
     />
   )

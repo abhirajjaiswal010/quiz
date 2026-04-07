@@ -39,8 +39,8 @@ export default function AdminDashboard({
   tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop, 
   duration, setDuration, allowTabSwitching, setAllowTabSwitching,
   loading, status, participantCount, participants, sessionInfo, leaderboard, handleLogout,
-  questions, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion,
-  handleBulkUpload
+  questions, quizzes, fetchQuizzes, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion,
+  handleDeleteQuiz, handleBulkUpload
 }) {
   const [pTab, setPTab] = useState('all') // all | doing | done
 
@@ -103,6 +103,10 @@ export default function AdminDashboard({
           <BookOpen size={16} />
           Question Bank
         </button>
+        <button onClick={() => { setTab('history'); fetchQuizzes(); }} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${tab === 'history' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>
+          <LayoutDashboard size={16} />
+          Recent Sessions
+        </button>
         <button onClick={() => setTab('leaderboard')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${tab === 'leaderboard' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>
           <Trophy size={16} />
           Leaderboard
@@ -136,9 +140,9 @@ export default function AdminDashboard({
                   <button onClick={fetchStatus} className="btn-primary bg-[#4FB3FF] mt-7 text-white whitespace-nowrap h-[38px] flex items-center">Fetch</button>
                 </div>
                 <div className="pt-4 grid grid-cols-1 gap-3">
-                  <button onClick={handleCreate} disabled={loading} className="btn-primary w-full bg-white ">Create New Quiz</button>
-                  <button onClick={handleStart} disabled={loading || status === true || !status === null} className="btn-primary w-full bg-[#98E19A] border-[#98E19A]/50 ">Start Quiz</button>
-                  <button onClick={handleStop} disabled={loading || status === false || !status === null} className="btn-primary w-full bg-[#FF7575] border-[#FF7575]/50 ">Stop Quiz</button>
+                   <button onClick={handleCreate} disabled={loading} className="btn-primary w-full bg-white text-black font-bold uppercase py-4 shadow-xl hover:bg-white/90 transition-all">Create New Quiz</button>
+                   <button onClick={handleStart} disabled={loading || status === true || status === null} className="btn-primary w-full bg-[#98E19A] border-[#98E19A]/50 font-bold uppercase py-4 text-black hover:opacity-90 disabled:opacity-30 transition-all">Start Quiz</button>
+                   <button onClick={handleStop} disabled={loading || status === false || status === null} className="btn-primary w-full bg-[#FF7575] border-[#FF7575]/50 font-bold uppercase py-4 text-white hover:opacity-90 disabled:opacity-30 transition-all">Stop Quiz</button>
                 </div>
               </div>
 
@@ -455,7 +459,92 @@ export default function AdminDashboard({
           </div>
         </div>
       )}
-    </div>
+
+        {tab === 'history' && (
+          <div className="grid gap-6 animate-slide-up">
+            <div className="card bg-[#0f0f0f]/40 backdrop-blur-md border-white/10 p-8 shadow-2xl">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <LayoutDashboard className="text-[#4FB3FF]" />
+                    Recent Sessions
+                  </h2>
+                  <p className="text-slate-500 text-sm">Review previous quiz IDs and their current status</p>
+                </div>
+                <button 
+                  onClick={fetchQuizzes}
+                  className="p-2 hover:bg-white/5 rounded-full transition-colors text-white/50 hover:text-white"
+                  title="Refresh List"
+                >
+                  <Zap size={20} />
+                </button>
+              </div>
+
+              <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-white/5 border-b border-white/10">
+                      <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Quiz ID</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Created</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                      <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/10">
+                    {quizzes.length === 0 ? (
+                      <tr>
+                        <td colSpan="4" className="px-6 py-20 text-center text-slate-500">
+                          No sessions found. Create a quiz to get started!
+                        </td>
+                      </tr>
+                    ) : (
+                      quizzes.map((q) => (
+                        <tr key={q._id} className="group hover:bg-white/[0.02] transition-colors">
+                          <td className="px-6 py-5">
+                            <span className="font-display font-black text-[#4FB3FF] text-lg tracking-wider bg-[#4FB3FF]/10 px-3 py-1 rounded-lg">
+                              {q.quizId}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5 text-slate-300">
+                            {new Date(q.createdAt).toLocaleDateString()} at {new Date(q.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                          <td className="px-6 py-5">
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${q.isActive ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-500/10 text-slate-400 border border-white/10'}`}>
+                              {q.isActive ? 'Active' : 'Completed'}
+                            </span>
+                          </td>
+                          <td className="px-6 py-5 text-right flex items-center justify-end gap-3">
+                            <button 
+                              onClick={() => {
+                                setQuizId(q.quizId);
+                                setTab('control');
+                                fetchStatus(q.quizId); // pass ID directly
+                              }}
+                              className="text-white hover:text-[#4FB3FF] text-xs font-bold uppercase transition-all opacity-0 group-hover:opacity-100 bg-white/5 px-4 py-2 rounded-lg"
+                            >
+                              Load
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteQuiz(q.quizId);
+                              }}
+                              className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                              title="Delete Session"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
     )
 }

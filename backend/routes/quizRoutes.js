@@ -11,6 +11,8 @@ router.post('/stop-quiz', adminOnly, quizController.stopQuiz);
 // Question Management (Admin)
 router.get('/admin/verify', adminOnly, quizController.verifyAdmin);
 router.get('/admin/questions', adminOnly, quizController.getAdminQuestions);
+router.get('/admin/quizzes', adminOnly, quizController.getAllQuizzes);
+router.delete('/admin/quizzes/:quizId', adminOnly, quizController.deleteQuiz);
 router.post('/admin/questions', adminOnly, quizController.addQuestion);
 router.post('/admin/questions/upload', adminOnly, quizController.uploadQuestions);
 router.put('/admin/questions/:id', adminOnly, quizController.updateQuestion);

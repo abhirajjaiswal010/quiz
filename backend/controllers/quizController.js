@@ -447,3 +447,26 @@ exports.deleteQuestion = asyncHandler(async (req, res, next) => {
 exports.verifyAdmin = asyncHandler(async (req, res, next) => {
   res.status(200).json({ success: true, message: 'Authorized' });
 });
+
+exports.getAllQuizzes = asyncHandler(async (req, res, next) => {
+  const quizzes = await Quiz.find({}).sort({ createdAt: -1 });
+  res.status(200).json({ success: true, count: quizzes.length, quizzes });
+});
+
+exports.deleteQuiz = asyncHandler(async (req, res, next) => {
+  const { quizId } = req.params;
+  const normalizedId = quizId.trim().toUpperCase();
+
+  const quiz = await Quiz.findOne({ quizId: normalizedId });
+  if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
+
+  // 1. Delete associated data
+  await Promise.all([
+    Quiz.deleteOne({ quizId: normalizedId }),
+    Result.deleteMany({ quizId: normalizedId }),
+    Participant.deleteMany({ quizId: normalizedId }),
+    Attempt.deleteMany({ quizId: normalizedId }),
+  ]);
+
+  res.status(200).json({ success: true, message: `Quiz session ${normalizedId} and all associated results deleted.` });
+});
