@@ -2,12 +2,14 @@ import { useState, useEffect, useCallback } from 'react'
 import * as quizApi from '../api/quizApi'
 import { useSocket } from '../context/SocketContext'
 import { toast } from 'react-hot-toast'
-import { Lock } from 'lucide-react'
+import { Lock, Eye, EyeOff } from 'lucide-react'
 import Threads from '../components/thread'
 import AdminDashboard from './AdminDashboard'
+import Beams from '../components/beams'
 
 export default function AdminPanel() {
   const [adminKey, setAdminKey] = useState(localStorage.getItem('adminKey') || '')
+  const [showKey, setShowKey] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
   const socket = useSocket()
 
@@ -235,7 +237,17 @@ export default function AdminPanel() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] p-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-          <Threads amplitude={1} distance={0.1} enableMouseInteraction />
+          {/* <Threads amplitude={1} distance={0.1} enableMouseInteraction /> */}
+           <Beams
+    beamWidth={3}
+    beamHeight={30}
+    beamNumber={20}
+    lightColor="#55b4dd"
+    speed={2}
+    noiseIntensity={1.75}
+    scale={0.2}
+    rotation={30}
+  />
         </div>
 
         <div className="card relative z-10 bg-[#0f0f0f]/10 backdrop-blur-sm max-w-sm w-full p-8 text-center shadow-2xl border-white/20">
@@ -245,8 +257,24 @@ export default function AdminPanel() {
           <h1 className="font-display text-2xl font-bold text-white mb-2">Admin Access</h1>
           <p className="text-white text-sm mb-8">Enter your Secret Key to manage the quiz</p>
           <form onSubmit={handleLogin} className="space-y-4">
-            <input name="key" type="password" placeholder="Admin Secret Key" className="input-field bg-[#0f0f0f]/20 border border-white/20 uppercase text-white py-2 text-[10px] focus:border-white transition-colors" required />
-            <button type="submit" disabled={loading} className="btn-primary bg-white w-full py-4">
+            <div className="relative">
+              <input
+                name="key"
+                type={showKey ? "text" : "password"}
+                placeholder="Admin Secret Key"
+                className="input-field bg-[#0f0f0f]/20 border border-white/20 uppercase text-white py-2 text-[10px] focus:border-white transition-colors w-full pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
+                title={showKey ? "Hide Secret Key" : "Show Secret Key"}
+              >
+                {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <button type="submit" disabled={loading} className="btn-primary bg-white w-full py-4 uppercase font-bold text-black hover:bg-white/90 transition-all">
               {loading ? 'Verifying...' : 'Unlock Panel'}
             </button>
           </form>
