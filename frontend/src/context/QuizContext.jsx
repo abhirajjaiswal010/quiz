@@ -11,7 +11,7 @@ function shuffleArray(array) {
   const newArr = [...array]
   for (let i = newArr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
-    ;[newArr[i], newArr[j]] = [newArr[j], newArr[i]]
+      ;[newArr[i], newArr[j]] = [newArr[j], newArr[i]]
   }
   return newArr
 }
@@ -224,7 +224,7 @@ export const QuizProvider = ({ children }) => {
           roll: student.roll,
           quizId: student.quizId,
           answers: updated,
-        }).catch(() => {}) // Silently fail — local state is still intact
+        }).catch(() => { }) // Silently fail — local state is still intact
       }
 
       return updated
@@ -302,7 +302,7 @@ export const QuizProvider = ({ children }) => {
         if (!data.isActive && phase === 'quiz') {
           updatePhase('leaderboard')
         }
-      } catch (_) {}
+      } catch (_) { }
     }
 
     const interval = setInterval(checkStatus, 15000)
