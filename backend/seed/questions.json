@@ -121,7 +121,7 @@
   },
   {
     "question": "Which of these is a primary key property in a database?",
-    "options": ["Can be NULL", "Must be mkc", "Can repeat", "Optional field"],
-    "answer": "Must be mkc"
+    "options": ["Can be NULL", "Must be Unique", "Can repeat", "Optional field"],
+    "answer": "Must be Unique"
   }
 ]

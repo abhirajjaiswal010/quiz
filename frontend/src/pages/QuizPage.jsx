@@ -34,10 +34,10 @@ export default function QuizPage() {
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0
   
   // ── SUBMIT LOCK LOGIC ──
-  // Enable submit only after 50% of the duration has passed
+  // Enable submit only after 50% of the duration has passed (DISABLED)
   const totalSeconds = quizDuration * 60
   const elapsedSeconds = totalSeconds - timeLeft
-  const canSubmit = elapsedSeconds >= totalSeconds / 2
+  const canSubmit = true // elapsedSeconds >= totalSeconds / 2
 
   // ── Anti-Cheat Effect ───────────────────────────────────────────────────
   useEffect(() => {
@@ -78,7 +78,25 @@ export default function QuizPage() {
     }
   }
 
-  if (!questions.length) return null
+  if (!questions || !questions.length) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 text-center">
+        <div className="card max-w-sm p-8 animate-fade-in">
+          <div className="text-5xl mb-6">⏳</div>
+          <h2 className="text-2xl font-display font-bold text-white mb-2">Quiz not ready</h2>
+          <p className="text-slate-400 text-sm mb-6">
+            We couldn't find any questions. Make sure the quiz has started and you've joined correctly.
+          </p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            className="btn-primary w-full bg-brand-600 hover:bg-brand-500 border-none"
+          >
+            Go to Registration
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   const timerColor =
     timeLeft > 300 ? 'text-emerald-400' : timeLeft > 60 ? 'text-amber-400' : 'text-red-400'
@@ -286,11 +304,11 @@ export default function QuizPage() {
             </button>
           ) : (
             <div className="flex flex-col items-center">
-              {!canSubmit && (
+              {/* {!canSubmit && (
                 <span className="text-[10px] text-amber-500 font-bold uppercase mb-1 animate-pulse">
                   Unlocks in {formatTime(Math.ceil((totalSeconds / 2) - elapsedSeconds))}
                 </span>
-              )}
+              )} */}
               <button
                 id="submit-quiz-btn"
                 onClick={confirmSubmit}
