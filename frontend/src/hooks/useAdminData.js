@@ -27,7 +27,8 @@ export const useAdminData = () => {
 
   // ── Session Methods ────────────────────────────────────────────────────────
   const fetchStatus = useCallback(async (manualId = null, silent = false) => {
-    const idToUse = manualId || quizId;
+    // If manualId is a React Event or not a string, ignore it and use quizId state
+    const idToUse = (typeof manualId === 'string' ? manualId : quizId)?.trim()?.toUpperCase();
     if (!idToUse) return;
     try {
       const data = await quizApi.getQuizStatus(idToUse);
@@ -58,6 +59,7 @@ export const useAdminData = () => {
     try {
       await quizApi.createQuiz(adminKey, quizId.trim().toUpperCase(), duration, allowTabSwitching);
       toast.success('Quiz created');
+      setStatus(false); // Enable Launch button instantly
       fetchStatus();
     } catch (err) {
       toast.error(err.message);
@@ -223,17 +225,24 @@ export const useAdminData = () => {
       }
     };
 
-    const handleResultSubmitted = (data) => {
+    const handleParticipantSubmitted = (data) => {
+      setParticipants(prev => prev.map(p => 
+        p.roll === data.roll ? { ...p, isSubmitted: true } : p
+      ));
+    };
+
+    const handleLeaderboardUpdate = (data) => {
       setLeaderboard(data.results);
-      setParticipantCount(data.participantCount);
     };
 
     socket.on('participantJoined', handleParticipantJoined);
-    socket.on('resultSubmitted', handleResultSubmitted);
+    socket.on('participantSubmitted', handleParticipantSubmitted);
+    socket.on('leaderboardUpdateAdmin', handleLeaderboardUpdate);
 
     return () => {
       socket.off('participantJoined', handleParticipantJoined);
-      socket.off('resultSubmitted', handleResultSubmitted);
+      socket.off('participantSubmitted', handleParticipantSubmitted);
+      socket.off('leaderboardUpdateAdmin', handleLeaderboardUpdate);
     };
   }, [socket, isAuthorized, quizId, status]);
 

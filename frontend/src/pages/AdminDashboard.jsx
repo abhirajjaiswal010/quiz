@@ -5,10 +5,11 @@ import AdminHeader from '../components/Admin/AdminHeader';
 import AdminNav from '../components/Admin/AdminNav';
 
 // Admin Tab Modules
+// Admin Tab Modules (Lazy-loaded for efficiency)
+const QuestionBankTab = React.lazy(() => import('../components/Admin/QuestionBankTab'));
+const LeaderboardTab = React.lazy(() => import('../components/Admin/LeaderboardTab'));
+const SessionHistoryTab = React.lazy(() => import('../components/Admin/SessionHistoryTab'));
 import SessionControlTab from '../components/Admin/SessionControlTab';
-import QuestionBankTab from '../components/Admin/QuestionBankTab';
-import LeaderboardTab from '../components/Admin/LeaderboardTab';
-import SessionHistoryTab from '../components/Admin/SessionHistoryTab';
 
 /**
  * High-performance Admin Dashboard orchestrator.
@@ -35,40 +36,41 @@ export default function AdminDashboard({
 
         {/* Tab Orchestration Engine */}
         <main className="mt-4 pb-20">
-          
-          {/* Tab: Session Control & Telemetry */}
-          {tab === 'control' && (
-            <SessionControlTab 
-              quizId={quizId} setQuizId={setQuizId} duration={duration} setDuration={setDuration}
-              allowTabSwitching={allowTabSwitching} setAllowTabSwitching={setAllowTabSwitching}
-              fetchStatus={fetchStatus} handleCreate={handleCreate} handleStart={handleStart} handleStop={handleStop}
-              loading={loading} status={status} participantCount={participantCount} participants={participants}
-              sessionInfo={sessionInfo}
-            />
-          )}
+          <React.Suspense fallback={<div className="py-20 text-center opacity-30 animate-pulse text-xs tracking-[0.3em] uppercase">Decoding Module...</div>}>
+            {/* Tab: Session Control & Telemetry */}
+            {tab === 'control' && (
+              <SessionControlTab 
+                quizId={quizId} setQuizId={setQuizId} duration={duration} setDuration={setDuration}
+                allowTabSwitching={allowTabSwitching} setAllowTabSwitching={setAllowTabSwitching}
+                fetchStatus={fetchStatus} handleCreate={handleCreate} handleStart={handleStart} handleStop={handleStop}
+                loading={loading} status={status} participantCount={participantCount} participants={participants}
+                sessionInfo={sessionInfo}
+              />
+            )}
 
-          {/* Tab: Global Rankings */}
-          {tab === 'leaderboard' && (
-            <LeaderboardTab leaderboard={leaderboard} quizId={quizId} />
-          )}
+            {/* Tab: Global Rankings */}
+            {tab === 'leaderboard' && (
+              <LeaderboardTab leaderboard={leaderboard} quizId={quizId} />
+            )}
 
-          {/* Tab: Question Master Vault */}
-          {tab === 'questions' && (
-            <QuestionBankTab 
-              questions={questions} qForm={qForm} setQForm={setQForm} 
-              handleSaveQuestion={handleSaveQuestion} editingId={editingId} 
-              setEditingId={setEditingId} handleDeleteQuestion={handleDeleteQuestion} 
-              handleBulkUpload={handleBulkUpload} loading={loading}
-            />
-          )}
+            {/* Tab: Question Master Vault */}
+            {tab === 'questions' && (
+              <QuestionBankTab 
+                questions={questions} qForm={qForm} setQForm={setQForm} 
+                handleSaveQuestion={handleSaveQuestion} editingId={editingId} 
+                setEditingId={setEditingId} handleDeleteQuestion={handleDeleteQuestion} 
+                handleBulkUpload={handleBulkUpload} loading={loading}
+              />
+            )}
 
-          {/* Tab: Historical Archive */}
-          {tab === 'history' && (
-            <SessionHistoryTab 
-              quizzes={quizzes} fetchQuizzes={fetchQuizzes} setQuizId={setQuizId} 
-              setTab={setTab} fetchStatus={fetchStatus} handleDeleteQuiz={handleDeleteQuiz}
-            />
-          )}
+            {/* Tab: Historical Archive */}
+            {tab === 'history' && (
+              <SessionHistoryTab 
+                quizzes={quizzes} fetchQuizzes={fetchQuizzes} setQuizId={setQuizId} 
+                setTab={setTab} fetchStatus={fetchStatus} handleDeleteQuiz={handleDeleteQuiz}
+              />
+            )}
+          </React.Suspense>
         </main>
       </div>
 

@@ -7,6 +7,7 @@ import SubmitConfirmation from '../components/Quiz/SubmitConfirmation'
 import QuizHeader from '../components/Quiz/QuizHeader'
 import QuestionCard from '../components/Quiz/QuestionCard'
 import QuestionNavigation from '../components/Quiz/QuestionNavigation'
+import QuizIntro from '../components/Quiz/QuizIntro'
 
 // Helper function preserved exactly
 function computeRemaining(startTime, quizDuration) {
@@ -34,6 +35,7 @@ export default function QuizPage() {
   const [submitError, setSubmitError] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
   const [isFullscreenWarning, setIsFullscreenWarning] = useState(false)
+  const [showIntro, setShowIntro] = useState(true)
 
   // ── ANTI-CHEAT STRIKES ──
   const [strikes, setStrikes] = useState(() => {
@@ -115,6 +117,8 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen flex flex-col animate-fade-in bg-slate-950 text-slate-200">
       
+      {showIntro && <QuizIntro onComplete={() => setShowIntro(false)} />}
+
       {/* ── Modals and Overlays ── */}
       {isFullscreenWarning && (
         <AntiCheatWarning 

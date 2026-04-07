@@ -24,19 +24,19 @@ export default function QuestionCard({ currentQuestion, currentIndex, answers, s
               key={idx}
               id={`option-${idx}-btn`}
               onClick={() => selectAnswer(currentQuestion._id, option)}
-              className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center gap-1
+              className={`w-full text-left p-4 rounded-xl border transition-all duration-300 flex items-center gap-1 active:scale-[0.98]
                 ${isSelected
-                  ? 'bg-brand-600/20 border-brand-500 text-white shadow-lg shadow-brand-500/10'
-                  : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:bg-slate-800 hover:border-slate-600'}`}
+                  ? 'bg-brand-600/25 border-brand-500/80 text-white shadow-[0_0_25px_rgba(59,130,246,0.15)] ring-1 ring-brand-500/20'
+                  : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-800/80 hover:border-slate-600 hover:text-slate-200'}`}
               disabled={isSubmitting}
             >
-              <span className={`inline-flex w-7 h-7 rounded-lg items-center justify-center text-xs font-bold mr-3 flex-shrink-0
+              <span className={`inline-flex w-7 h-7 rounded-lg items-center justify-center text-xs font-black mr-3 flex-shrink-0 transition-transform duration-300
                 ${isSelected
-                  ? 'bg-brand-600 text-white'
-                  : 'bg-slate-700 text-slate-400'}`}>
+                  ? 'bg-brand-500 text-white scale-110'
+                  : 'bg-slate-700/50 text-slate-500'}`}>
                 {labels[idx]}
               </span>
-              {option}
+              <span className="font-medium tracking-tight">{option}</span>
             </button>
           );
         })}

@@ -78,8 +78,8 @@ exports.getQuizStatus = asyncHandler(async (req, res, next) => {
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
 
   const [activeParticipants, submittedResults, totalQuestions] = await Promise.all([
-    Participant.find({ quizId }).select('name roll joinedAt').sort({ joinedAt: -1 }),
-    Result.find({ quizId }).select('name roll createdAt').sort({ createdAt: -1 }),
+    Participant.find({ quizId }).select('name roll joinedAt').sort({ joinedAt: -1 }).lean(),
+    Result.find({ quizId }).select('name roll createdAt').sort({ createdAt: -1 }).lean(),
     Question.countDocuments()
   ]);
 

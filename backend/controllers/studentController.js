@@ -41,7 +41,7 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
   const existingAttempt = await Attempt.findOne({ roll: rollUpper, quizId });
 
   if (quiz.isActive && !timeExpired) {
-    const questions = await Question.find({}, { answer: 0 });
+    const questions = await Question.find({}, { answer: 0 }).lean();
 
     if (!existingAttempt) {
       await Attempt.create({ roll: rollUpper, quizId, name, answers: {} });
@@ -97,7 +97,7 @@ exports.getQuestions = asyncHandler(async (req, res, next) => {
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
   if (!quiz.isActive) return next(new ErrorResponse('Quiz not active', 403));
 
-  const questions = await Question.find({}, { answer: 0 });
+  const questions = await Question.find({}, { answer: 0 }).lean();
   res.status(200).json({
     success: true,
     questions,
@@ -154,11 +154,11 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
     Participant.deleteOne({ roll: rollUpper, quizId })
   ]);
 
-  const results = await Result.find({ quizId }).sort({ score: -1, correctAnswers: -1, timeTaken: 1 });
-  const participantCount = await Participant.countDocuments({ quizId });
+  // Notify admin room of a submission (for real-time checkmarks)
+  getIO().to(`ADMIN_${quizId}`).emit('participantSubmitted', { roll: rollUpper });
 
-  getIO().to(`ADMIN_${quizId}`).emit('resultSubmitted', { results, participantCount });
-  getIO().to(quizId).emit('leaderboardUpdate', { results });
+  const { throttledBroadcastLeaderboard } = require('../utils/broadcastUtils');
+  throttledBroadcastLeaderboard(quizId);
 
   res.status(201).json({ success: true, result, totalQuestions: totalCount });
 });

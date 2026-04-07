@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Zap, Radio, Moon, Users, CheckCircle2 } from 'lucide-react';
 import AdminTimer from './AdminTimer';
+import ParticipantRow from './ParticipantRow';
 
 const SessionControlTab = ({
   quizId, setQuizId, duration, setDuration, allowTabSwitching, setAllowTabSwitching,
@@ -116,25 +117,11 @@ const SessionControlTab = ({
                 ))}
               </div>
 
+
               {/* Scrollable list of student sessions */}
               <div className="max-h-[280px] overflow-y-auto pr-1 space-y-2 mt-2 custom-scrollbar">
                 {filteredParticipants.length > 0 ? filteredParticipants.map((p, idx) => (
-                  <div key={p.roll || idx} className="flex justify-between items-center bg-white/5 hover:bg-white/[0.08] p-3 rounded-xl border border-white/5 transition-all group">
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-white truncate">{p.name}</p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <p className="text-[10px] font-mono text-slate-500">{p.roll}</p>
-                        {p.isSubmitted && (
-                          <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase bg-emerald-400/10 px-1.5 py-0.5 rounded border border-emerald-400/20">
-                             <CheckCircle2 size={8} /> Submited
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <span className="text-[9px] text-slate-500 font-mono opacity-50 group-hover:opacity-100 transition-opacity">
-                      {new Date(p.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
+                  <ParticipantRow key={p.roll || idx} p={p} idx={idx} />
                 )) : (
                   <div className="py-12 text-center opacity-30 italic text-xs">
                      No participant data available for this selection
