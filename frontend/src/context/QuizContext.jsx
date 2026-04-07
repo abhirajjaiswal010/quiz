@@ -124,7 +124,7 @@ export const QuizProvider = ({ children }) => {
     setQuestions(randomizedQuestions)
     setAnswers({})
     setStartTime(Date.now())
-    setAllowTabSwitching(!!allowTabSwitching)
+    setAllowTabSwitching(!!allowTabs)
     updatePhase('quiz')
   }, [updatePhase])
 

@@ -54,12 +54,12 @@ export default function RegistrationPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-start md:items-center  md:justify-center px-4 pt-[4.5rem]  md:py-6 bg-[#0F0F0F]">
-      <TargetCursor
+      {/* <TargetCursor
         spinDuration={2}
         hideDefaultCursor
         parallaxOn
         hoverDuration={0.2}
-      />
+      /> */}
 
       {/* Dynamic Background Threads */}
       <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">

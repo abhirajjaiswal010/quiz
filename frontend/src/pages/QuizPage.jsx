@@ -10,7 +10,7 @@ function formatTime(seconds) {
 export default function QuizPage() {
   const { 
     student, questions, answers, selectAnswer, 
-    submitCurrentQuiz, isSubmitting, quizDuration, startTime 
+    submitCurrentQuiz, isSubmitting, quizDuration, startTime, allowTabSwitching 
   } = useQuiz()
 
   const [currentIndex, setCurrentIndex] = useState(0)
