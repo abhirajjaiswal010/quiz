@@ -12,11 +12,13 @@ router.post('/stop-quiz', adminOnly, quizController.stopQuiz);
 router.get('/admin/verify', adminOnly, quizController.verifyAdmin);
 router.get('/admin/questions', adminOnly, quizController.getAdminQuestions);
 router.post('/admin/questions', adminOnly, quizController.addQuestion);
+router.post('/admin/questions/upload', adminOnly, quizController.uploadQuestions);
 router.put('/admin/questions/:id', adminOnly, quizController.updateQuestion);
 router.delete('/admin/questions/:id', adminOnly, quizController.deleteQuestion);
 
 // ─── STUDENT APIs ───────────────────────────────────────────────────────────
 router.post('/join-quiz', quizController.joinQuiz);
+router.post('/save-progress', quizController.saveProgress);
 router.get('/quiz-status', quizController.getQuizStatus);
 router.get('/questions', quizController.getQuestions);
 router.post('/submit', quizController.submitQuiz);

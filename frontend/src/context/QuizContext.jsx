@@ -1,66 +1,96 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getQuizStatus, submitQuiz as submitQuizApi } from '../api/quizApi'
+import { getQuizStatus, submitQuiz as submitQuizApi, saveProgress } from '../api/quizApi'
 import { useSocket } from './SocketContext'
 import toast from 'react-hot-toast'
 
 const QuizContext = createContext(null)
 
+// ── Shuffle helper ──────────────────────────────────────────────────────────
+function shuffleArray(array) {
+  const newArr = [...array]
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[newArr[i], newArr[j]] = [newArr[j], newArr[i]]
+  }
+  return newArr
+}
+
+// ── Randomize question + options order (stable per student session) ─────────
+function randomizeQuestions(rawQuestions) {
+  return shuffleArray(rawQuestions).map(q => ({
+    ...q,
+    options: shuffleArray(q.options),
+  }))
+}
+
 export const QuizProvider = ({ children }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const socket = useSocket() // Access the global socket instance
+  const socket = useSocket()
 
+  // ── Persisted student identity ────────────────────────────────────────────
   const [student, setStudent] = useState(() => {
     const saved = localStorage.getItem('quiz_student')
     return saved ? JSON.parse(saved) : null
   })
+
+  // ── Quiz questions (randomized order cached in localStorage) ──────────────
   const [questions, setQuestions] = useState(() => {
     const saved = localStorage.getItem('quiz_questions')
     return saved ? JSON.parse(saved) : []
   })
+
+  // ── Answers: { questionId: selectedOption } ───────────────────────────────
   const [answers, setAnswers] = useState(() => {
     const saved = localStorage.getItem('quiz_answers')
     return saved ? JSON.parse(saved) : {}
   })
+
+  // ── Final result ──────────────────────────────────────────────────────────
   const [result, setResult] = useState(() => {
     const saved = localStorage.getItem('quiz_result')
     return saved ? JSON.parse(saved) : null
   })
 
-  const [phase, setPhase] = useState('register')
-  const [isQuizActive, setIsQuizActive] = useState(false)
-  const [participantCount, setParticipantCount] = useState(0)
-  const [quizDuration, setQuizDuration] = useState(15) // Minutes
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  // ── Server-authoritative timing (NEVER touch after quiz starts) ───────────
+  // startTime: epoch ms when admin started the quiz (from server)
+  // quizDuration: minutes (from server)
   const [startTime, setStartTime] = useState(() => {
     const saved = localStorage.getItem('quiz_start_time')
-    return saved ? parseInt(saved) : null
+    return saved ? parseInt(saved, 10) : null
   })
+  const [quizDuration, setQuizDuration] = useState(() => {
+    const saved = localStorage.getItem('quiz_duration')
+    return saved ? parseInt(saved, 10) : 15
+  })
+
   const [allowTabSwitching, setAllowTabSwitching] = useState(() => {
     return localStorage.getItem('quiz_allow_tabs') === 'true'
   })
 
-  // ── Persistence ────────────────────────────────────────────────────────────
+  // ── UI states ─────────────────────────────────────────────────────────────
+  const [phase, setPhase] = useState('register')
+  const [isQuizActive, setIsQuizActive] = useState(false)
+  const [participantCount, setParticipantCount] = useState(0)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Prevent duplicate socket-triggered submit runs
+  const submitLock = useRef(false)
+
+  // ── Persistence effects ───────────────────────────────────────────────────
   useEffect(() => {
-    if (student) localStorage.setItem('quiz_student', JSON.stringify(student))
-    else {
-      localStorage.removeItem('quiz_student');
-      localStorage.removeItem('quiz_questions');
-      localStorage.removeItem('quiz_answers');
-      localStorage.removeItem('quiz_start_time');
-      localStorage.removeItem('quiz_allow_tabs');
+    if (student) {
+      localStorage.setItem('quiz_student', JSON.stringify(student))
+    } else {
+      // Full cleanup on logout/reset
+      ;[
+        'quiz_student', 'quiz_questions', 'quiz_answers',
+        'quiz_start_time', 'quiz_duration', 'quiz_allow_tabs',
+        'quiz_result', 'quiz_strikes',
+      ].forEach(k => localStorage.removeItem(k))
     }
   }, [student])
-
-  useEffect(() => {
-    localStorage.setItem('quiz_allow_tabs', allowTabSwitching.toString())
-  }, [allowTabSwitching])
-
-  useEffect(() => {
-    if (result) localStorage.setItem('quiz_result', JSON.stringify(result))
-    else localStorage.removeItem('quiz_result')
-  }, [result])
 
   useEffect(() => {
     if (questions.length) localStorage.setItem('quiz_questions', JSON.stringify(questions))
@@ -71,22 +101,34 @@ export const QuizProvider = ({ children }) => {
   }, [answers])
 
   useEffect(() => {
+    if (result) localStorage.setItem('quiz_result', JSON.stringify(result))
+  }, [result])
+
+  useEffect(() => {
     if (startTime) localStorage.setItem('quiz_start_time', startTime.toString())
   }, [startTime])
 
-  // ── Anti-Tab-Close ──
+  useEffect(() => {
+    localStorage.setItem('quiz_duration', quizDuration.toString())
+  }, [quizDuration])
+
+  useEffect(() => {
+    localStorage.setItem('quiz_allow_tabs', allowTabSwitching.toString())
+  }, [allowTabSwitching])
+
+  // ── Warn before tab close during quiz ────────────────────────────────────
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (phase === 'quiz' && !isSubmitting) {
-        e.preventDefault();
-        e.returnValue = 'You have an active quiz session. Are you sure you want to leave? Your progress will be saved but the timer continues.';
+        e.preventDefault()
+        e.returnValue = 'Your quiz is in progress. Timer keeps running — your answers are saved.'
       }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [phase, isSubmitting]);
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload)
+  }, [phase, isSubmitting])
 
-  // ── Sync URL with phase ───────────────────────────────────────────────────
+  // ── Sync phase with URL ───────────────────────────────────────────────────
   useEffect(() => {
     const path = location.pathname
     if (path === '/') setPhase('register')
@@ -95,48 +137,57 @@ export const QuizProvider = ({ children }) => {
     else if (path === '/leaderboard') setPhase('leaderboard')
   }, [location.pathname])
 
-  // ── Sync phase with URL (when changed programmatically) ─────────────────────
   const updatePhase = useCallback((newPhase) => {
     setPhase(newPhase)
-    if (newPhase === 'register' && location.pathname !== '/') navigate('/')
-    if (newPhase === 'waiting' && location.pathname !== '/waiting') navigate('/waiting')
-    if (newPhase === 'quiz' && location.pathname !== '/quiz') navigate('/quiz')
-    if (newPhase === 'leaderboard' && location.pathname !== '/leaderboard') navigate('/leaderboard')
+    const routes = { register: '/', waiting: '/waiting', quiz: '/quiz', leaderboard: '/leaderboard' }
+    if (routes[newPhase] && location.pathname !== routes[newPhase]) {
+      navigate(routes[newPhase])
+    }
   }, [navigate, location.pathname])
 
-  // ── Shuffling Utility (Move up to prevent initialization errors) ──────────
-  const shuffleArray = (array) => {
-    const newArr = [...array]
-    for (let i = newArr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArr[i], newArr[j]] = [newArr[j], newArr[i]]
-    }
-    return newArr
-  }
+  // ── Core: Initialize quiz state from server data ──────────────────────────
+  // Used for: fresh start, late join, reconnect
+  const initQuizFromServer = useCallback((serverData, studentData, savedAnswers = {}) => {
+    const { questions: rawQuestions, startTime: serverStartTime, duration, allowTabSwitching: allowTabs } = serverData
 
-  const startQuiz = useCallback((studentData, loadedQuestions, allowTabs = false) => {
-    const randomizedQuestions = shuffleArray(loadedQuestions).map(q => ({
-      ...q,
-      options: shuffleArray(q.options)
-    }))
+    // Always randomize questions (but keep same order on reconnect via localStorage)
+    const savedQs = localStorage.getItem('quiz_questions')
+    let finalQuestions
+    if (savedQs) {
+      const parsed = JSON.parse(savedQs)
+      // Validate they belong to same quiz by checking ids match
+      const serverIds = new Set(rawQuestions.map(q => q._id))
+      const savedIds = new Set(parsed.map(q => q._id))
+      const isSameSet = [...serverIds].every(id => savedIds.has(id)) && serverIds.size === savedIds.size
+      finalQuestions = isSameSet ? parsed : randomizeQuestions(rawQuestions)
+    } else {
+      finalQuestions = randomizeQuestions(rawQuestions)
+    }
 
     setStudent(studentData)
-    setQuestions(randomizedQuestions)
-    setAnswers({})
-    setStartTime(Date.now())
+    setQuestions(finalQuestions)
+    setAnswers(savedAnswers)           // Restore previous answers if reconnecting
+    setStartTime(serverStartTime)      // Authoritative server time
+    setQuizDuration(duration || 15)
     setAllowTabSwitching(!!allowTabs)
     updatePhase('quiz')
   }, [updatePhase])
 
+  // ── Submit quiz ───────────────────────────────────────────────────────────
   const submitCurrentQuiz = useCallback(async (isAuto = false) => {
-    if (isSubmitting || !student || !questions.length) return;
-    setIsSubmitting(true);
+    if (submitLock.current || !student || !questions.length) return
+    submitLock.current = true
+    setIsSubmitting(true)
 
-    const timeTaken = startTime ? Math.round((Date.now() - startTime) / 1000) : 0;
-    const answersPayload = questions.map((q) => ({
+    // Use server startTime for accurate timeTaken calculation
+    const timeTaken = startTime
+      ? Math.round((Date.now() - startTime) / 1000)
+      : (quizDuration * 60) // fallback: treat as used full time
+
+    const answersPayload = questions.map(q => ({
       questionId: q._id,
       selected: answers[q._id] || null,
-    }));
+    }))
 
     try {
       const data = await submitQuizApi({
@@ -145,80 +196,121 @@ export const QuizProvider = ({ children }) => {
         quizId: student.quizId,
         answers: answersPayload,
         timeTaken,
-      });
-      setResult({ ...data.result, total: data.totalQuestions });
-      updatePhase('leaderboard');
+      })
+      setResult({ ...data.result, total: data.result?.totalQuestions || data.totalQuestions })
+      updatePhase('leaderboard')
     } catch (err) {
-      console.error('Submission failed', err);
-      // Even if failed, if auto-submit (quiz ended), move to leaderboard
-      if (isAuto) updatePhase('leaderboard');
+      console.error('Submission failed:', err)
+      if (isAuto) {
+        // Timer expired or admin ended quiz — still move to leaderboard
+        updatePhase('leaderboard')
+      } else {
+        toast.error(err.message || 'Submission failed. Please try again.')
+      }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
+      submitLock.current = false
     }
-  }, [isSubmitting, student, questions, answers, startTime, updatePhase]);
+  }, [student, questions, answers, startTime, quizDuration, updatePhase])
 
-  // ── WebSocket Live Listeners ────────────────────────────────────────────────
+  // ── Select answer + immediately persist to backend ────────────────────────
+  const selectAnswer = useCallback((questionId, option) => {
+    setAnswers(prev => {
+      const updated = { ...prev, [questionId]: option }
+
+      // Fire-and-forget save to backend (debounced effect not needed — per-answer is fine)
+      if (student?.quizId && student?.roll) {
+        saveProgress({
+          roll: student.roll,
+          quizId: student.quizId,
+          answers: updated,
+        }).catch(() => {}) // Silently fail — local state is still intact
+      }
+
+      return updated
+    })
+  }, [student])
+
+  // ── WebSocket Listeners ───────────────────────────────────────────────────
   useEffect(() => {
-    if (!socket || !student?.quizId) return;
+    if (!socket || !student?.quizId) return
 
-    const quizId = student.quizId.toUpperCase();
-    socket.emit('joinQuiz', quizId);
+    const quizId = student.quizId.toUpperCase()
+    socket.emit('joinQuiz', quizId)
 
-    socket.on('quizStarted', (data) => {
-      console.log('🚀 Quiz Started via Socket', data);
+    // Admin started quiz → broadcast received by waiting students
+    const handleQuizStarted = (data) => {
+      console.log('🚀 quizStarted', data)
       setAllowTabSwitching(data.allowTabSwitching)
       setQuizDuration(data.duration || 15)
-      startQuiz(student, data.questions, data.allowTabSwitching);
-      toast.success('The quiz has started! Good luck!');
-    });
+      initQuizFromServer(data, student, {})
+      toast.success('Quiz has started! Good luck! 🚀')
+    }
 
-    socket.on('quizStopped', () => {
-      console.log('🛑 Quiz Stopped via Socket');
+    // Admin stopped quiz → force submit if in quiz
+    const handleQuizStopped = () => {
+      console.log('🛑 quizStopped')
       if (phase === 'quiz') {
-        toast.error('The admin has ended the quiz. Auto-submitting your answers...', { id: 'quiz-stopped' });
-        submitCurrentQuiz(true); // Force submit
+        toast.error('Admin ended the quiz. Auto-submitting…', { id: 'quiz-stopped' })
+        submitCurrentQuiz(true)
       } else {
-        updatePhase('leaderboard');
+        updatePhase('leaderboard')
       }
-    });
+    }
 
-    socket.on('leaderboardUpdate', (data) => {
-      setResult(prev => ({ ...prev, leaderboard: data.results }));
-    });
+    const handleLeaderboardUpdate = (data) => {
+      setResult(prev => ({ ...prev, leaderboard: data.results }))
+    }
+
+    socket.on('quizStarted', handleQuizStarted)
+    socket.on('quizStopped', handleQuizStopped)
+    socket.on('leaderboardUpdate', handleLeaderboardUpdate)
 
     return () => {
-      socket.off('quizStarted');
-      socket.off('quizStopped');
-      socket.off('leaderboardUpdate');
-    };
-  }, [socket, student?.quizId, student, startQuiz, updatePhase, phase]);
+      socket.off('quizStarted', handleQuizStarted)
+      socket.off('quizStopped', handleQuizStopped)
+      socket.off('leaderboardUpdate', handleLeaderboardUpdate)
+    }
+  }, [socket, student?.quizId, student, phase, initQuizFromServer, submitCurrentQuiz, updatePhase])
 
-  // ── Polling Fallback (Reduced Frequency) ────────────────────────────────────
+  // ── Polling Fallback (reduced frequency) ──────────────────────────────────
+  // Only used when socket misses events (network blip, etc.)
   useEffect(() => {
     const checkStatus = async () => {
-      if (!student?.quizId) return;
+      if (!student?.quizId) return
       try {
         const data = await getQuizStatus(student.quizId)
         setIsQuizActive(data.isActive)
         setParticipantCount(data.participantCount || 0)
-        if (data.totalQuestions && data.quizDetails?.duration) {
-           setQuizDuration(data.quizDetails.duration)
+
+        // Only act on poll data if we're in waiting — to catch missed socket events
+        if (data.isActive && data.startTime && phase === 'waiting' && questions.length === 0) {
+          const { getQuestions } = await import('../api/quizApi')
+          const qData = await getQuestions(student.quizId)
+          initQuizFromServer(
+            {
+              questions: qData.questions,
+              startTime: qData.startTime || data.startTime,
+              duration: qData.duration || data.quizDetails?.duration || 15,
+              allowTabSwitching: qData.allowTabSwitching || false,
+            },
+            student,
+            {}
+          )
         }
-        if (data.isActive && phase === 'waiting' && questions.length === 0) {
-           const { getQuestions } = await import('../api/quizApi');
-           const qData = await getQuestions(student.quizId);
-           startQuiz(student, qData.questions);
-        }
+
         if (!data.isActive && phase === 'quiz') {
-           updatePhase('leaderboard')
+          updatePhase('leaderboard')
         }
-      } catch (err) {}
+      } catch (_) {}
     }
+
     const interval = setInterval(checkStatus, 15000)
     checkStatus()
     return () => clearInterval(interval)
-  }, [phase, updatePhase, student?.quizId, questions.length, student, startQuiz])
+  }, [phase, student?.quizId, student, questions.length, initQuizFromServer, updatePhase])
 
+  // ── goToWaiting (called after joinQuiz responds with quizState='waiting') ──
   const goToWaiting = useCallback((studentData) => {
     setStudent(studentData)
     setQuestions([])
@@ -226,24 +318,26 @@ export const QuizProvider = ({ children }) => {
     updatePhase('waiting')
   }, [updatePhase])
 
-  const selectAnswer = useCallback((questionId, option) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: option }))
-  }, [])
+  // ── goToQuiz (called after joinQuiz responds with quizState='active') ──────
+  // This handles both late joiners and reconnecting students
+  const goToQuiz = useCallback((studentData, serverData, savedAnswers = {}) => {
+    initQuizFromServer(serverData, studentData, savedAnswers)
+  }, [initQuizFromServer])
 
   const completeQuiz = useCallback((submissionResult) => {
     setResult(submissionResult)
-    updatePhase('leaderboard') // Now syncing with leaderboard path directly
-  }, [updatePhase])
-
-  const goToLeaderboard = useCallback(() => {
     updatePhase('leaderboard')
   }, [updatePhase])
+
+  const goToLeaderboard = useCallback(() => updatePhase('leaderboard'), [updatePhase])
 
   const reset = useCallback(() => {
     setStudent(null)
     setQuestions([])
     setAnswers({})
     setResult(null)
+    setStartTime(null)
+    submitLock.current = false
     updatePhase('register')
   }, [updatePhase])
 
@@ -260,11 +354,12 @@ export const QuizProvider = ({ children }) => {
         quizDuration,
         startTime,
         allowTabSwitching,
-        startQuiz,
-        submitCurrentQuiz,
         isSubmitting,
+        // Actions
         goToWaiting,
+        goToQuiz,
         selectAnswer,
+        submitCurrentQuiz,
         completeQuiz,
         goToLeaderboard,
         reset,

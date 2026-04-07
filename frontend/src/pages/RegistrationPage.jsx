@@ -3,48 +3,74 @@ import { useQuiz } from '../context/QuizContext'
 import { joinQuiz } from '../api/quizApi'
 import { Rocket, ShieldCheck, Timer } from 'lucide-react'
 import logo from '../assets/logo.png'
-import TargetCursor from '../components/targetCursor'
 import Threads from '../components/thread'
 import toast from 'react-hot-toast'
 
 export default function RegistrationPage() {
-  const { goToWaiting } = useQuiz()
+  const { goToWaiting, goToQuiz } = useQuiz()
 
-  const [form, setForm] = useState({
-    name: '',
-    roll: '',
-    quizId: '',
-  })
+  const [form, setForm] = useState({ name: '', roll: '', quizId: '' })
   const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setForm(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    // Validation
     if (!form.quizId.trim()) return toast.error('Quiz ID is required')
     if (!form.name.trim()) return toast.error('Full Name is required')
     if (!form.roll.trim()) return toast.error('Roll Number is required')
 
     setLoading(true)
 
-    try {
-      await joinQuiz({
-        name: form.name.trim(),
-        roll: form.roll.trim().toUpperCase(),
-        quizId: form.quizId.trim().toUpperCase()
-      })
+    const studentData = {
+      name: form.name.trim(),
+      roll: form.roll.trim().toUpperCase(),
+      quizId: form.quizId.trim().toUpperCase(),
+    }
 
-      goToWaiting({
-        name: form.name.trim(),
-        roll: form.roll.trim().toUpperCase(),
-        quizId: form.quizId.trim().toUpperCase()
-      })
-      toast.success('Joined successfully!')
+    try {
+      const data = await joinQuiz(studentData)
+
+      if (data.quizState === 'active') {
+        // ── Late joiner or reconnecting student ──────────────────────────────
+        // Remaining time = (startTime + duration_ms) - Date.now()
+        const remainingMs = (data.startTime + data.duration * 60 * 1000) - Date.now()
+
+        if (remainingMs <= 0) {
+          // Time already up — go directly to leaderboard
+          toast.error('Quiz time has already ended. Redirecting to leaderboard…')
+          goToWaiting(studentData) // set student identity first
+          // Small delay so context hydrates, then navigate
+          setTimeout(() => {
+            window.location.href = '/leaderboard'
+          }, 300)
+          return
+        }
+
+        toast.success('Quiz is live! Joining now…')
+        goToQuiz(studentData, {
+          questions: data.questions,
+          startTime: data.startTime,
+          duration: data.duration,
+          allowTabSwitching: data.allowTabSwitching,
+        }, data.savedAnswers || {})
+
+      } else if (data.quizState === 'expired') {
+        // Quiz ended before student joined — go to leaderboard
+        toast.error('This quiz has already ended.')
+        goToWaiting(studentData)
+        setTimeout(() => { window.location.href = '/leaderboard' }, 300)
+
+      } else {
+        // quizState === 'waiting' — normal pre-quiz lobby
+        toast.success('Joined successfully! Waiting for quiz to start…')
+        goToWaiting(studentData)
+      }
+
     } catch (err) {
       toast.error(err.message || 'Failed to join quiz.')
     } finally {
@@ -53,21 +79,10 @@ export default function RegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-start md:items-center  md:justify-center px-4 pt-[4.5rem]  md:py-6 bg-[#0F0F0F]">
-      {/* <TargetCursor
-        spinDuration={2}
-        hideDefaultCursor
-        parallaxOn
-        hoverDuration={0.2}
-      /> */}
-
+    <div className="min-h-screen flex flex-col items-start md:items-center md:justify-center px-4 pt-[4.5rem] md:py-6 bg-[#0F0F0F]">
       {/* Dynamic Background Threads */}
       <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-        <Threads
-          amplitude={1.2}
-          distance={0.2}
-          enableMouseInteraction
-        />
+        <Threads amplitude={1.2} distance={0.2} enableMouseInteraction />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
@@ -76,13 +91,15 @@ export default function RegistrationPage() {
             <img src={logo} alt="Innovixus Logo" className="w-20 h-20 object-contain" />
           </div>
           <div className="space-y-0">
-            <span className="text-[15px] text-white-200 font-bold tracking-[0.2em] uppercase block mb-10">Platform by Innovixus</span>
-            <h1 className="font-display text-4xl  text-[#4FB3FF] tracking-tight font-montserrat">
+            <span className="text-[15px] text-white-200 font-bold tracking-[0.2em] uppercase block mb-10">
+              Platform by Innovixus
+            </span>
+            <h1 className="font-display text-4xl text-[#4FB3FF] tracking-tight font-montserrat">
               Club Quiz
             </h1>
           </div>
           <p className="text-white-100 text-xs mt-1 font-medium tracking-wide">
-            AUTHENTICATION & JOINING
+            AUTHENTICATION &amp; JOINING
           </p>
         </div>
 
@@ -93,7 +110,9 @@ export default function RegistrationPage() {
 
           <form onSubmit={handleSubmit} noValidate className="space-y-3">
             <div>
-              <label htmlFor="quizId" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">Quiz ID</label>
+              <label htmlFor="quizId" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">
+                Quiz ID
+              </label>
               <input
                 id="quizId"
                 type="text"
@@ -106,7 +125,9 @@ export default function RegistrationPage() {
             </div>
 
             <div>
-              <label htmlFor="name" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">Full Name</label>
+              <label htmlFor="name" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">
+                Full Name
+              </label>
               <input
                 id="name"
                 type="text"
@@ -119,7 +140,9 @@ export default function RegistrationPage() {
             </div>
 
             <div>
-              <label htmlFor="roll" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">Roll Number</label>
+              <label htmlFor="roll" className="text-xs font-semibold text-white uppercase tracking-wider mb-1 block">
+                Roll Number
+              </label>
               <input
                 id="roll"
                 type="text"
@@ -134,9 +157,9 @@ export default function RegistrationPage() {
             <button
               type="submit"
               disabled={loading}
-              className="btn-primary cursor-target bg-[#4fb3ff] w-full  py-3 text-xl text-white flex items-center justify-center gap-2"
+              className="btn-primary cursor-target bg-[#4fb3ff] w-full py-3 text-xl text-white flex items-center justify-center gap-2"
             >
-              {loading ? 'Joining...' : (
+              {loading ? 'Joining…' : (
                 <>
                   <Rocket size={16} />
                   <span>Join Quiz</span>

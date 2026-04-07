@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useQuiz } from '../context/QuizContext'
+import { ArrowBigLeftDashIcon, ArrowBigRight, ArrowBigRightDashIcon } from 'lucide-react'
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60)
@@ -7,22 +8,36 @@ function formatTime(seconds) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
+// Compute remaining seconds from server startTime + duration (minutes)
+function computeRemaining(startTime, quizDuration) {
+  if (!startTime) return quizDuration * 60
+  const endTime = startTime + quizDuration * 60 * 1000
+  return Math.max(0, Math.round((endTime - Date.now()) / 1000))
+}
+
 export default function QuizPage() {
-  const { 
-    student, questions, answers, selectAnswer, 
-    submitCurrentQuiz, isSubmitting, quizDuration, startTime, allowTabSwitching 
+  const {
+    student, questions, answers, selectAnswer,
+    submitCurrentQuiz, isSubmitting, quizDuration, startTime, allowTabSwitching, result
   } = useQuiz()
 
+  // ── Prevent Cheating via Back Button ──────────────────────────────────────
+  // If a result exists, the user has already submitted. 
+  // Redirect them back to the leaderboard immediately.
+  useEffect(() => {
+    if (result) {
+      window.location.href = '/leaderboard'
+    }
+  }, [result])
+
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [timeLeft, setTimeLeft] = useState(() => {
-    if (!startTime) return quizDuration * 60
-    const elapsed = Math.floor((Date.now() - startTime) / 1000)
-    return Math.max(0, (quizDuration * 60) - elapsed)
-  })
+  // Always derive from server startTime — correct for late joiners & reconnects
+  const [timeLeft, setTimeLeft] = useState(() => computeRemaining(startTime, quizDuration))
+  const autoSubmitted = useRef(false)
   const [submitError, setSubmitError] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
   const [isFullscreenWarning, setIsFullscreenWarning] = useState(false)
-  
+
   // ── ANTI-CHEAT STRIKES ──
   const [strikes, setStrikes] = useState(() => {
     const saved = localStorage.getItem('quiz_strikes')
@@ -32,7 +47,7 @@ export default function QuizPage() {
   const currentQuestion = questions[currentIndex]
   const answeredCount = Object.keys(answers).length
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0
-  
+
   // ── SUBMIT LOCK LOGIC ──
   // Enable submit only after 50% of the duration has passed (DISABLED)
   const totalSeconds = quizDuration * 60
@@ -48,7 +63,7 @@ export default function QuizPage() {
         const newStrikes = strikes + 1
         setStrikes(newStrikes)
         localStorage.setItem('quiz_strikes', newStrikes.toString())
-        
+
         if (newStrikes >= 3) {
           submitCurrentQuiz(true) // Auto-submit on 3rd leak
         } else {
@@ -60,15 +75,19 @@ export default function QuizPage() {
     return () => document.removeEventListener('visibilitychange', handleVisibility)
   }, [strikes, isSubmitting, submitCurrentQuiz, allowTabSwitching])
 
-  // ── Timer ────────────────────────────────────────────────────────────────
+  // ── Timer — recomputes from server startTime every second ──────────────
   useEffect(() => {
-    if (timeLeft <= 0) {
-      submitCurrentQuiz(true)
-      return
-    }
-    const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000)
+    const timer = setInterval(() => {
+      const remaining = computeRemaining(startTime, quizDuration)
+      setTimeLeft(remaining)
+
+      if (remaining <= 0 && !autoSubmitted.current && !isSubmitting) {
+        autoSubmitted.current = true
+        submitCurrentQuiz(true)
+      }
+    }, 1000)
     return () => clearInterval(timer)
-  }, [timeLeft, submitCurrentQuiz])
+  }, [startTime, quizDuration, isSubmitting, submitCurrentQuiz])
 
   const confirmSubmit = () => {
     if ((questions.length - answeredCount) > 0) {
@@ -87,7 +106,7 @@ export default function QuizPage() {
           <p className="text-slate-400 text-sm mb-6">
             We couldn't find any questions. Make sure the quiz has started and you've joined correctly.
           </p>
-          <button 
+          <button
             onClick={() => window.location.href = '/'}
             className="btn-primary w-full bg-brand-600 hover:bg-brand-500 border-none"
           >
@@ -116,8 +135,8 @@ export default function QuizPage() {
             </p>
             <div className="bg-red-500/5 rounded-xl p-4 mb-6 border border-red-500/10">
               <p className="text-xs text-red-400 font-medium italic">
-                {strikes === 1 
-                  ? "First warning. Your progress is saved, but don't do it again." 
+                {strikes === 1
+                  ? "First warning. Your progress is saved, but don't do it again."
                   : "Final warning! One more tab switch and your quiz will be AUTO-SUBMITTED."}
               </p>
             </div>
@@ -165,11 +184,11 @@ export default function QuizPage() {
       {/* ── Header ── */}
       <header className="sticky top-0 z-20 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 px-4 py-3">
         <div className="max-w-3xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-5 min-w-0">
             <span className="text-xl">🧠</span>
             <div className="min-w-0">
-              <p className="text-xs text-slate-500 leading-none">ClubQuiz</p>
-              <p className="text-sm font-semibold text-white truncate">{student?.name}</p>
+              <p className="text-xl text-white font-semib leading-none">ClubQuiz</p>
+              <p className="text-md mt-1 font-semibold text-white truncate">User : {student?.name}</p>
             </div>
           </div>
 
@@ -182,8 +201,8 @@ export default function QuizPage() {
           </div>
 
           {/* Progress */}
-          <div className="hidden sm:flex items-center gap-2 text-sm text-slate-400">
-            <span className="text-brand-400 font-semibold">{answeredCount}</span>
+          <div className="hidden sm:flex items-center gap-2 text-sm text-white">
+            <span className="text-white font-semibold">{answeredCount}</span>
             <span>/</span>
             <span>{questions.length}</span>
             <span>answered</span>
@@ -198,7 +217,7 @@ export default function QuizPage() {
               style={{ width: `${progress}%`, transition: 'width 0.4s ease' }}
             />
           </div>
-          <div className="flex justify-between text-xs text-slate-600 mt-1">
+          <div className="flex justify-between text-md text-white mt-1">
             <span>Question {currentIndex + 1} of {questions.length}</span>
             <span>{Math.round(progress)}% complete</span>
           </div>
@@ -215,10 +234,10 @@ export default function QuizPage() {
         )}
 
         {/* Question Card */}
-        <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-slate-900/50 border-slate-800">
+        <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-white-900/50 border-slate-800">
           <div className="flex items-start gap-4 mb-6">
-            <span className="flex-shrink-0 w-10 h-10 rounded-xl bg-brand-600/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">
-              {currentIndex + 1}
+            <span className="flex-shrink-0 w-20  h-10 rounded-xl bg-brand-600/20 border border-brand-500/30 flex items-center justify-center text-brand-400 font-bold text-sm">
+              Que {currentIndex + 1}
             </span>
             <p className="text-lg md:text-xl font-medium text-slate-100 leading-relaxed pt-1">
               {currentQuestion.question}
@@ -236,8 +255,8 @@ export default function QuizPage() {
                   id={`option-${idx}-btn`}
                   onClick={() => selectAnswer(currentQuestion._id, option)}
                   className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center gap-1
-                    ${isSelected 
-                      ? 'bg-brand-600/20 border-brand-500 text-white shadow-lg shadow-brand-500/10' 
+                    ${isSelected
+                      ? 'bg-brand-600/20 border-brand-500 text-white shadow-lg shadow-brand-500/10'
                       : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:bg-slate-800 hover:border-slate-600'}`}
                   disabled={isSubmitting}
                 >
@@ -255,18 +274,18 @@ export default function QuizPage() {
         </div>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-10">
           <button
             id="prev-question-btn"
             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
             disabled={currentIndex === 0 || isSubmitting}
-            className="btn-secondary px-6 shrink-0"
+            className="btn-primary bg-slate-800/40 text-white px-6 shrink-0"
           >
-            ← Previous
+            <ArrowBigLeftDashIcon/> Previous
           </button>
 
           {/* Question dots (desktop) */}
-          <div className="hidden md:flex flex-wrap justify-center gap-1.5 flex-1">
+          <div className="hidden md:flex flex-wrap justify-center gap-3 flex-1">
             {questions.map((q, i) => {
               const isCurrent = i === currentIndex
               const isAnswered = !!answers[q._id]
@@ -283,7 +302,7 @@ export default function QuizPage() {
                       : isAnswered
                         ? 'bg-emerald-600 text-emerald-50'
                         : isSkipped
-                          ? 'bg-amber-600/40 text-amber-200'
+                          ? 'bg-[#D97A2B] text-white'
                           : 'bg-slate-800 text-slate-500 hover:bg-slate-700'}`}
                   title={`Question ${i + 1}`}
                 >
@@ -298,9 +317,10 @@ export default function QuizPage() {
               id="next-question-btn"
               onClick={() => setCurrentIndex((i) => i + 1)}
               disabled={isSubmitting}
-              className="btn-primary px-8 shrink-0"
+              className="btn-primary px-8 shrink-0 bg-[#4fb3ff]"
             >
-              Next →
+              Next 
+              <ArrowBigRightDashIcon/>
             </button>
           ) : (
             <div className="flex flex-col items-center">
@@ -324,7 +344,7 @@ export default function QuizPage() {
                     ...
                   </>
                 ) : (
-                  '🚀 Submit'
+                  'Submit'
                 )}
               </button>
             </div>
@@ -339,7 +359,7 @@ export default function QuizPage() {
               const isCurrent = i === currentIndex
               const isAnswered = !!answers[q._id]
               const isSkipped = i < currentIndex && !isAnswered
-              
+
               return (
                 <button
                   key={q._id}

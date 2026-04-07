@@ -39,12 +39,14 @@ export const verifyAdmin = (key) => api.get('/admin/verify', getAdminHeaders(key
 /** ─── Question Management (Admin) ───────────────────────────────────────────── */
 export const getAdminQuestions = (key) => api.get('/admin/questions', getAdminHeaders(key))
 export const addQuestion = (key, data) => api.post('/admin/questions', data, getAdminHeaders(key))
+export const uploadQuestions = (key, questions) => api.post('/admin/questions/upload', { questions }, getAdminHeaders(key))
 export const updateQuestion = (key, id, data) => api.put(`/admin/questions/${id}`, data, getAdminHeaders(key))
 export const deleteQuestion = (key, id) => api.delete(`/admin/questions/${id}`, getAdminHeaders(key))
 
 
 /** ─── Student APIs ───────────────────────────────────────────────────────────── */
 export const joinQuiz = (data) => api.post('/join-quiz', data)
+export const saveProgress = (data) => api.post('/save-progress', data)
 export const getQuizStatus = (quizId) => api.get(`/quiz-status?quizId=${quizId}`)
 export const getQuestions = (quizId) => api.get(`/questions?quizId=${quizId}`)
 export const submitQuiz = (data) => api.post('/submit', data)

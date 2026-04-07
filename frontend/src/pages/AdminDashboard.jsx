@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Zap, BookOpen, Radio, Moon, Users, Pencil, Trash2, LogOut } from 'lucide-react'
+import { LayoutDashboard, Zap, BookOpen, Radio, Moon, Users, Pencil, Trash2, LogOut, CheckCircle2, Trophy, FileJson, Upload } from 'lucide-react'
 import logo from '../assets/logo.png'
 
 function formatAdminTime(seconds) {
@@ -38,10 +38,42 @@ const AdminTimer = ({ startedAt, duration }) => {
 export default function AdminDashboard({
   tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop, 
   duration, setDuration, allowTabSwitching, setAllowTabSwitching,
-  loading, status, participantCount, sessionInfo, leaderboard, handleLogout,
-  questions, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion
+  loading, status, participantCount, participants, sessionInfo, leaderboard, handleLogout,
+  questions, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion,
+  handleBulkUpload
 }) {
-    return (
+  const [pTab, setPTab] = useState('all') // all | doing | done
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target.result)
+        handleBulkUpload(json)
+      } catch (err) {
+        alert('Invalid JSON file')
+      }
+    }
+    reader.readAsText(file)
+    // Reset input so same file can be selected again
+    e.target.value = ''
+  }
+
+  const filteredParticipants = participants.filter(p => {
+    if (pTab === 'doing') return !p.isSubmitted
+    if (pTab === 'done') return p.isSubmitted
+    return true
+  })
+
+  // Counts
+  const countDoing = participants.filter(p => !p.isSubmitted).length
+  const countDone = participants.filter(p => p.isSubmitted).length
+  const countAll = participants.length
+
+  return (
     <div className="min-h-screen bg-[#0f0f0f] relative overflow-hidden">
     
 
@@ -70,6 +102,10 @@ export default function AdminDashboard({
         <button onClick={() => setTab('questions')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${tab === 'questions' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>
           <BookOpen size={16} />
           Question Bank
+        </button>
+        <button onClick={() => setTab('leaderboard')} className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${tab === 'leaderboard' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}>
+          <Trophy size={16} />
+          Leaderboard
         </button>
       </div>
 
@@ -119,14 +155,64 @@ export default function AdminDashboard({
                   </div>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase font-bold mb-1 tracking-widest">Participants</p>
-                    <p className="text-2xl font-bold text-white">{participantCount}</p>
+                <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col gap-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase font-bold mb-1 tracking-widest">Participants</p>
+                      <p className="text-2xl font-bold text-white">{participantCount}</p>
+                    </div>
+                    <div className="text-white">
+                      <Users size={28} />
+                    </div>
                   </div>
-                  <div className="text-white">
-                    <Users size={28} />
+
+                  {/* Tab Switches */}
+                  <div className="flex gap-1 bg-white/5 p-1 rounded-xl border border-white/5">
+                    <button 
+                      onClick={() => setPTab('all')}
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${pTab === 'all' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                      All ({countAll})
+                    </button>
+                    <button 
+                      onClick={() => setPTab('doing')}
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${pTab === 'doing' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                      Doing ({countDoing})
+                    </button>
+                    <button 
+                      onClick={() => setPTab('done')}
+                      className={`flex-1 py-1.5 rounded-lg text-[10px] font-bold transition-all ${pTab === 'done' ? 'bg-[#4FB3FF] text-white shadow-lg' : 'text-slate-500 hover:text-white'}`}
+                    >
+                      Done ({countDone})
+                    </button>
                   </div>
+
+                  {/* Joined Names List */}
+                  {filteredParticipants && filteredParticipants.length > 0 ? (
+                    <div className="max-h-[320px] overflow-y-auto pr-2 space-y-2 mt-2 custom-scrollbar">
+                      {filteredParticipants.map((p, idx) => (
+                        <div key={p.roll || idx} className="flex justify-between items-center bg-white/5 p-2.5 rounded-xl border border-white/5 animate-fade-in">
+                           <div className="min-w-0">
+                             <p className="text-xs font-bold text-white truncate">{p.name}</p>
+                             <div className="flex items-center gap-2">
+                               <p className="text-[10px] text-slate-500">{p.roll}</p>
+                               {p.isSubmitted && (
+                                 <CheckCircle2 size={12} className="text-emerald-500" />
+                               )}
+                             </div>
+                           </div>
+                           <span className="text-[9px] text-slate-600 font-mono">
+                             {new Date(p.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                           </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="py-10 text-center">
+                       <p className="text-xs text-slate-600 font-medium">No students found in this category</p>
+                    </div>
+                  )}
                 </div>
 
                 {sessionInfo && (
@@ -167,45 +253,81 @@ export default function AdminDashboard({
               </div>
             </div>
           </div>
+        </div>
+      )}
 
-          {leaderboard.length > 0 && (
-            <div className="card p-8 animate-slide-up">
-              <h3 className="text-xl font-bold text-white mb-6">Session Leaderboard</h3>
+      {tab === 'leaderboard' && (
+        <div className="animate-slide-up">
+          <div className="card p-8 min-h-[400px]">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-bold text-white tracking-tight">Session Leaderboard</h3>
+                <p className="text-slate-500 text-sm mt-1">Real-time standings for Quiz ID: <span className="text-brand-400 font-mono uppercase font-bold">{quizId}</span></p>
+              </div>
+              <div className="bg-brand-500/10 p-4 rounded-2xl border border-brand-500/20 text-brand-400">
+                 <Trophy size={32} />
+              </div>
+            </div>
+
+            {leaderboard.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="text-slate-500 border-b border-slate-800">
                     <tr>
-                      <th className="text-left py-3 px-2">Rank</th>
-                      <th className="text-left py-3 px-2">Student</th>
-                      <th className="text-left py-3 px-2">Score</th>
-                      <th className="text-left py-3 px-2">Time</th>
+                      <th className="text-left py-4 px-4">Rank</th>
+                      <th className="text-left py-4 px-4">Student</th>
+                      <th className="text-left py-4 px-4">Accuracy</th>
+                      <th className="text-left py-4 px-4">Score</th>
+                      <th className="text-left py-4 px-4 text-right">Time Taken</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-800/50">
-                    {leaderboard.map((r, i) => (
-                      <tr key={r.roll}>
-                        <td className="py-3 px-2 font-bold text-brand-400">#{i + 1}</td>
-                        <td className="py-3 px-2">
-                          <div className="text-white font-medium">{r.name}</div>
-                          <div className="text-[10px] text-slate-500">{r.roll}</div>
-                        </td>
-                        <td className="py-3 px-2 text-white">{r.score}</td>
-                        <td className="py-3 px-2 text-slate-400">{r.timeTaken}s</td>
-                      </tr>
-                    ))}
+                    {leaderboard.map((r, i) => {
+                      const isTop3 = i < 3
+                      const rankColors = ['text-yellow-400', 'text-slate-300', 'text-amber-600']
+                      return (
+                        <tr key={r.roll} className="group hover:bg-white/5 transition-colors">
+                          <td className={`py-5 px-4 font-black text-xl ${isTop3 ? rankColors[i] : 'text-slate-500'}`}>
+                            #{i + 1}
+                          </td>
+                          <td className="py-5 px-4">
+                            <div className="text-white font-bold group-hover:text-brand-400 transition-colors">{r.name}</div>
+                            <div className="text-xs text-slate-500 font-mono mt-0.5">{r.roll}</div>
+                          </td>
+                          <td className="py-5 px-4">
+                            <span className="text-white font-medium">{r.correctAnswers || 0}</span>
+                            <span className="text-slate-500 text-[10px]"> / {r.totalQuestions || 0}</span>
+                          </td>
+                          <td className="py-5 px-4">
+                             <span className="bg-brand-500/10 text-brand-400 px-3 py-1 rounded-lg font-black border border-brand-500/20">
+                               {r.score}
+                             </span>
+                          </td>
+                          <td className="py-5 px-4 text-right">
+                             <span className="text-slate-400 text-xs font-mono">{r.timeTaken}s</span>
+                          </td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
+                 <div className="text-6xl mb-4">🏆</div>
+                 <p className="text-white font-bold text-lg">No Results Yet</p>
+                 <p className="text-slate-500 text-sm mt-1">Leaderboard will update automatically as students submit.</p>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
       {tab === 'questions' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-slide-up">
-          <div className="lg:col-span-4">
+          <div className="lg:col-span-4 space-y-6">
             <form onSubmit={handleSaveQuestion} className="card p-6 sticky top-10">
-              <h3 className="text-lg font-bold text-white mb-6">{editingId ? 'Edit' : 'Add'} Question</h3>
+              <h3 className="text-lg font-bold text-white mb-6 tracking-tight">{editingId ? 'Update' : 'Create'} Question</h3>
               <div className="space-y-4">
                 <div>
                   <label className="label">Question Text</label>
@@ -230,40 +352,106 @@ export default function AdminDashboard({
                     ))}
                   </select>
                 </div>
-                <div className="flex gap-2 pt-2">
-                  <button type="submit" className="btn-primary flex-1">{editingId ? 'Update' : 'Save'}</button>
-                  {editingId && <button type="button" onClick={() => { setEditingId(null); setQForm({ question: '', options: ['', '', '', ''], answer: '' }) }} className="btn-secondary">Cancel</button>}
-                </div>
+                <button type="submit" disabled={loading} className="btn-primary w-full py-4 uppercase tracking-widest font-black flex items-center justify-center gap-2">
+                  <CheckCircle2 size={18} />
+                  {editingId ? 'Update' : 'Save'} Question
+                </button>
+                {editingId && (
+                  <button type="button" onClick={() => { setEditingId(null); setQForm({ question: '', options: ['', '', '', ''], answer: '' }) }} className="btn-secondary w-full py-2 text-xs opacity-50 uppercase font-black">Cancel Edit</button>
+                )}
               </div>
             </form>
-          </div>
 
-          <div className="lg:col-span-8 space-y-4">
-            <h3 className="text-lg font-bold text-white px-2">Total Questions: {questions.length}</h3>
-            {questions.map((q, idx) => (
-              <div key={q._id} className="card p-6 border-l-4 border-l-brand-600 transition-all hover:bg-slate-900/50">
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <p className="text-white font-medium mb-4"><span className="text-slate-500 mr-2">{idx + 1}.</span>{q.question}</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      {q.options.map((o, i) => (
-                        <div key={i} className={`px-3 py-2 rounded-lg text-xs border ${o === q.answer ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold' : 'bg-slate-800/50 border-slate-700/50 text-slate-500'}`}>
-                          {o}
-                        </div>
-                      ))}
-                    </div>
+            {/* BULK UPLOAD CARD */}
+            {!editingId && (
+              <div className="card p-6 border-brand-400/20 bg-brand-400/5">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="bg-brand-500/20 p-2 rounded-lg text-brand-400">
+                    <FileJson size={20} />
                   </div>
-                  <div className="flex gap-2">
-                    <button onClick={() => { setEditingId(q._id); setQForm({ question: q.question, options: [...q.options], answer: q.answer }) }} className="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-[#4FB3FF] transition-colors">
-                      <Pencil size={18} />
-                    </button>
-                    <button onClick={() => handleDeleteQuestion(q._id)} className="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-500 transition-colors">
-                      <Trash2 size={18} />
-                    </button>
+                  <div>
+                    <h4 className="text-white font-bold text-sm">Bulk Import</h4>
+                    <p className="text-[10px] text-slate-500">Fast-track with JSON</p>
                   </div>
                 </div>
+                <p className="text-[11px] text-slate-400 leading-relaxed mb-6">
+                  Replace existence questions by uploading a <code>questions.json</code> file. Ensure the format matches the system schema.
+                </p>
+                <div className="relative group cursor-pointer group-hover:border-brand-400">
+                   <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-white/10 rounded-2xl hover:border-brand-400/50 hover:bg-brand-400/10 transition-all cursor-pointer">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                         <Upload className="w-8 h-8 mb-3 text-slate-500 group-hover:text-brand-400 transition-colors" />
+                         <p className="text-xs font-bold text-slate-500 group-hover:text-white">Choose JSON File</p>
+                         <p className="text-[9px] text-slate-600 mt-1 uppercase font-black tracking-tighter">Click to browse</p>
+                      </div>
+                      <input type="file" accept=".json" className="hidden" onChange={handleFileSelect} />
+                   </label>
+                </div>
+                <div className="mt-4 pt-4 border-t border-white/5">
+                  <p className="text-[9px] text-slate-600 uppercase font-black tracking-widest mb-2">JSON Format Hint</p>
+                  <pre className="text-[8px] bg-black/50 p-3 rounded-lg text-brand-300 font-mono overflow-x-auto">
+                    {`[`} <br/>
+                    {`  {`} <br/>
+                    {`    "question": "Text",`} <br/>
+                    {`    "options": ["A", "B", "C", "D"],`} <br/>
+                    {`    "answer": "A"`} <br/>
+                    {`  }`} <br/>
+                    {`]`}
+                  </pre>
+                </div>
               </div>
-            ))}
+            )}
+          </div>
+          
+          <div className="lg:col-span-8">
+            <div className="card min-h-[500px]">
+               <div className="p-6 border-b border-white/5 flex items-center justify-between">
+                  <h3 className="text-xl font-bold text-white tracking-tight">Active Question Bank</h3>
+                  <div className="bg-white/5 px-3 py-1 rounded-full border border-white/10 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                    {questions.length} Questions
+                  </div>
+               </div>
+               <div className="divide-y divide-white/5 max-h-[800px] overflow-y-auto custom-scrollbar">
+                  {questions.length > 0 ? (
+                    questions.map((q, idx) => (
+                      <div key={q._id} className="p-6 hover:bg-white/5 transition-colors group">
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="flex-1">
+                            <span className="text-[9px] font-black text-brand-400 uppercase tracking-widest mb-2 block items-center gap-2">
+                              Question #{idx + 1}
+                            </span>
+                            <h4 className="text-white font-bold text-md leading-relaxed mb-4">{q.question}</h4>
+                            <div className="grid grid-cols-2 gap-2">
+                               {q.options.map((opt, i) => (
+                                 <div key={i} className={`px-4 py-2 rounded-lg text-[10px] font-bold border transition-colors ${opt === q.answer ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-white/5 border-white/5 text-slate-500'}`}>
+                                    {String.fromCharCode(65 + i)}. {opt}
+                                 </div>
+                               ))}
+                            </div>
+                          </div>
+                          <div className="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onClick={() => {
+                              setEditingId(q._id)
+                              setQForm({ question: q.question, options: q.options, answer: q.answer })
+                            }} className="p-2.5 bg-brand-500/10 text-brand-400 rounded-xl border border-brand-500/20 hover:bg-brand-500 hover:text-white transition-all">
+                              <Pencil size={16} />
+                            </button>
+                            <button onClick={() => handleDeleteQuestion(q._id)} className="p-2.5 bg-red-500/10 text-red-500 rounded-xl border border-red-500/20 hover:bg-red-500 hover:text-white transition-all">
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-24 text-center opacity-40">
+                       <BookOpen size={64} className="mb-4 text-slate-500" />
+                       <h4 className="text-white font-black uppercase tracking-widest">Question Bank Empty</h4>
+                       <p className="text-slate-600 text-xs max-w-[200px] mx-auto mt-2 italic">Add questions manually or use bulk import to get started.</p>
+                    </div>
+                  )}
+               </div>
+            </div>
           </div>
         </div>
       )}

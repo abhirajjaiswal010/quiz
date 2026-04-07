@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useQuiz } from '../context/QuizContext'
 import { getLeaderboard } from '../api/quizApi'
 import confetti from 'canvas-confetti'
-import { Trophy, Medal, PartyPopper, BarChart3, Lock, Flag, Loader2, Flame, Star, ThumbsUp, BookOpen as BookIcon } from 'lucide-react'
+import { Trophy, Medal, PartyPopper, BarChart3, Lock, Flag, Loader2, Flame, Star, ThumbsUp, BookOpen as BookIcon, ChevronDown } from 'lucide-react'
 
 const DEPARTMENTS = ['All', 'CSE', 'IT', 'ECE', 'ME', 'CE', 'EEE', 'MCA', 'MBA', 'OTHER']
 
@@ -23,19 +23,24 @@ function RankBadge({ rank }) {
   )
 }
 
-function ScoreBar({ score, total }) {
-  const pct = total > 0 ? (score / total) * 100 : 0
+function ScoreBar({ score, correct, total }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 h-1.5 bg-slate-800 rounded-full overflow-hidden min-w-[60px]">
-        <div
-          className="h-full rounded-full transition-all duration-700 bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.3)]"
-          style={{ width: `${pct}%` }}
-        />
+    <div className="flex flex-col">
+      <div className="flex items-baseline gap-1">
+        <span className="text-lg font-black text-[#4FB3FF] tabular-nums leading-none">
+          {score}
+        </span>
+        <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">pts</span>
       </div>
-      <span className="text-sm font-semibold text-slate-300 tabular-nums">
-        {score}/{total}
-      </span>
+      <div className="flex items-center gap-1.5 mt-1">
+         <div className="w-16 h-1 bg-slate-800 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-emerald-500 rounded-full transition-all duration-500" 
+              style={{ width: `${(correct/total) * 100}%` }}
+            />
+         </div>
+         <span className="text-[10px] text-slate-500 font-medium">{correct}/{total}</span>
+      </div>
     </div>
   )
 }
@@ -135,19 +140,37 @@ export default function LeaderboardPage() {
             {myRank && (
               <div className="mb-8 animate-bounce-slow">
                 <span className="text-white/50 text-xs font-bold uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
-                <span className="text-6xl md:text-8xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                <span className="text-5xl md:text-7xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                   #{myRank}
                 </span>
               </div>
             )}
 
-            {/* Score Card */}
-            <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-[#0F0F0F]/80 backdrop-blur-sm border border-white/20 rounded-2xl px-6 py-5 shadow-2xl">
+            {/* Final Points Card */}
+            <div className="mb-5 animate-slide-up animation-delay-200">
+               <div className="inline-block bg-[#0F0F0F]/60 backdrop-blur-md border border-white/20 rounded-3xl px-12 py-8 border-t-white/40">
+                  <span className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Total Points Earned</span>
+                  <div className="text-6xl md:text-8xl font-black text-white flex items-center justify-center gap-2">
+                    <span className="gradient-text">{result.score || 0}</span>
+                  </div>
+                  <div className="mt-4 flex items-center justify-center gap-4 text-xs">
+                     <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
+                       {(result.correctAnswers || 0) * 100} Acc Points
+                     </span>
+                     <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-bold">
+                       +{result.remainingTime || 0} Speed Bonus
+                     </span>
+                  </div>
+               </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-[#0F0F0F]/60 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-5">
               {/* Correct */}
               <div className="text-center px-1">
                 <div className="font-display text-4xl font-black text-[#98E19A]">
-                  {result.score}
-                  <span className="text-white/20 text-xl font-normal ml-0.5">/{result.total}</span>
+                  {result.correctAnswers || 0}
+                  <span className="text-white/20 text-xl font-normal ml-0.5">/{result.totalQuestions || result.total}</span>
                 </div>
                 <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Correct</div>
               </div>
@@ -157,7 +180,7 @@ export default function LeaderboardPage() {
               {/* Wrong */}
               <div className="text-center px-1">
                 <div className="font-display text-4xl font-black text-[#FF7575]">
-                  {(result.attempted || result.score) - result.score}
+                  {result.wrongAnswers || 0}
                 </div>
                 <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Wrong</div>
               </div>
@@ -167,27 +190,19 @@ export default function LeaderboardPage() {
               {/* Attempted */}
               <div className="text-center px-1">
                 <div className="font-display text-4xl font-black text-[#4FB3FF]">
-                  {result.attempted || result.score}
+                  {(result.correctAnswers || 0) + (result.wrongAnswers || 0)}
                 </div>
                 <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Attempted</div>
               </div>
 
               <div className="w-px h-10 bg-white/10" />
 
-              {/* Skipped */}
-              <div className="text-center px-1">
-                <div className="font-display text-4xl font-black text-slate-400">
-                  {result.total - (result.attempted || result.score)}
-                </div>
-                <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Skipped</div>
-              </div>
-
-              <div className="w-px h-10 bg-white/10 hidden sm:block" />
-
               {/* Accuracy */}
               <div className="text-center px-1">
                 <div className="font-display text-4xl font-black text-amber-400">
-                  {result.total > 0 ? Math.round((result.score / result.total) * 100) : '—'}
+                  { (result.totalQuestions || result.total) > 0 ? 
+                    Math.round(((result.correctAnswers || 0) / (result.totalQuestions || result.total)) * 100) : 
+                    '—' }
                   <span className="text-xl font-normal ml-0.5">%</span>
                 </div>
                 <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Accuracy</div>
@@ -195,26 +210,33 @@ export default function LeaderboardPage() {
             </div>
 
             <div className="mt-4 text-sm text-slate-500 flex flex-col items-center gap-2">
-              {result.score === result.total && (
+              {result.correctAnswers === (result.totalQuestions || result.total) && (
                 <span className="flex items-center gap-2 text-amber-500 font-bold uppercase tracking-widest">
                   <Flame size={16} /> Perfect Score! Outstanding!
                 </span>
               )}
-              {result.score >= result.total * 0.8 && result.score < result.total && (
+              {result.correctAnswers >= (result.totalQuestions || result.total) * 0.8 && result.correctAnswers < (result.totalQuestions || result.total) && (
                 <span className="flex items-center gap-2 text-white font-semibold">
                   <Star size={16} /> Excellent work!
                 </span>
               )}
-              {result.score >= result.total * 0.6 && result.score < result.total * 0.8 && (
+              {result.correctAnswers >= (result.totalQuestions || result.total) * 0.6 && result.correctAnswers < (result.totalQuestions || result.total) * 0.8 && (
                 <span className="flex items-center gap-2 text-white font-semibold ">
                   <ThumbsUp size={16} /> Good job!
                 </span>
               )}
-              {result.score < result.total * 0.6 && (
+              {result.correctAnswers < (result.totalQuestions || result.total) * 0.6 && (
                 <span className="flex items-center gap-2 text-white font-semibold">
                   <BookIcon size={16} /> Keep practicing!
                 </span>
               )}
+            </div>
+            
+            {/* Scroll Indicator */}
+            <div className="mt-4 flex flex-col items-center   opacity-40">
+               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white mb-1">Scroll for Rankings</span>
+               <ChevronDown size={15} className="text-white animate-bounce mb-[-10px]" />
+               <ChevronDown size={20} className="text-white animate-bounce" />
             </div>
           </div>
         </div>
@@ -233,20 +255,6 @@ export default function LeaderboardPage() {
               {isQuizActive ? 'Ranking calculation in progress...' : `${leaderboard.length} participants finalized`}
             </p>
           </div>
-
-          {!isQuizActive && (
-            <button
-              id="refresh-leaderboard-btn"
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="btn-secondary gap-2 self-start sm:self-auto px-6"
-            >
-              <svg className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
-              Sync Data
-            </button>
-          )}
         </div>
 
         {false ? (
@@ -334,7 +342,11 @@ export default function LeaderboardPage() {
                                 </div>
                               </td>
                               <td className="px-4 py-3.5">
-                                <ScoreBar score={entry.score} total={totalQuestions || entry.score} />
+                                <ScoreBar 
+                                  score={entry.score} 
+                                  correct={entry.correctAnswers || 0} 
+                                  total={entry.totalQuestions || totalQuestions || 0} 
+                                />
                               </td>
                               <td className="px-4 py-3.5 hidden md:table-cell text-slate-400 text-sm tabular-nums">
                                 {formatTime(entry.timeTaken)}

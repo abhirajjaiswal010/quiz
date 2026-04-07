@@ -16,6 +16,7 @@ export default function AdminPanel() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(null)
   const [participantCount, setParticipantCount] = useState(0)
+  const [participants, setParticipants] = useState([])
   const [sessionInfo, setSessionInfo] = useState(null)
   const [duration, setDuration] = useState(15) // Default 15 mins
   const [allowTabSwitching, setAllowTabSwitching] = useState(false)
@@ -59,6 +60,7 @@ export default function AdminPanel() {
       const data = await quizApi.getQuizStatus(quizId)
       setStatus(data.isActive)
       setParticipantCount(data.participantCount || 0)
+      setParticipants(data.participants || [])
       setSessionInfo({
         totalQuestions: data.totalQuestions,
         createdAt: data.createdAt,
@@ -89,7 +91,14 @@ export default function AdminPanel() {
 
     socket.on('participantJoined', (data) => {
       setParticipantCount(data.participantCount);
-      if (data.name) toast.success(`${data.name} joined!`, { id: 'join-alert' });
+      if (data.name && data.roll) {
+        setParticipants(prev => {
+          // Prevent duplicates in state
+          if (prev.some(p => p.roll === data.roll)) return prev;
+          return [{ name: data.name, roll: data.roll, joinedAt: new Date() }, ...prev];
+        });
+        toast.success(`${data.name} joined!`, { id: 'join-alert' });
+      }
     });
 
     socket.on('resultSubmitted', (data) => {
@@ -197,6 +206,19 @@ export default function AdminPanel() {
     }
   }
 
+  const handleBulkUpload = async (jsonQuestions) => {
+    setLoading(true)
+    try {
+      await quizApi.uploadQuestions(adminKey, jsonQuestions)
+      toast.success('Batch upload successful!')
+      fetchQuestions()
+    } catch (err) {
+      toast.error(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     if (adminKey) {
       quizApi.verifyAdmin(adminKey)
@@ -213,9 +235,9 @@ export default function AdminPanel() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] p-6 relative overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-          <Threads  amplitude={1} distance={0.1} enableMouseInteraction />
+          <Threads amplitude={1} distance={0.1} enableMouseInteraction />
         </div>
-        
+
         <div className="card relative z-10 bg-[#0f0f0f]/10 backdrop-blur-sm max-w-sm w-full p-8 text-center shadow-2xl border-white/20">
           <div className="mx-auto w-16 h-16 bg-[#4FB3FF]/10 rounded-2xl flex items-center justify-center mb-6 text-[#4FB3FF] ">
             <Lock size={32} />
@@ -250,6 +272,7 @@ export default function AdminPanel() {
       loading={loading}
       status={status}
       participantCount={participantCount}
+      participants={participants}
       sessionInfo={sessionInfo}
       leaderboard={leaderboard}
       handleLogout={handleLogout}
@@ -260,6 +283,7 @@ export default function AdminPanel() {
       editingId={editingId}
       setEditingId={setEditingId}
       handleDeleteQuestion={handleDeleteQuestion}
+      handleBulkUpload={handleBulkUpload}
     />
   )
 }
