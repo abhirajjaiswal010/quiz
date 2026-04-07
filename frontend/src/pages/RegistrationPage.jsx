@@ -5,6 +5,7 @@ import { Rocket, ShieldCheck, Timer } from 'lucide-react'
 import logo from '../assets/logo.png'
 import Threads from '../components/thread'
 import toast from 'react-hot-toast'
+import Beams from '../components/beams'
 
 export default function RegistrationPage() {
   const { goToWaiting, goToQuiz } = useQuiz()
@@ -79,10 +80,20 @@ export default function RegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-start md:items-center md:justify-center px-4 pt-[4.5rem] md:py-6 bg-[#0F0F0F]">
-      {/* Dynamic Background Threads */}
-      <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-        <Threads amplitude={1.2} distance={0.2} enableMouseInteraction />
+    <div className="min-h-screen relative flex flex-col items-start md:items-center md:justify-center px-4 pt-[4.5rem] md:py-6 bg-[#0F0F0F]">
+      {/* Dynamic Background Beams */}
+      <div className="absolute inset-0 z-0 opacity-70 pointer-events-none">
+        {/* <Threads amplitude={1.2} distance={0.2} enableMouseInteraction /> */}
+          <Beams
+    beamWidth={3}
+    beamHeight={30}
+    beamNumber={20}
+    lightColor="#55b4dd"
+    speed={2}
+    noiseIntensity={1.75}
+    scale={0.2}
+    rotation={30}
+  />
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-md">
