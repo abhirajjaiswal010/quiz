@@ -1,5 +1,6 @@
 import React from 'react';
 import { Trophy } from 'lucide-react';
+import Counter from '../counter';
 
 /**
  * Visual badge for participant ranking.
@@ -11,8 +12,15 @@ const RankBadge = ({ rank }) => {
   if (rank === 3) return <Trophy className="text-orange-500 drop-shadow-[0_0_8px_rgba(249,115,22,0.3)]" size={20} />;
   
   return (
-    <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 text-sm font-bold">
-      {rank}
+    <span className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-800 text-slate-400 text-sm font-bold overflow-hidden">
+      <Counter 
+        value={rank} 
+        fontSize={14} 
+        textColor="#94a3b8" 
+        gradientFrom="transparent"
+        horizontalPadding={0}
+        gap={2}
+      />
     </span>
   );
 };

@@ -8,6 +8,7 @@ import QuizHeader from '../components/Quiz/QuizHeader'
 import QuestionCard from '../components/Quiz/QuestionCard'
 import QuestionNavigation from '../components/Quiz/QuestionNavigation'
 import QuizIntro from '../components/Quiz/QuizIntro'
+import QuizRules from '../components/Quiz/QuizRules'
 
 // Helper function preserved exactly
 function computeRemaining(startTime, quizDuration) {
@@ -36,6 +37,7 @@ export default function QuizPage() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [isFullscreenWarning, setIsFullscreenWarning] = useState(false)
   const [showIntro, setShowIntro] = useState(true)
+  const [showRules, setShowRules] = useState(false)
 
   // ── ANTI-CHEAT STRIKES ──
   const [strikes, setStrikes] = useState(() => {
@@ -45,7 +47,7 @@ export default function QuizPage() {
 
   const answeredCount = Object.keys(answers).length
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0
-  const canSubmit = true 
+  const canSubmit = true
 
   // ── Anti-Cheat Effect ───────────────────────────────────────────────────
   useEffect(() => {
@@ -115,29 +117,31 @@ export default function QuizPage() {
     timeLeft > 300 ? 'text-emerald-400' : timeLeft > 60 ? 'text-amber-400' : 'text-red-400'
 
   return (
-    <div className="min-h-screen flex flex-col animate-fade-in bg-slate-950 text-slate-200">
-      
-      {showIntro && <QuizIntro onComplete={() => setShowIntro(false)} />}
+    <div className="min-h-screen flex flex-col animate-fade-in bg-[#0f0f0f] text-white">
+
+      {showIntro && <QuizIntro onComplete={() => { setShowIntro(false); setShowRules(true); }} />}
+
+      {showRules && <QuizRules onStart={() => setShowRules(false)} />}
 
       {/* ── Modals and Overlays ── */}
       {isFullscreenWarning && (
-        <AntiCheatWarning 
-          strikes={strikes} 
-          setIsFullscreenWarning={setIsFullscreenWarning} 
+        <AntiCheatWarning
+          strikes={strikes}
+          setIsFullscreenWarning={setIsFullscreenWarning}
         />
       )}
 
       {showConfirm && (
-        <SubmitConfirmation 
-          questions={questions} 
-          answeredCount={answeredCount} 
-          setShowConfirm={setShowConfirm} 
-          submitCurrentQuiz={submitCurrentQuiz} 
+        <SubmitConfirmation
+          questions={questions}
+          answeredCount={answeredCount}
+          setShowConfirm={setShowConfirm}
+          submitCurrentQuiz={submitCurrentQuiz}
         />
       )}
 
       {/* ── UI Components ── */}
-      <QuizHeader 
+      <QuizHeader
         timeLeft={timeLeft}
         timerColor={timerColor}
         student={student}
@@ -155,7 +159,7 @@ export default function QuizPage() {
           </div>
         )}
 
-        <QuestionCard 
+        <QuestionCard
           currentQuestion={questions[currentIndex]}
           currentIndex={currentIndex}
           answers={answers}
@@ -163,7 +167,7 @@ export default function QuizPage() {
           isSubmitting={isSubmitting}
         />
 
-        <QuestionNavigation 
+        <QuestionNavigation
           questions={questions}
           currentIndex={currentIndex}
           setCurrentIndex={setCurrentIndex}

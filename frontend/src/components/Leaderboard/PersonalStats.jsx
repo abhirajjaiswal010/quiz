@@ -1,5 +1,7 @@
 import React from 'react';
 import { Trophy, PartyPopper, BarChart3, Flame, Star, ThumbsUp, BookOpen as BookIcon, ChevronDown } from 'lucide-react';
+import CountUp from '../CountUp';
+import Counter from '../counter';
 
 const PersonalStats = ({ result, myRank }) => {
   if (!result) return null;
@@ -30,9 +32,16 @@ const PersonalStats = ({ result, myRank }) => {
         {myRank && (
           <div className="mb-8 animate-bounce-slow">
             <span className="text-white/50 text-[10px] font-bold uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
-            <span className="text-5xl md:text-7xl font-black text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-              #{myRank}
-            </span>
+            <div className="flex items-center justify-center gap-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              <span className="text-5xl md:text-7xl font-black text-white">#</span>
+              <Counter 
+                value={myRank} 
+                fontSize={64} 
+                textColor="white" 
+                gradientFrom="transparent" 
+                fontWeight="900" 
+              />
+            </div>
           </div>
         )}
 
@@ -41,14 +50,14 @@ const PersonalStats = ({ result, myRank }) => {
            <div className="inline-block bg-[#0F0F0F]/60 backdrop-blur-md border border-white/20 rounded-3xl px-12 py-8 border-t-white/40">
               <span className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Total Points Earned</span>
               <div className="text-6xl md:text-8xl font-black text-white flex items-center justify-center gap-2">
-                <span className="gradient-text">{result.score || 0}</span>
+                <span className="gradient-text"><CountUp to={result.score || 0} duration={2} /></span>
               </div>
               <div className="mt-4 flex items-center justify-center gap-4 text-xs">
                  <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
-                   {(result.correctAnswers || 0) * 100} Acc Points
+                   <CountUp to={(result.correctAnswers || 0) * 100} duration={1.5} /> Acc Points
                  </span>
                  <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-bold">
-                   +{result.remainingTime || 0} Speed Bonus
+                   +<CountUp to={result.remainingTime || 0} duration={1.5} /> Speed Bonus
                  </span>
               </div>
            </div>
@@ -58,7 +67,7 @@ const PersonalStats = ({ result, myRank }) => {
         <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-[#0F0F0F]/60 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-5">
           <div className="text-center px-1">
             <div className="font-display text-4xl font-black text-[#98E19A]">
-              {result.correctAnswers || 0}
+              <CountUp to={result.correctAnswers || 0} duration={1.5} />
               <span className="text-white/20 text-xl font-normal ml-0.5">/{totalQuestions}</span>
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Correct</div>
@@ -66,21 +75,21 @@ const PersonalStats = ({ result, myRank }) => {
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
             <div className="font-display text-4xl font-black text-[#FF7575]">
-              {result.wrongAnswers || 0}
+              <CountUp to={result.wrongAnswers || 0} duration={1.5} />
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Wrong</div>
           </div>
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
             <div className="font-display text-4xl font-black text-[#4FB3FF]">
-              {(result.correctAnswers || 0) + (result.wrongAnswers || 0)}
+              <CountUp to={(result.correctAnswers || 0) + (result.wrongAnswers || 0)} duration={1.5} />
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Attempted</div>
           </div>
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
             <div className="font-display text-4xl font-black text-amber-400">
-              { totalQuestions > 0 ? Math.round(((result.correctAnswers || 0) / totalQuestions) * 100) : '—' }
+              { totalQuestions > 0 ? <CountUp to={Math.round(((result.correctAnswers || 0) / totalQuestions) * 100)} duration={1.5} /> : '—' }
               <span className="text-xl font-normal ml-0.5">%</span>
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Accuracy</div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flag } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
 import LeaderboardRow from './LeaderboardRow';
 
 /**
@@ -58,15 +59,17 @@ const LeaderboardTable = ({ leaderboard, student, loading, error, totalQuestions
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/50">
-            {leaderboard.map((entry, idx) => (
-              <LeaderboardRow 
-                key={entry.roll || idx} 
-                entry={entry} 
-                student={student} 
-                rank={idx + 1} 
-                totalQuestions={totalQuestions} 
-              />
-            ))}
+            <AnimatePresence initial={false}>
+              {leaderboard.map((entry, idx) => (
+                <LeaderboardRow 
+                  key={entry.roll || idx} 
+                  entry={entry} 
+                  student={student} 
+                  rank={idx + 1} 
+                  totalQuestions={totalQuestions} 
+                />
+              ))}
+            </AnimatePresence>
           </tbody>
         </table>
       </div>

@@ -5,6 +5,8 @@ import { useQuiz } from '../context/QuizContext'
 import BreathingGuide from '../components/Waiting/BreathingGuide'
 import WaitingStatus from '../components/Waiting/WaitingStatus'
 import WaitingTips from '../components/Waiting/WaitingTips'
+import QuizRules from '../components/Quiz/QuizRules'
+import { ShieldCheck } from 'lucide-react'
 
 const MOTIVATIONAL_MESSAGES = [
   "Stay calm, you got this ",
@@ -27,6 +29,7 @@ const PHASES = [
 
 export default function WaitingPage() {
   const { student, participantCount } = useQuiz()
+  const [showRules, setShowRules] = useState(false)
 
   // ── Phase clock ─────────────────────────────────────────────────────────
   const [phaseIndex, setPhaseIndex] = useState(0)
@@ -75,7 +78,7 @@ export default function WaitingPage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-charcoal-800 animate-fade-in overflow-hidden relative">
-      
+
       {/* Ambient Glow Preserved */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
         <div
@@ -126,6 +129,25 @@ export default function WaitingPage() {
       </div>
 
       <WaitingTips student={student} />
+
+      {/* Rules Toggle Button */}
+      <div className="absolute bottom-6 right-6 z-10">
+        <button
+          onClick={() => setShowRules(true)}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/80 transition-all text-[10px] font-black uppercase tracking-[0.2em] shadow-lg backdrop-blur-md"
+        >
+          <ShieldCheck size={14} className="text-brand-400" />
+          View Rules
+        </button>
+      </div>
+
+      {/* Rules Modal Overlay */}
+      {showRules && (
+        <QuizRules
+          onStart={() => setShowRules(false)}
+          buttonText="CLOSE GUIDELINES"
+        />
+      )}
     </div>
   )
 }

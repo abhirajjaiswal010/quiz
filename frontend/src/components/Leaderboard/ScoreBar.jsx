@@ -1,4 +1,5 @@
 import React from 'react';
+import CountUp from '../CountUp';
 
 /**
  * Visual progress bar showing points and and correct/total ratio.
@@ -8,7 +9,7 @@ const ScoreBar = ({ score, correct, total }) => {
     <div className="flex flex-col">
       <div className="flex items-baseline gap-1">
         <span className="text-lg font-black text-[#4fb3ff] tabular-nums leading-none">
-          {score}
+          <CountUp to={score} duration={1} />
         </span>
         <span className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">pts</span>
       </div>

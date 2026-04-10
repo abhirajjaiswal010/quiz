@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import RankBadge from './RankBadge';
 import ScoreBar from './ScoreBar';
 
@@ -16,7 +17,16 @@ const LeaderboardRow = React.memo(({ entry, student, rank, totalQuestions }) => 
   const isCurrentUser = entry.roll === student?.roll;
   
   return (
-    <tr
+    <motion.tr
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ 
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
+        opacity: { duration: 0.2 }
+      }}
       className={`transition-colors duration-150 ${isCurrentUser
         ? 'bg-[#4FB3FF]/10 border-l-2 border-l-[#4FB3FF]'
         : 'hover:bg-slate-800/30'
@@ -52,7 +62,7 @@ const LeaderboardRow = React.memo(({ entry, student, rank, totalQuestions }) => 
       <td className="px-4 py-3.5 hidden md:table-cell text-slate-400 text-sm tabular-nums">
         {formatTime(entry.timeTaken)}
       </td>
-    </tr>
+    </motion.tr>
   );
 });
 
