@@ -165,22 +165,3 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
 
   res.status(201).json({ success: true, result, totalQuestions: totalCount });
 });
-
-// GET /api/quiz-review?quizId=...&roll=...
-exports.getQuizReview = asyncHandler(async (req, res, next) => {
-  const quizId = req.query.quizId?.trim().toUpperCase();
-  const roll = req.query.roll?.trim().toUpperCase();
-
-  if (!quizId || !roll) {
-    return next(new ErrorResponse('quizId and roll are required', 400));
-  }
-
-  // Ensure student has actually submitted before giving them the answers
-  const result = await Result.findOne({ quizId, roll });
-  if (!result) {
-    return next(new ErrorResponse('You must submit the quiz to view the review.', 403));
-  }
-
-  const questions = await Question.find({}); // Includes the .answer field
-  res.status(200).json({ success: true, questions });
-});
