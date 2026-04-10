@@ -12,11 +12,8 @@
   }
 
   body {
-    @apply font-sans text-[#e0e9ff] antialiased min-h-screen;
+    @apply font-montserrat text-[#e0e9ff] antialiased min-h-screen;
     background-color: #0f0f0f;
-    background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(146, 172, 255, 0.12), transparent),
-      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(146, 172, 255, 0.05), transparent);
   }
 
   h1, h2, h3, h4 {
@@ -33,7 +30,7 @@
   transition-all duration-200 
   active:scale-95 
   disabled:opacity-50 disabled:cursor-not-allowed 
-  shadow-lg border border-white/20;
+  border border-white/20;
 
   
 }
@@ -49,15 +46,15 @@
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .card {
-    @apply bg-[#09061a] backdrop-blur-sm border border-[#1d1d2e] rounded-2xl shadow-xl;
+    @apply bg-[#0f0f0f] border border-white/10 rounded-2xl;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl bg-[#09061a] border-[#1d1d2e] focus:border-[#92acff] focus:ring-2 focus:ring-[#92acff]/10 outline-none text-[#92acff] placeholder-[#5e5e6e] transition-all duration-200 text-sm;
+    @apply w-full px-4 py-3 rounded-xl bg-[#0f0f0f] border-white/10 focus:border-[#4fb3ff] focus:ring-2 focus:ring-[#4fb3ff]/10 outline-none text-[#4fb3ff] placeholder-[#5e5e6e] transition-all duration-200 text-sm;
   }
 
   .label {
@@ -73,7 +70,7 @@
   }
 
   .glass-card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+    @apply bg-white/5 border border-white/10 rounded-2xl;
   }
 }
 
@@ -110,7 +107,7 @@
 
 /* Option button hover state */
 .option-btn {
-  @apply relative w-full text-left px-5 py-4 rounded-xl border-2 border-[#1d1d2e] bg-[#09061a] hover:border-[#92acff] transition-all duration-200 text-[#92acff] text-sm font-medium cursor-pointer;
+  @apply relative w-full text-left px-5 py-4 rounded-xl border-2 border-white/10 bg-[#0f0f0f] hover:border-[#4fb3ff] transition-all duration-200 text-[#4fb3ff] text-sm font-medium cursor-pointer;
 }
 
 .option-btn.selected {

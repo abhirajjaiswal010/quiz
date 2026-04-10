@@ -4,10 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Montserrat', 'Poppins', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Outfit', 'Montserrat', 'sans-serif'],
+        sans: ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+        display: ['Montserrat', 'Outfit', 'sans-serif'],
         montserrat: ['Montserrat', 'sans-serif'],
-        poppins: ['Poppins', 'sans-serif'],
       },
       colors: {
         brand: {

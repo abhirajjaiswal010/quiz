@@ -15,7 +15,7 @@ const AdminHeader = ({ handleLogout }) => {
           <h1 className="font-display text-4xl text-white tracking-tight flex items-center gap-3">
             Admin Dashboard
           </h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-white/60 text-sm mt-1">
             Full control over quiz sessions and question bank
           </p>
         </div>

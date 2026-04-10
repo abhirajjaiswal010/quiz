@@ -82,7 +82,7 @@ export default function WaitingPage() {
       {/* Ambient Glow Preserved */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center" aria-hidden="true">
         <div
-          style={{ width: 520, height: 520, borderRadius: '50%', background: `radial-gradient(circle, ${phaseGlow} 0%, transparent 70%)`, transition: 'background 3.6s ease', filter: 'blur(40px)' }}
+          style={{ width: 520, height: 520, borderRadius: '50%', background: `radial-gradient(circle, ${phaseGlow} 0%, transparent 70%)`, transition: 'background 3.6s ease' }}
         />
       </div>
 
@@ -96,7 +96,7 @@ export default function WaitingPage() {
           <span className="text-xl font-black tracking-tight transition-colors duration-500" style={{ color: phase.color }}>
             {phase.label}
           </span>
-          <span className="text-xl font-black text-white tabular-nums leading-none transition-all duration-300" style={{ textShadow: `0 0 20px ${phase.color}88` }}>
+          <span className="text-xl font-black text-white tabular-nums leading-none transition-all duration-300">
             {phaseSeconds}
           </span>
         </div>
@@ -106,18 +106,17 @@ export default function WaitingPage() {
       {/* Dot Indicators */}
       <div className="flex gap-2 items-center mb-8">
         {PHASES.map((p, i) => (
-          <div
-            key={p.label}
-            className="transition-all duration-700 rounded-full"
-            style={{
-              width: i === phaseIndex ? 32 : 8,
-              height: 4,
-              background: i === phaseIndex
-                ? `linear-gradient(90deg, ${p.color}, ${PHASES[(i + 1) % 3].color})`
-                : 'rgba(100,116,139,0.3)',
-              boxShadow: i === phaseIndex ? `0 0 8px ${p.color}88` : 'none',
-            }}
-          />
+              <div
+                key={p.label}
+                className="transition-all duration-700 rounded-full"
+                style={{
+                  width: i === phaseIndex ? 32 : 8,
+                  height: 4,
+                  background: i === phaseIndex
+                    ? `linear-gradient(90deg, ${p.color}, ${PHASES[(i + 1) % 3].color})`
+                    : 'rgba(100,116,139,0.3)',
+                }}
+              />
         ))}
       </div>
 
@@ -134,7 +133,7 @@ export default function WaitingPage() {
       <div className="absolute bottom-6 right-6 z-10">
         <button
           onClick={() => setShowRules(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/80 transition-all text-[10px] font-black uppercase tracking-[0.2em] shadow-lg backdrop-blur-md"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/80 transition-all text-[10px] font-black uppercase tracking-[0.2em]"
         >
           <ShieldCheck size={14} className="text-brand-400" />
           View Rules

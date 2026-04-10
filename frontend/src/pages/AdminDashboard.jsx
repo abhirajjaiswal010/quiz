@@ -76,8 +76,8 @@ export default function AdminDashboard({
 
       {/* Decorative Branding Watermark */}
       <div className="fixed bottom-10 right-10 pointer-events-none opacity-5 flex flex-col items-end">
-        <h2 className="text-8xl font-black italic uppercase tracking-tighter">Admin Panel</h2>
-        <p className="text-xs font-black tracking-[0.5em] uppercase mt-2">V.1.0 Protocol Innovixus</p>
+        <h2 className="text-8xl font-bold italic uppercase tracking-tighter">Admin Panel</h2>
+        <p className="text-xs font-bold tracking-[0.5em] uppercase mt-2">V.1.0 Protocol Innovixus</p>
       </div>
     </div>
   );
