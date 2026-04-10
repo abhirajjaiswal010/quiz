@@ -15,6 +15,8 @@ export const useAdminData = () => {
   const [participantCount, setParticipantCount] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [sessionInfo, setSessionInfo] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+
   const [duration, setDuration] = useState(15);
   const [allowTabSwitching, setAllowTabSwitching] = useState(false);
 
@@ -23,7 +25,15 @@ export const useAdminData = () => {
   const [quizzes, setQuizzes] = useState([]);
   const [qForm, setQForm] = useState({ question: '', options: ['', '', '', ''], answer: 0 });
   const [editingId, setEditingId] = useState(null);
-  const [leaderboard, setLeaderboard] = useState([]);
+
+  // Reset data when quizId changes to prevent leakage between sessions
+  useEffect(() => {
+    setStatus(null);
+    setParticipantCount(0);
+    setParticipants([]);
+    setSessionInfo(null);
+    setLeaderboard([]);
+  }, [quizId]);
 
   // ── Session Methods ────────────────────────────────────────────────────────
   const fetchStatus = useCallback(async (manualId = null, silent = false) => {
@@ -211,36 +221,67 @@ export const useAdminData = () => {
 
   useEffect(() => {
     if (!socket || !isAuthorized || !quizId || status === null) return;
-    const normalizedId = quizId.toUpperCase();
-    socket.emit('adminJoin', normalizedId);
+
+    const normalizedId = quizId.trim().toUpperCase();
+
+    const joinRoom = () => {
+      console.log(`📡 Attempting to join admin room: ${normalizedId}`);
+      socket.emit('adminJoin', normalizedId);
+      // Sync latest snapshot on every connection/reconnection
+      fetchStatus(normalizedId, true);
+    };
+
+    // Join immediately if connected
+    if (socket.connected) {
+      joinRoom();
+    }
+
+    // Handle reconnections
+    socket.on('connect', joinRoom);
 
     const handleParticipantJoined = (data) => {
+      console.log('👤 Live Event: Participant Joined', data);
       setParticipantCount(data.participantCount);
       if (data.name && data.roll) {
         setParticipants(prev => {
-          if (prev.some(p => p.roll === data.roll)) return prev;
-          return [{ name: data.name, roll: data.roll, joinedAt: new Date() }, ...prev];
+          if (prev.some(p => p.roll === data.roll)) {
+            // If they were already there (e.g. reconnected), clear their disconnected status
+            return prev.map(p => p.roll === data.roll ? { ...p, isDisconnected: false } : p);
+          }
+          return [{ name: data.name, roll: data.roll, joinedAt: new Date(), isDisconnected: false }, ...prev];
         });
-        toast.success(`${data.name} joined!`, { id: 'join-alert' });
+        toast.success(`${data.name} joined!`, { id: 'join-alert', duration: 2000 });
       }
     };
 
-    const handleParticipantSubmitted = (data) => {
+    const handleParticipantLeft = (data) => {
+      console.log('🚪 Live Event: Participant Left', data);
       setParticipants(prev => prev.map(p => 
-        p.roll === data.roll ? { ...p, isSubmitted: true } : p
+        p.roll === data.roll ? { ...p, isDisconnected: true } : p
+      ));
+    };
+
+    const handleParticipantSubmitted = (data) => {
+      console.log('✅ Live Event: Participant Submitted', data);
+      setParticipants(prev => prev.map(p => 
+        p.roll === data.roll ? { ...p, isSubmitted: true, isDisconnected: false } : p
       ));
     };
 
     const handleLeaderboardUpdate = (data) => {
+      console.log('📊 Live Event: Leaderboard Update', data.results?.length);
       setLeaderboard(data.results);
     };
 
     socket.on('participantJoined', handleParticipantJoined);
+    socket.on('participantLeft', handleParticipantLeft);
     socket.on('participantSubmitted', handleParticipantSubmitted);
     socket.on('leaderboardUpdateAdmin', handleLeaderboardUpdate);
 
     return () => {
+      socket.off('connect', joinRoom);
       socket.off('participantJoined', handleParticipantJoined);
+      socket.off('participantLeft', handleParticipantLeft);
       socket.off('participantSubmitted', handleParticipantSubmitted);
       socket.off('leaderboardUpdateAdmin', handleLeaderboardUpdate);
     };

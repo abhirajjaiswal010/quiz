@@ -134,7 +134,10 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   const timeTakenSeconds = Math.round((submissionTime - startTimeMs) / 1000);
 
   const { correctCount, wrongCount, totalCount } = await calculateScore(answersMap);
-  const finalScore = (correctCount * 100) + remainingSeconds;
+  // Fairness Guard: If no correct answers, total score is 0 regardless of speed.
+  // We use a 1000x multiplier so that even 1 correct answer (1000 pts) 
+  // beats 0 correct answers with max speed bonus (~900 pts).
+  const finalScore = correctCount > 0 ? (correctCount * 1000) + remainingSeconds : 0;
 
   const result = await Result.create({
     name,

@@ -53,12 +53,12 @@ const PersonalStats = ({ result, myRank }) => {
                 <span className="gradient-text"><CountUp to={result.score || 0} duration={2} /></span>
               </div>
               <div className="mt-4 flex items-center justify-center gap-4 text-xs">
-                 <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
-                   <CountUp to={(result.correctAnswers || 0) * 100} duration={1.5} /> Acc Points
-                 </span>
-                 <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-bold">
-                   +<CountUp to={result.remainingTime || 0} duration={1.5} /> Speed Bonus
-                 </span>
+                  <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
+                    <CountUp to={(result.correctAnswers || 0) * 1000} duration={1.5} /> Acc Points
+                  </span>
+                  <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-bold">
+                    +<CountUp to={result.remainingTime || 0} duration={1.5} /> Speed Bonus
+                  </span>
               </div>
            </div>
         </div>
@@ -97,8 +97,8 @@ const PersonalStats = ({ result, myRank }) => {
         </div>
 
         <div className="mt-4 text-sm text-slate-500 flex flex-col items-center gap-2">
-          {result.correctAnswers === totalQuestions && (
-            <span className="flex items-center gap-2 text-amber-500 font-bold uppercase tracking-widest">
+          {result.correctAnswers === totalQuestions && totalQuestions > 0 && (
+            <span className="flex items-center gap-2 text-amber-500 font-bold uppercase tracking-widest animate-pulse">
               <Flame size={16} /> Perfect Score! Outstanding!
             </span>
           )}
@@ -112,9 +112,14 @@ const PersonalStats = ({ result, myRank }) => {
               <ThumbsUp size={16} /> Good job!
             </span>
           )}
-          {result.correctAnswers < totalQuestions * 0.6 && (
+          {result.correctAnswers > 0 && result.correctAnswers < totalQuestions * 0.6 && (
             <span className="flex items-center gap-2 text-white font-semibold text-xs">
               <BookIcon size={16} /> Keep practicing!
+            </span>
+          )}
+          {result.correctAnswers === 0 && (
+            <span className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-widest animate-pulse">
+              <BookIcon size={16} /> Better luck next time! Attend more carefully.
             </span>
           )}
         </div>

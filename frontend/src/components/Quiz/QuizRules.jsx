@@ -11,7 +11,7 @@ import {
 
 export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES - START QUIZ" }) {
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-transparent animate-fade-in">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-transparent backdrop-blur-md animate-fade-in">
       <div className="card max-w-2xl w-full bg-[#0F0F0F] border border-white/10  relative overflow-hidden">
 
         {/* Header Decor */}

@@ -77,7 +77,7 @@ const SessionControlTab = ({
           <div className="space-y-6">
             <div className={`p-6 rounded-2xl border transition-all duration-500 flex items-center justify-between ${status === true ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-white/5 border-white/10'}`}>
               <div>
-                <p className="text-xs text-white/40 uppercase font-bold mb-1 tracking-[0.2em]">Session Health</p>
+                <p className="text-xs text-white uppercase font-bold mb-1 tracking-[0.2em]">Session Health</p>
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${status === true ? 'bg-emerald-500 animate-ping' : 'bg-red-500'}`} />
                   <p className={`text-xl font-bold tracking-tight ${status === true ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -86,7 +86,7 @@ const SessionControlTab = ({
                 </div>
               </div>
               <div className="text-white">
-                {status === true ? <Radio className="text-emerald-400 animate-pulse" size={28} /> : <Moon className="text-white/30" size={28} />}
+                {status === true ? <Radio className="text-emerald-400 animate-pulse" size={28} /> : <Moon className="text-white" size={28} />}
               </div>
             </div>
 

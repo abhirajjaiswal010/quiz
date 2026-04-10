@@ -15,11 +15,15 @@ const ParticipantRow = React.memo(({ p, idx }) => {
           <p className="text-[12px] font-mono text-white/50  tracking-tighter">
              <span className="text-white mr-1">Roll:</span>{p.roll}
           </p>
-          {p.isSubmitted && (
+          {p.isSubmitted ? (
             <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase bg-emerald-400/10 px-1.5 py-0.5 rounded-md border border-emerald-400/20">
               <CheckCircle2 size={8} /> Finalized
             </span>
-          )}
+          ) : p.isDisconnected ? (
+            <span className="flex items-center gap-1 text-[8px] font-bold text-white uppercase bg-red-400/10 px-1.5 py-0.5 rounded-md border border-red-400/20">
+              Left Quiz
+            </span>
+          ) : null}
         </div>
       </div>
       <div className="text-right shrink-0 ml-4">

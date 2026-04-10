@@ -7,6 +7,7 @@ import { ArrowBigLeftDashIcon, Trophy } from 'lucide-react';
 // Modular UI Components
 import PersonalStats from '../components/Leaderboard/PersonalStats';
 import LeaderboardTable from '../components/Leaderboard/LeaderboardTable';
+import Podium from '../components/Leaderboard/Podium';
 
 /**
  * Global Real-Time Leaderboard Page.
@@ -28,7 +29,10 @@ export default function LeaderboardPage() {
    * Fetches the latest global rankings from the specialized leaderboard controller.
    */
   const fetchLeaderboard = useCallback(async () => {
-    if (!student?.quizId) return;
+    if (!student?.quizId) {
+      setLoading(false);
+      return;
+    }
     try {
       setError('');
       const data = await getLeaderboard(student.quizId);
@@ -47,6 +51,8 @@ export default function LeaderboardPage() {
       fetchLeaderboard();
       const interval = setInterval(fetchLeaderboard, 5000);
       return () => clearInterval(interval);
+    } else {
+      setLoading(false);
     }
   }, [fetchLeaderboard, isQuizActive, student?.quizId]);
 
@@ -78,6 +84,11 @@ export default function LeaderboardPage() {
       
       {/* ── Personal Achievement Banner ── */}
       <PersonalStats result={result} myRank={myRank} />
+
+      {/* ── Podium Winners (Post-Quiz Glory View) ── */}
+      {!isQuizActive && leaderboard.length >= 3 && (
+        <Podium topThree={leaderboard.slice(0, 3)} />
+      )}
 
       {/* ── Global Rankings Module ── */}
       <div className="max-w-4xl mx-auto px-4 py-8">

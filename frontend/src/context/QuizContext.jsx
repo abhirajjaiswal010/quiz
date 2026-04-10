@@ -236,7 +236,7 @@ export const QuizProvider = ({ children }) => {
     if (!socket || !student?.quizId) return
 
     const quizId = student.quizId.toUpperCase()
-    socket.emit('joinQuiz', quizId)
+    socket.emit('joinQuiz', { quizId, roll: student.roll })
 
     // Admin started quiz → broadcast received by waiting students
     const handleQuizStarted = (data) => {
