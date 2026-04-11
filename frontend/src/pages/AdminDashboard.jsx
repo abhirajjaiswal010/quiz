@@ -26,7 +26,7 @@ export default function AdminDashboard({
   return (
     <div className="min-h-screen bg-[#0f0f0f] relative overflow-hidden selection:bg-[#4fb3ff]/30">
       {/* Premium Dashboard Container */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 py-12 animate-fade-in">
+      <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 animate-fade-in">
         
         {/* Top Header & Identity */}
         <AdminHeader handleLogout={handleLogout} />

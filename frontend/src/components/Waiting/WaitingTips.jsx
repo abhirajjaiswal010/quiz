@@ -17,10 +17,10 @@ export default function WaitingTips({ student }) {
         ))}
       </div>
 
-      {/* Quiz ID */}
+      {/* Session PIN */}
       {student?.quizId && (
-        <p className="mt-5 text-[11px] text-white-700 tracking-widest uppercase">
-          Quiz · <span className="text-white-600">{student.quizId}</span>
+        <p className="mt-5 text-[11px] text-white/50 tracking-widest uppercase">
+          Session Code · <span className="text-white/80 font-bold">{student.quizId.length === 6 && /^\d+$/.test(student.quizId) ? `${student.quizId.substring(0,3)}-${student.quizId.substring(3)}` : student.quizId}</span>
         </p>
       )}
     </>

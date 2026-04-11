@@ -9,7 +9,7 @@ export const useAdminData = () => {
   const socket = useSocket();
 
   const [tab, setTab] = useState('control');
-  const [quizId, setQuizId] = useState('');
+  const [quizId, setQuizId] = useState(() => Math.floor(100000 + Math.random() * 900000).toString());
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(null);
   const [participantCount, setParticipantCount] = useState(0);

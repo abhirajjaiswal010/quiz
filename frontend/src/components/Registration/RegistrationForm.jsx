@@ -5,13 +5,13 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
   return (
     <div className="border border-white/20 rounded-xl max-w-md p-6 animate-slide-up bg-[#0F0F0F]/10 backdrop-blur-xl shadow-2xl shadow-black/80 w-full mt-4">
       <div className="mb-4">
-        <h2 className="font-display text-lg font-bold text-white uppercase tracking-wider">Join Quiz Session</h2>
+        <h2 className="font-display text-lg font-bold text-white uppercase tracking-wider">Join Quiz </h2>
       </div>
 
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <div>
           <label htmlFor="quizId" className="text-xs font-semibold text-white uppercase tracking-widest mb-1.5 block">
-            Quiz ID
+            Session Code
           </label>
           <input
             id="quizId"
@@ -19,9 +19,10 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
             name="quizId"
             value={form.quizId}
             onChange={onChange}
-            // placeholder="e.g. COLLEGE_24"
-            className="input-field bg-white/5 border-white/10 text-white py-2.5 text-sm focus:border-[#4FB3FF] transition-all w-full px-4 rounded-lg placeholder:text-white/20 uppercase"
+            // placeholder="e.g. 483-921"
+            className="input-field bg-white/5 border-white/10 text-white py-2.5 text-sm uppercase focus:border-[#4FB3FF] transition-all w-full px-4 rounded-lg placeholder:text-white/20 font-mono  tracking-[0.2em] text-center"
             required
+            autoComplete="off"
           />
         </div>
 

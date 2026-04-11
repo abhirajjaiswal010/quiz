@@ -15,7 +15,19 @@ export default function RegistrationPage() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    
+    if (name === 'quizId') {
+      // Remove all non-alphanumeric characters
+      let raw = value.replace(/[^A-Za-z0-9]/g, '');
+      // Format as XXX-XXX (only insert hyphen if longer than 3 characters)
+      if (raw.length > 3) {
+        value = `${raw.slice(0, 3)}-${raw.slice(3, 6)}`;
+      } else {
+        value = raw;
+      }
+    }
+    
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
@@ -27,7 +39,7 @@ export default function RegistrationPage() {
     e.preventDefault();
 
     // Basic Validation
-    if (!form.quizId.trim()) return toast.error('Quiz ID is required');
+    if (!form.quizId.trim()) return toast.error('Session Code is required');
     if (!form.name.trim()) return toast.error('Full Name is required');
 
     setLoading(true);
@@ -39,10 +51,13 @@ export default function RegistrationPage() {
       localStorage.setItem('clubquiz_session_id', autoStudentId);
     }
 
+    // Strip any hyphens or spaces a student might type in the Session Code (e.g. '483-921' -> '483921')
+    const finalQuizId = form.quizId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+
     const studentData = {
       name: form.name.trim(),
       studentId: autoStudentId,
-      quizId: form.quizId.trim().toUpperCase(),
+      quizId: finalQuizId,
     };
 
     try {
