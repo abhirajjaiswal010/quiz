@@ -48,7 +48,11 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
     }
 
     const participantCount = await Participant.countDocuments({ quizId });
-    getIO().to(`ADMIN_${quizId}`).emit('participantJoined', { participantCount, name, roll: rollUpper });
+    const joinPayload = { participantCount, name, roll: rollUpper };
+    
+    const { emitToQuiz, emitToAdmin } = require('../socket');
+    emitToQuiz(quizId, 'participantJoined', joinPayload);
+    emitToAdmin(quizId, 'participantJoined', joinPayload);
 
     return res.status(200).json({
       success: true,
@@ -63,7 +67,10 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
 
   const participantCount = await Participant.countDocuments({ quizId });
   if (!existingParticipant) {
-    getIO().to(`ADMIN_${quizId}`).emit('participantJoined', { participantCount, name, roll: rollUpper });
+    const joinPayload = { participantCount, name, roll: rollUpper };
+    const { emitToQuiz, emitToAdmin } = require('../socket');
+    emitToQuiz(quizId, 'participantJoined', joinPayload);
+    emitToAdmin(quizId, 'participantJoined', joinPayload);
   }
 
   return res.status(200).json({ success: true, quizState: 'waiting', message: 'Ready.' });

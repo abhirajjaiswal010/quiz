@@ -258,6 +258,11 @@ export const QuizProvider = ({ children }) => {
       }
     }
 
+    const handleParticipantJoined = (data) => {
+      console.log('👤 participantJoined', data)
+      setParticipantCount(data.participantCount || 0)
+    }
+
     const handleLeaderboardUpdate = (data) => {
       setResult(prev => ({ ...prev, leaderboard: data.results }))
     }
@@ -265,11 +270,13 @@ export const QuizProvider = ({ children }) => {
     socket.on('quizStarted', handleQuizStarted)
     socket.on('quizStopped', handleQuizStopped)
     socket.on('leaderboardUpdate', handleLeaderboardUpdate)
+    socket.on('participantJoined', handleParticipantJoined)
 
     return () => {
       socket.off('quizStarted', handleQuizStarted)
       socket.off('quizStopped', handleQuizStopped)
       socket.off('leaderboardUpdate', handleLeaderboardUpdate)
+      socket.off('participantJoined', handleParticipantJoined)
     }
   }, [socket, student?.quizId, student, phase, initQuizFromServer, submitCurrentQuiz, updatePhase])
 
