@@ -7,11 +7,10 @@ const resultSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    roll: {
+    studentId: {
       type: String,
       required: true,
       trim: true,
-      uppercase: true,
     },
     quizId: {
       type: String,
@@ -52,8 +51,8 @@ const resultSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// One attempt per roll per quiz
-resultSchema.index({ roll: 1, quizId: 1 }, { unique: true });
+// One attempt per studentId per quiz
+resultSchema.index({ studentId: 1, quizId: 1 }, { unique: true });
 
 // Leaderboard index: Score DESC, Correct DESC, timeTaken ASC
 resultSchema.index({ quizId: 1, score: -1, correctAnswers: -1, timeTaken: 1 });

@@ -57,7 +57,7 @@ const LeaderboardTab = ({ leaderboard, quizId }) => {
                     'from-amber-600/20 to-amber-600/5 text-amber-600 border-amber-600/20'
                   ];
                   return (
-                    <tr key={r.roll} className={`group hover:bg-white/[0.04] transition-all ${isTop3 ? 'bg-white/[0.01]' : ''}`}>
+                    <tr key={r.studentId} className={`group hover:bg-white/[0.04] transition-all ${isTop3 ? 'bg-white/[0.01]' : ''}`}>
                       <td className="py-6 px-6">
                         <div className={`w-12 h-12 flex items-center justify-center rounded-2xl border text-xl font-montserrat italic  ${isTop3 ? `bg-gradient-to-br ${rankStyles[i]}` : 'bg-white/5 text-white/40 border-white/5'}`}>
                            #{i + 1}
@@ -65,7 +65,7 @@ const LeaderboardTab = ({ leaderboard, quizId }) => {
                       </td>
                       <td className="py-6 px-6">
                         <div className="text-white font-montserrat text-lg group-hover:text-[#4fb3ff] transition-colors uppercase tracking-tight">{r.name}</div>
-                        <div className="text-[10px] text-white/40 font-mono mt-1 opacity-60 font-bold uppercase tracking-widest">{r.roll}</div>
+                        <div className="text-[10px] text-white/40 font-mono mt-1 opacity-60 font-bold uppercase tracking-widest">{r.studentId}</div>
                       </td>
                       <td className="py-6 px-6">
                         <div className="flex flex-col items-center">

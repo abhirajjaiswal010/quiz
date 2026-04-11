@@ -10,19 +10,19 @@ const { isTimeExpired, calculateScore } = require('../utils/quizUtils');
 
 // Join a quiz session
 exports.joinQuiz = asyncHandler(async (req, res, next) => {
-  const { name, roll } = req.body;
+  const { name, studentId } = req.body;
   const quizId = req.body.quizId?.trim().toUpperCase();
-  const rollUpper = roll?.trim().toUpperCase();
+  const sId = studentId?.trim();
 
-  if (!quizId || !name || !rollUpper) {
-    return next(new ErrorResponse('name, roll, and quizId are required', 400));
+  if (!quizId || !name || !sId) {
+    return next(new ErrorResponse('name, studentId, and quizId are required', 400));
   }
 
   const quiz = await Quiz.findOne({ quizId });
   if (!quiz) return next(new ErrorResponse('Invalid quizId', 404));
 
   // Already submitted?
-  const existingResult = await Result.findOne({ roll: rollUpper, quizId });
+  const existingResult = await Result.findOne({ studentId: sId, quizId });
   if (existingResult) {
     return next(new ErrorResponse('You have already submitted this quiz', 400));
   }
@@ -33,22 +33,22 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
   }
 
   // Register participant (idempotent)
-  const existingParticipant = await Participant.findOne({ roll: rollUpper, quizId });
+  const existingParticipant = await Participant.findOne({ studentId: sId, quizId });
   if (!existingParticipant) {
-    await Participant.create({ name, roll: rollUpper, quizId });
+    await Participant.create({ name, studentId: sId, quizId });
   }
 
-  const existingAttempt = await Attempt.findOne({ roll: rollUpper, quizId });
+  const existingAttempt = await Attempt.findOne({ studentId: sId, quizId });
 
   if (quiz.isActive && !timeExpired) {
     const questions = await Question.find({}, { answer: 0 }).lean();
 
     if (!existingAttempt) {
-      await Attempt.create({ roll: rollUpper, quizId, name, answers: {} });
+      await Attempt.create({ studentId: sId, quizId, name, answers: {} });
     }
 
     const participantCount = await Participant.countDocuments({ quizId });
-    const joinPayload = { participantCount, name, roll: rollUpper };
+    const joinPayload = { participantCount, name, studentId: sId };
     
     const { emitToQuiz, emitToAdmin } = require('../socket');
     emitToQuiz(quizId, 'participantJoined', joinPayload);
@@ -67,7 +67,7 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
 
   const participantCount = await Participant.countDocuments({ quizId });
   if (!existingParticipant) {
-    const joinPayload = { participantCount, name, roll: rollUpper };
+    const joinPayload = { participantCount, name, studentId: sId };
     const { emitToQuiz, emitToAdmin } = require('../socket');
     emitToQuiz(quizId, 'participantJoined', joinPayload);
     emitToAdmin(quizId, 'participantJoined', joinPayload);
@@ -78,9 +78,9 @@ exports.joinQuiz = asyncHandler(async (req, res, next) => {
 
 // Partial answer saving for reconnection support
 exports.saveProgress = asyncHandler(async (req, res, next) => {
-  const { roll, answers } = req.body;
+  const { studentId, answers } = req.body;
   const quizId = req.body.quizId?.trim().toUpperCase();
-  const rollUpper = roll?.trim().toUpperCase();
+  const sId = studentId?.trim();
 
   const quiz = await Quiz.findOne({ quizId });
   if (!quiz || !quiz.isActive) {
@@ -88,7 +88,7 @@ exports.saveProgress = asyncHandler(async (req, res, next) => {
   }
 
   await Attempt.findOneAndUpdate(
-    { roll: rollUpper, quizId },
+    { studentId: sId, quizId },
     { $set: { answers } },
     { new: true, upsert: true }
   );
@@ -115,15 +115,15 @@ exports.getQuestions = asyncHandler(async (req, res, next) => {
 
 // Final submission and scoring logic
 exports.submitQuiz = asyncHandler(async (req, res, next) => {
-  const { name, roll, answers } = req.body;
+  const { name, studentId, answers } = req.body;
   const quizId = req.body.quizId?.trim().toUpperCase();
-  const rollUpper = roll?.trim().toUpperCase();
+  const sId = studentId?.trim();
 
   const quiz = await Quiz.findOne({ quizId });
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
   if (!quiz.startedAt) return next(new ErrorResponse('Quiz not started', 403));
 
-  const existing = await Result.findOne({ roll: rollUpper, quizId });
+  const existing = await Result.findOne({ studentId: sId, quizId });
   if (existing) {
     return res.status(200).json({ success: true, result: existing, totalQuestions: (existing.totalQuestions || 0), message: 'Already submitted' });
   }
@@ -148,7 +148,7 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
 
   const result = await Result.create({
     name,
-    roll: rollUpper,
+    studentId: sId,
     quizId,
     score: finalScore,
     correctAnswers: correctCount,
@@ -160,12 +160,12 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   });
 
   await Promise.all([
-    Attempt.deleteOne({ roll: rollUpper, quizId }),
-    Participant.deleteOne({ roll: rollUpper, quizId })
+    Attempt.deleteOne({ studentId: sId, quizId }),
+    Participant.deleteOne({ studentId: sId, quizId })
   ]);
 
   // Notify admin room of a submission (for real-time checkmarks)
-  getIO().to(`ADMIN_${quizId}`).emit('participantSubmitted', { roll: rollUpper });
+  getIO().to(`ADMIN_${quizId}`).emit('participantSubmitted', { studentId: sId });
 
   const { throttledBroadcastLeaderboard } = require('../utils/broadcastUtils');
   throttledBroadcastLeaderboard(quizId);

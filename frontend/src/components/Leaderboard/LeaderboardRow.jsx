@@ -14,7 +14,7 @@ function formatTime(seconds) {
  * Memoized to prevent unnecessary re-renders in large participant pools (70+).
  */
 const LeaderboardRow = React.memo(({ entry, student, rank, totalQuestions }) => {
-  const isCurrentUser = entry.roll === student?.roll;
+  const isCurrentUser = entry.studentId === student?.studentId;
   
   return (
     <motion.tr
@@ -48,7 +48,7 @@ const LeaderboardRow = React.memo(({ entry, student, rank, totalQuestions }) => 
               {entry.name}
               {isCurrentUser && <span className="ml-1.5 text-xs text-brand-500">(You)</span>}
             </p>
-            <p className="text-xs text-white font-medium truncate">{entry.roll}</p>
+            <p className="text-xs text-white font-medium truncate">{entry.studentId}</p>
           </div>
         </div>
       </td>

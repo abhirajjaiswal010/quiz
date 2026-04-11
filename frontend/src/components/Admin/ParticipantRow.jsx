@@ -13,7 +13,7 @@ const ParticipantRow = React.memo(({ p, idx }) => {
         <p className="text-xs font-bold text-white truncate">{p.name}</p>
         <div className="flex items-center gap-4 mt-0.5">
           <p className="text-[12px] font-mono text-white/50  tracking-tighter">
-             <span className="text-white mr-1">Roll:</span>{p.roll}
+             <span className="text-white mr-1">ID:</span>{p.studentId}
           </p>
           {p.isSubmitted ? (
             <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase bg-emerald-400/10 px-1.5 py-0.5 rounded-md border border-emerald-400/20">

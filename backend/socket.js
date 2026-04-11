@@ -20,16 +20,16 @@ const initSocket = (server, allowedOrigins = ["*"]) => {
     socket.on('joinQuiz', (data) => {
       // Handle both string (old) and object (new) formats for backward compatibility
       const quizId = (typeof data === 'string' ? data : data.quizId)?.toUpperCase();
-      const roll = typeof data === 'object' ? data.roll : null;
+      const studentId = typeof data === 'object' ? data.studentId : null;
       
       if (!quizId) return;
       socket.join(quizId);
       
-      if (roll) {
-        socketUserMap.set(socket.id, { quizId, roll });
+      if (studentId) {
+        socketUserMap.set(socket.id, { quizId, studentId });
       }
       
-      console.log(`✅ ${socket.id} ${roll ? `(${roll})` : ''} joined quiz: ${quizId}`);
+      console.log(`✅ ${socket.id} ${studentId ? `(${studentId})` : ''} joined quiz: ${quizId}`);
     });
 
     // Admin Room (to receive all events for a quiz)
@@ -41,10 +41,10 @@ const initSocket = (server, allowedOrigins = ["*"]) => {
 
     socket.on('disconnect', () => {
       if (socketUserMap.has(socket.id)) {
-        const { quizId, roll } = socketUserMap.get(socket.id);
-        io.to(`ADMIN_${quizId}`).emit('participantLeft', { roll });
+        const { quizId, studentId } = socketUserMap.get(socket.id);
+        io.to(`ADMIN_${quizId}`).emit('participantLeft', { studentId });
         socketUserMap.delete(socket.id);
-        console.log(`🚪 Student Left: ${roll} from ${quizId}`);
+        console.log(`🚪 Student Left: ${studentId} from ${quizId}`);
       }
       console.log(`❌ Disconnected: ${socket.id}`);
     });

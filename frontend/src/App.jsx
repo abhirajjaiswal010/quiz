@@ -7,6 +7,8 @@ import WaitingPage from './pages/WaitingPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import AdminPanel from './pages/AdminPanel'
 import { Toaster } from 'react-hot-toast'
+import WelcomePreloader from './components/WelcomePreloader'
+import { useState, useEffect } from 'react'
 
 function AppRoutes() {
   const { phase, result, student, questions, isQuizActive } = useQuiz()
@@ -51,10 +53,26 @@ function AppRoutes() {
 
 
 export default function App() {
+  const [showWelcome, setShowWelcome] = useState(true);
+
+  useEffect(() => {
+    // Check if they've already seen the preloader in this session
+    const hasSeen = sessionStorage.getItem('has_seen_welcome');
+    if (hasSeen) {
+      setShowWelcome(false);
+    }
+  }, []);
+
+  const handleWelcomeComplete = () => {
+    sessionStorage.setItem('has_seen_welcome', 'true');
+    setShowWelcome(false);
+  };
+
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <SocketProvider>
         <QuizProvider>
+          {showWelcome && <WelcomePreloader onComplete={handleWelcomeComplete} />}
           <Toaster position="top-center" toastOptions={{ 
             style: { 
               background: '#0f172a', 
@@ -63,7 +81,9 @@ export default function App() {
               borderRadius: '12px'
             } 
           }} />
-          <AppRoutes />
+          <div className={showWelcome ? 'hidden' : 'block'}>
+            <AppRoutes />
+          </div>
         </QuizProvider>
       </SocketProvider>
     </Router>

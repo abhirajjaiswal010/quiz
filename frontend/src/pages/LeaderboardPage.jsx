@@ -76,7 +76,7 @@ export default function LeaderboardPage() {
   }, [result]);
 
   const myRank = result
-    ? leaderboard.findIndex((r) => r.roll === student?.roll) + 1
+    ? leaderboard.findIndex((r) => r.studentId === student?.studentId) + 1
     : null;
 
   return (

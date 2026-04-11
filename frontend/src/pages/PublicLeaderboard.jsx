@@ -64,11 +64,11 @@ export default function PublicLeaderboard() {
             </tr></thead>
             <tbody className="divide-y divide-slate-800/50">
               {leaderboard.map((entry) => (
-                <tr key={entry.roll} className="hover:bg-slate-800/30 transition-colors">
+                <tr key={entry.studentId} className="hover:bg-slate-800/30 transition-colors">
                   <td className="px-4 py-3"><RankBadge rank={entry.rank} /></td>
                   <td className="px-4 py-3">
                     <p className="text-sm font-medium text-slate-200">{entry.name}</p>
-                    <p className="text-xs text-slate-600">{entry.roll}</p>
+                    <p className="text-xs text-slate-600">{entry.studentId}</p>
                   </td>
                   <td className="px-4 py-3 hidden sm:table-cell">
                     <span className="badge bg-slate-800 text-slate-400 border border-slate-700">{entry.department}</span>

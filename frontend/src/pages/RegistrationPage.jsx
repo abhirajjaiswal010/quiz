@@ -11,7 +11,7 @@ import RegistrationForm from '../components/Registration/RegistrationForm';
 export default function RegistrationPage() {
   const { goToWaiting, goToQuiz } = useQuiz();
 
-  const [form, setForm] = useState({ name: '', roll: '', quizId: '' });
+  const [form, setForm] = useState({ name: '', quizId: '' });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -29,13 +29,19 @@ export default function RegistrationPage() {
     // Basic Validation
     if (!form.quizId.trim()) return toast.error('Quiz ID is required');
     if (!form.name.trim()) return toast.error('Full Name is required');
-    if (!form.roll.trim()) return toast.error('Roll Number is required');
 
     setLoading(true);
 
+    // Auto-generate or retrieve a unique student identifier
+    let autoStudentId = localStorage.getItem('clubquiz_session_id');
+    if (!autoStudentId) {
+      autoStudentId = 'STU_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+      localStorage.setItem('clubquiz_session_id', autoStudentId);
+    }
+
     const studentData = {
       name: form.name.trim(),
-      roll: form.roll.trim().toUpperCase(),
+      studentId: autoStudentId,
       quizId: form.quizId.trim().toUpperCase(),
     };
 

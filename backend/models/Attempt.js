@@ -8,11 +8,10 @@ const mongoose = require('mongoose');
  */
 const attemptSchema = new mongoose.Schema(
   {
-    roll: {
+    studentId: {
       type: String,
       required: true,
       trim: true,
-      uppercase: true,
     },
     quizId: {
       type: String,
@@ -44,8 +43,8 @@ const attemptSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// One in-progress attempt per (roll + quizId)
-attemptSchema.index({ roll: 1, quizId: 1 }, { unique: true });
+// One in-progress attempt per (studentId + quizId)
+attemptSchema.index({ studentId: 1, quizId: 1 }, { unique: true });
 
 // Auto-cleanup after 4 hours (safety net for abandoned sessions)
 attemptSchema.index({ joinedAt: 1 }, { expireAfterSeconds: 14400 });

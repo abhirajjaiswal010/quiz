@@ -267,13 +267,13 @@ export const useAdminData = () => {
     const handleParticipantJoined = (data) => {
       console.log('👤 Live Event: Participant Joined', data);
       setParticipantCount(data.participantCount);
-      if (data.name && data.roll) {
+      if (data.name && data.studentId) {
         setParticipants(prev => {
-          if (prev.some(p => p.roll === data.roll)) {
+          if (prev.some(p => p.studentId === data.studentId)) {
             // If they were already there (e.g. reconnected), clear their disconnected status
-            return prev.map(p => p.roll === data.roll ? { ...p, isDisconnected: false } : p);
+            return prev.map(p => p.studentId === data.studentId ? { ...p, isDisconnected: false } : p);
           }
-          return [{ name: data.name, roll: data.roll, joinedAt: new Date(), isDisconnected: false }, ...prev];
+          return [{ name: data.name, studentId: data.studentId, joinedAt: new Date(), isDisconnected: false }, ...prev];
         });
         toast.success(`${data.name} joined!`, { id: 'join-alert', duration: 2000 });
       }
@@ -282,14 +282,14 @@ export const useAdminData = () => {
     const handleParticipantLeft = (data) => {
       console.log('🚪 Live Event: Participant Left', data);
       setParticipants(prev => prev.map(p => 
-        p.roll === data.roll ? { ...p, isDisconnected: true } : p
+        p.studentId === data.studentId ? { ...p, isDisconnected: true } : p
       ));
     };
 
     const handleParticipantSubmitted = (data) => {
       console.log('✅ Live Event: Participant Submitted', data);
       setParticipants(prev => prev.map(p => 
-        p.roll === data.roll ? { ...p, isSubmitted: true, isDisconnected: false } : p
+        p.studentId === data.studentId ? { ...p, isSubmitted: true, isDisconnected: false } : p
       ));
     };
 

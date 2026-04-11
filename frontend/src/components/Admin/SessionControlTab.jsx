@@ -138,7 +138,7 @@ const SessionControlTab = ({
               {/* Scrollable list of student sessions */}
               <div className="max-h-[280px] overflow-y-auto pr-1 space-y-2 mt-2 custom-scrollbar">
                 {filteredParticipants.length > 0 ? filteredParticipants.map((p, idx) => (
-                  <ParticipantRow key={p.roll || idx} p={p} idx={idx} />
+                  <ParticipantRow key={p.studentId || idx} p={p} idx={idx} />
                 )) : (
                   <div className="py-12 text-center opacity-30 italic text-xs">
                     No participant data available for this selection

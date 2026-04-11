@@ -197,7 +197,7 @@ export const QuizProvider = ({ children }) => {
     try {
       const data = await submitQuizApi({
         name: student.name,
-        roll: student.roll,
+        studentId: student.studentId,
         quizId: student.quizId,
         answers: answersPayload,
         timeTaken,
@@ -224,12 +224,12 @@ export const QuizProvider = ({ children }) => {
       const updated = { ...prev, [questionId]: option }
 
       // Fire-and-forget save to backend (debounced effect not needed — per-answer is fine)
-      if (student?.quizId && student?.roll) {
+      if (student?.quizId && student?.studentId) {
         saveProgress({
-          roll: student.roll,
           quizId: student.quizId,
+          studentId: student.studentId,
           answers: updated,
-        }).catch(() => { }) // Silently fail — local state is still intact
+        }).catch(() => { })
       }
 
       return updated
@@ -241,7 +241,7 @@ export const QuizProvider = ({ children }) => {
     if (!socket || !student?.quizId) return
 
     const quizId = student.quizId.toUpperCase()
-    socket.emit('joinQuiz', { quizId, roll: student.roll })
+    socket.emit('joinQuiz', { quizId, studentId: student.studentId })
 
     // Admin started quiz → broadcast received by waiting students
     const handleQuizStarted = (data) => {

@@ -15,7 +15,7 @@ const throttledBroadcastLeaderboard = (quizId) => {
     try {
       const results = await Result.find({ quizId })
         .sort({ score: -1, correctAnswers: -1, timeTaken: 1 })
-        .select('name roll score correctAnswers totalQuestions timeTaken')
+        .select('name studentId score correctAnswers totalQuestions timeTaken')
         .lean();
       
       const io = getIO();

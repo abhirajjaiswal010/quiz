@@ -19,7 +19,7 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
             name="quizId"
             value={form.quizId}
             onChange={onChange}
-            placeholder="e.g. COLLEGE_24"
+            // placeholder="e.g. COLLEGE_24"
             className="input-field bg-white/5 border-white/10 text-white py-2.5 text-sm focus:border-[#4FB3FF] transition-all w-full px-4 rounded-lg placeholder:text-white/20 uppercase"
             required
           />
@@ -35,24 +35,8 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
             name="name"
             value={form.name}
             onChange={onChange}
-            placeholder="e.g. Alexander Pierce"
+            // placeholder="E.G. Alexander Pierce"
             className="input-field bg-white/5 border-white/10 text-white py-2.5 text-sm focus:border-[#4FB3FF] transition-all w-full px-4 rounded-lg placeholder:text-white/20"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="roll" className="text-xs font-semibold text-white uppercase tracking-widest mb-1.5 block">
-            Roll Number
-          </label>
-          <input
-            id="roll"
-            type="text"
-            name="roll"
-            value={form.roll}
-            onChange={onChange}
-            placeholder="e.g. 24BCS001"
-            className="input-field bg-white/5 border-white/10 text-white py-2.5 text-sm uppercase focus:border-[#4FB3FF] transition-all w-full px-4 rounded-lg placeholder:text-white/20"
             required
           />
         </div>

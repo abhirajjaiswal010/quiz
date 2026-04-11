@@ -62,7 +62,7 @@ const LeaderboardTable = ({ leaderboard, student, loading, error, totalQuestions
             <AnimatePresence initial={false}>
               {leaderboard.map((entry, idx) => (
                 <LeaderboardRow 
-                  key={entry.roll || idx} 
+                  key={entry.studentId || idx} 
                   entry={entry} 
                   student={student} 
                   rank={idx + 1} 
