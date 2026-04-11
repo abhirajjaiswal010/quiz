@@ -53,6 +53,8 @@ export const QuizProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null
   })
 
+  const [leaderboard, setLeaderboard] = useState([])
+
   // ── Server-authoritative timing (NEVER touch after quiz starts) ───────────
   // startTime: epoch ms when admin started the quiz (from server)
   // quizDuration: minutes (from server)
@@ -94,14 +96,17 @@ export const QuizProvider = ({ children }) => {
 
   useEffect(() => {
     if (questions.length) localStorage.setItem('quiz_questions', JSON.stringify(questions))
+    else localStorage.removeItem('quiz_questions')
   }, [questions])
 
   useEffect(() => {
     if (Object.keys(answers).length) localStorage.setItem('quiz_answers', JSON.stringify(answers))
+    else localStorage.removeItem('quiz_answers')
   }, [answers])
 
   useEffect(() => {
     if (result) localStorage.setItem('quiz_result', JSON.stringify(result))
+    else localStorage.removeItem('quiz_result')
   }, [result])
 
   useEffect(() => {
@@ -264,7 +269,7 @@ export const QuizProvider = ({ children }) => {
     }
 
     const handleLeaderboardUpdate = (data) => {
-      setResult(prev => ({ ...prev, leaderboard: data.results }))
+      setLeaderboard(data.results || [])
     }
 
     socket.on('quizStarted', handleQuizStarted)
@@ -362,6 +367,7 @@ export const QuizProvider = ({ children }) => {
         startTime,
         allowTabSwitching,
         isSubmitting,
+        leaderboard,
         // Actions
         goToWaiting,
         goToQuiz,

@@ -41,6 +41,19 @@ export default function QuizPage() {
   const [showIntro, setShowIntro] = useState(true)
   const [showRules, setShowRules] = useState(false) // No longer blocking by default
 
+  /** ─── Fullscreen Logic ───────────────────────────────────────────── */
+  const enterFullscreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch(err => console.warn("Fullscreen blocked:", err));
+    }
+  };
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    enterFullscreen();
+  };
+
   // ── ANTI-CHEAT STRIKES ──
   const [strikes, setStrikes] = useState(() => {
     const saved = localStorage.getItem('quiz_strikes')
@@ -130,9 +143,12 @@ export default function QuizPage() {
     timeLeft > 300 ? 'text-emerald-400' : timeLeft > 60 ? 'text-amber-400' : 'text-red-400'
 
   return (
-    <div className="min-h-screen flex flex-col animate-fade-in bg-[#0f0f0f] text-white">
+    <div 
+      className="min-h-screen flex flex-col animate-fade-in bg-[#0f0f0f] text-white select-none"
+      onContextMenu={(e) => e.preventDefault()}
+    >
 
-      {showIntro && <QuizIntro onComplete={() => setShowIntro(false)} />}
+      {showIntro && <QuizIntro onComplete={handleIntroComplete} />}
 
       {showRules && <QuizRules onStart={() => setShowRules(false)} />}
 
@@ -141,7 +157,10 @@ export default function QuizPage() {
         <AntiCheatWarning
           strikes={strikes}
           setIsFullscreenWarning={(val) => {
-            if (!val) localStorage.removeItem('quiz_warn_pending');
+            if (!val) {
+              localStorage.removeItem('quiz_warn_pending');
+              enterFullscreen();
+            }
             setIsFullscreenWarning(val);
           }}
         />

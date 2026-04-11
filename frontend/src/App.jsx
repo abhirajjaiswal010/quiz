@@ -9,7 +9,7 @@ import AdminPanel from './pages/AdminPanel'
 import { Toaster } from 'react-hot-toast'
 
 function AppRoutes() {
-  const { phase, result, student, questions } = useQuiz()
+  const { phase, result, student, questions, isQuizActive } = useQuiz()
 
   // ── Routing Guards ──
   // 1. If result exists, always force to leaderboard
@@ -32,13 +32,13 @@ function AppRoutes() {
       } />
 
       <Route path="/quiz" element={
-        result ? <Navigate to="/leaderboard" replace /> :
+        (result || !isQuizActive) ? <Navigate to="/leaderboard" replace /> :
         questions.length > 0 ? <QuizPage /> : 
         student ? <Navigate to="/waiting" replace /> : <Navigate to="/" replace />
       } />
 
       <Route path="/leaderboard" element={
-        result ? <LeaderboardPage /> : 
+        (result || !isQuizActive) ? <LeaderboardPage /> : 
         questions.length > 0 ? <Navigate to="/quiz" replace /> :
         student ? <Navigate to="/waiting" replace /> : <Navigate to="/" replace />
       } />

@@ -5,7 +5,7 @@ export default function QuestionCard({ currentQuestion, currentIndex, answers, s
   const labels = ['A', 'B', 'C', 'D'];
 
   return (
-    <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-[#0f0f0f] border-white/20">
+    <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-[#0f0f0f] border-white/20 select-none">
       <div className="flex items-start gap-4 mb-6">
         <span className="flex-shrink-0 w-20  h-10 rounded-xl bg-white/20 border border-white/20 flex items-center justify-center text-white font-bold text-sm">
           Que {currentIndex + 1}
