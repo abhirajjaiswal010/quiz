@@ -121,7 +121,7 @@ export default function LeaderboardPage() {
           <button
             id="back-to-home-btn"
             onClick={reset}
-            className="btn-secondary mx-auto font-montserrat uppercase px-10 py-4 tracking-widest text-[10px] font-black border-none"
+            className="btn-secondary mx-auto font-montserrat uppercase px-10 py-4 tracking-widest text-[10px] font-bold border-none"
           >
             <ArrowBigLeftDashIcon/> Exit to Portal
           </button>

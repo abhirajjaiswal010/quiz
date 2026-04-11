@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import Lottie from 'lottie-react';
 import Beams from '../beams';
 import CountUp from '../CountUp';
 
 const StatusMessages = [
-  "Manifesting 100% accuracy...",
-  "Cooking the leaderboard...",
-  "Vibing with the quiz vault...",
-  "Deleting all the brain rot...",
-  "Main character energy loading...",
+  { text: "Manifesting 100% accuracy...", code: "1f619" },
+  { text: "Cooking the leaderboard...", code: "1f525" },
+  { text: "Vibing with the quiz vault...", code: "1f60e" },
+  { text: "Deleting all the brain rot...", code: "1f9d8" },
+  { text: "Main character energy loading...", code: "1f680" },
 ];
+
+const LottieEmoji = ({ code }) => {
+  const [animationData, setAnimationData] = useState(null);
+
+  useEffect(() => {
+    fetch(`https://fonts.gstatic.com/s/e/notoemoji/latest/${code}/lottie.json`)
+      .then(res => res.json())
+      .then(data => setAnimationData(data))
+      .catch(err => console.error("Lottie Load Error:", err));
+  }, [code]);
+
+  if (!animationData) return <div className="w-16 h-16" />;
+  return (
+    <div className="w-16 h-16 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+      <Lottie animationData={animationData} loop={true} />
+    </div>
+  );
+};
 
 const interpolateHex = (color1, color2, factor) => {
   const r1 = parseInt(color1.substring(1, 3), 16);
@@ -154,9 +173,12 @@ export default function QuizIntro({ onComplete }) {
               <div key={p} className={`h-1 rounded-full transition-all duration-500 ${progress >= p ? 'w-8 bg-white shadow-[0_0_10px_#white]' : 'w-4 bg-white/5'}`} />
             ))}
           </div>
-          <p className="text-md font-poppins  uppercase tracking-[0.3em] text-white animate-pulse">
-            {StatusMessages[msgIndex]}
-          </p>
+          <div className="flex flex-col items-center gap-4">
+             <LottieEmoji code={StatusMessages[msgIndex].code} />
+             <p className="text-md font-poppins uppercase tracking-[0.3em] text-white animate-pulse">
+               {StatusMessages[msgIndex].text}
+             </p>
+          </div>
         </div>
       </div>
 
