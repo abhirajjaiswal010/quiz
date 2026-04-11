@@ -25,7 +25,14 @@ const SessionControlTab = ({
     <div className="space-y-8 animate-slide-up">
       <div className="card p-8">
         <h2 className="text-xl font-bold text-white mb-6">Manage Quiz Session</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mt-6">
+          {/* Socket Connection Status */}
+          <div className="lg:col-span-2 flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10">
+             <div className={`w-2 h-2 rounded-full ${socketConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+             <p className="text-[10px] font-bold text-white/50 uppercase tracking-widest">
+               Real-time Data Stream: {socketConnected ? 'Connected' : 'Disconnected / Reconnecting...'}
+             </p>
+          </div>
 
           {/* Left: Input Controls */}
           <div className="space-y-6">
@@ -94,7 +101,7 @@ const SessionControlTab = ({
               <div className="flex items-center justify-between mb-2">
                 <div>
                   <p className="text-xs text-white uppercase font-bold mb-1 tracking-widest">Active Pool</p>
-                  <div className="flex items-center -ml-2">
+                  <div className="flex items-center -ml-2 gap-4">
                     <Counter 
                       value={participantCount} 
                       fontSize={48} 
@@ -102,6 +109,7 @@ const SessionControlTab = ({
                       gradientHeight={0}
                       containerStyle={{ display: 'inline-flex' }}
                     />
+                    <span className="text-white/20 text-xs font-mono self-end mb-2">/ RAW: {participantCount}</span>
                   </div>
                 </div>
                 <div className="text-white">

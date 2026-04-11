@@ -16,6 +16,7 @@ export const useAdminData = () => {
   const [participants, setParticipants] = useState([]);
   const [sessionInfo, setSessionInfo] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [socketConnected, setSocketConnected] = useState(socket?.connected || false);
 
   const [duration, setDuration] = useState(15);
   const [allowTabSwitching, setAllowTabSwitching] = useState(false);
@@ -248,7 +249,14 @@ export const useAdminData = () => {
     }
 
     // Handle reconnections
-    socket.on('connect', joinRoom);
+    const onConnect = () => {
+      setSocketConnected(true);
+      joinRoom();
+    };
+    const onDisconnect = () => setSocketConnected(false);
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
 
     const handleParticipantJoined = (data) => {
       console.log('👤 Live Event: Participant Joined', data);
@@ -304,7 +312,8 @@ export const useAdminData = () => {
     socket.on('quizStopped', handleQuizStopped);
 
     return () => {
-      socket.off('connect', joinRoom);
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
       socket.off('participantJoined', handleParticipantJoined);
       socket.off('participantLeft', handleParticipantLeft);
       socket.off('participantSubmitted', handleParticipantSubmitted);
@@ -318,7 +327,7 @@ export const useAdminData = () => {
     isAuthorized, loading, tab, setTab, quizId, setQuizId, status, participantCount,
     participants, sessionInfo, duration, setDuration, allowTabSwitching, setAllowTabSwitching,
     questions, quizzes, qForm, setQForm, editingId, setEditingId, leaderboard,
-    handleLogin, handleLogout, fetchStatus, handleCreate, handleStart, handleStop,
+    handleLogin, handleLogout, fetchStatus, handleCreate, handleStart, handleStop, socketConnected,
     fetchQuizzes, handleSaveQuestion, handleDeleteQuestion, handleDeleteQuiz, handleBulkUpload
   };
 };

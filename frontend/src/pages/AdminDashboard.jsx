@@ -20,7 +20,7 @@ export default function AdminDashboard({
   duration, setDuration, allowTabSwitching, setAllowTabSwitching,
   loading, status, participantCount, participants, sessionInfo, leaderboard, handleLogout,
   questions, quizzes, fetchQuizzes, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion,
-  handleDeleteQuiz, handleBulkUpload
+  handleDeleteQuiz, handleBulkUpload, socketConnected
 }) {
 
   return (
@@ -44,7 +44,7 @@ export default function AdminDashboard({
                 allowTabSwitching={allowTabSwitching} setAllowTabSwitching={setAllowTabSwitching}
                 fetchStatus={fetchStatus} handleCreate={handleCreate} handleStart={handleStart} handleStop={handleStop}
                 loading={loading} status={status} participantCount={participantCount} participants={participants}
-                sessionInfo={sessionInfo}
+                sessionInfo={sessionInfo} socketConnected={socketConnected}
               />
             )}
 

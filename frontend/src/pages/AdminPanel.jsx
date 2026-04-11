@@ -59,6 +59,7 @@ export default function AdminPanel() {
       handleDeleteQuestion={adminManager.handleDeleteQuestion}
       handleDeleteQuiz={adminManager.handleDeleteQuiz}
       handleBulkUpload={adminManager.handleBulkUpload}
+      socketConnected={adminManager.socketConnected}
     />
   );
 }
