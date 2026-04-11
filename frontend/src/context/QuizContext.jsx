@@ -75,6 +75,7 @@ export const QuizProvider = ({ children }) => {
   const [phase, setPhase] = useState('register')
   const [isQuizActive, setIsQuizActive] = useState(false)
   const [participantCount, setParticipantCount] = useState(0)
+  const [recentJoiners, setRecentJoiners] = useState([])
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Prevent duplicate socket-triggered submit runs
@@ -266,6 +267,13 @@ export const QuizProvider = ({ children }) => {
     const handleParticipantJoined = (data) => {
       console.log('👤 participantJoined', data)
       setParticipantCount(data.participantCount || 0)
+      if (data.name) {
+        setRecentJoiners(prev => {
+          // Keep only the 5 most recent people
+          const updated = [{ name: data.name, id: Date.now() }, ...prev];
+          return updated.slice(0, 5);
+        });
+      }
     }
 
     const handleLeaderboardUpdate = (data) => {
@@ -363,6 +371,7 @@ export const QuizProvider = ({ children }) => {
         phase,
         isQuizActive,
         participantCount,
+        recentJoiners,
         quizDuration,
         startTime,
         allowTabSwitching,

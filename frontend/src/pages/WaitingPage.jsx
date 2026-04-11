@@ -6,7 +6,7 @@ import BreathingGuide from '../components/Waiting/BreathingGuide'
 import WaitingStatus from '../components/Waiting/WaitingStatus'
 import WaitingTips from '../components/Waiting/WaitingTips'
 import QuizRules from '../components/Quiz/QuizRules'
-import { ShieldCheck } from 'lucide-react'
+import { ShieldCheck, Users } from 'lucide-react'
 
 const MOTIVATIONAL_MESSAGES = [
   "Stay calm, you got this ",
@@ -28,7 +28,7 @@ const PHASES = [
 ]
 
 export default function WaitingPage() {
-  const { student, participantCount } = useQuiz()
+  const { student, participantCount, recentJoiners } = useQuiz()
   const [showRules, setShowRules] = useState(false)
 
   // ── Phase clock ─────────────────────────────────────────────────────────
@@ -138,6 +138,24 @@ export default function WaitingPage() {
           <ShieldCheck size={14} className="text-brand-400" />
           View Rules
         </button>
+      </div>
+
+      {/* Live Joining Feed */}
+      <div className="absolute top-6 right-6 w-48 z-10 hidden md:block">
+        <h3 className="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] mb-3 flex items-center gap-1.5">
+          <Users size={12} className="text-emerald-400" />
+          Live Join Feed
+        </h3>
+        <div className="space-y-2">
+          {recentJoiners && recentJoiners.length > 0 ? recentJoiners.map((rj) => (
+            <div key={rj.id} className="flex items-center gap-2 bg-slate-800/30 border border-slate-700/50 px-3 py-1.5 rounded-lg animate-slide-up">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
+              <p className="text-[11px] text-white/80 font-bold font-montserrat truncate">{rj.name}</p>
+            </div>
+          )) : (
+             <p className="text-[10px] text-slate-600 italic">New participants will appear here...</p>
+          )}
+        </div>
       </div>
 
       {/* Rules Modal Overlay */}
