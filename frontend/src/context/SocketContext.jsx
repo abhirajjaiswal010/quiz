@@ -8,18 +8,26 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Determine socket URL based on environment
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+    console.log(`🔌 Connecting to Socket.io via Proxy at: ${socketUrl}`);
     
     const newSocket = io(socketUrl, {
-      transports: ['polling', 'websocket'], // Robust fallback sequence
+      transports: ['polling', 'websocket'],
       reconnection: true,
-      reconnectionAttempts: 5,
-      timeout: 10000
+      reconnectionAttempts: 10, // Increased for stability
+      timeout: 20000 // Increased timeout
     });
+
+    newSocket.on('connect', () => console.log('✅ Socket Connected:', newSocket.id));
+    newSocket.on('connect_error', (err) => console.error('❌ Socket Connection Error:', err.message));
+    newSocket.on('disconnect', (reason) => console.warn('⚠️ Socket Disconnected:', reason));
 
     setSocket(newSocket);
 
-    return () => newSocket.close();
+    return () => {
+      console.log('🔌 Closing Socket.io connection');
+      newSocket.close();
+    };
   }, []);
 
   return (
