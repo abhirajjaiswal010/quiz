@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function QuestionCard({ currentQuestion, currentIndex, answers, selectAnswer, isSubmitting }) {
+const QuestionCard = memo(({ currentQuestion, currentIndex, answers, selectAnswer, isSubmitting }) => {
   if (!currentQuestion) return null;
   const labels = ['A', 'B', 'C', 'D'];
+
+  const currentAnswer = answers[currentQuestion._id];
 
   return (
     <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-[#0f0f0f] border-white/20 select-none">
@@ -18,7 +20,7 @@ export default function QuestionCard({ currentQuestion, currentIndex, answers, s
       {/* Options */}
       <div className="space-y-3">
         {currentQuestion.options.map((option, idx) => {
-          const isSelected = answers[currentQuestion._id] === option;
+          const isSelected = currentAnswer === option;
           return (
             <button
               key={idx}
@@ -43,4 +45,6 @@ export default function QuestionCard({ currentQuestion, currentIndex, answers, s
       </div>
     </div>
   );
-}
+});
+
+export default QuestionCard;

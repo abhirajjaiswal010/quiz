@@ -82,8 +82,8 @@ exports.getQuizStatus = asyncHandler(async (req, res, next) => {
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
 
   const [activeParticipants, submittedResults, totalQuestions] = await Promise.all([
-    Participant.find({ quizId }).select('name roll joinedAt').sort({ joinedAt: -1 }).lean(),
-    Result.find({ quizId }).select('name roll createdAt').sort({ createdAt: -1 }).lean(),
+    Participant.find({ quizId }).select('name roll joinedAt').sort({ joinedAt: -1 }).limit(100).lean(),
+    Result.find({ quizId }).select('name roll createdAt').sort({ createdAt: -1 }).limit(100).lean(),
     Question.countDocuments()
   ]);
 
@@ -94,14 +94,14 @@ exports.getQuizStatus = asyncHandler(async (req, res, next) => {
     isSubmitted: true
   }));
 
-  const allParticipants = [...activeParticipants, ...submittedParticipants].sort((a, b) => 
-    new Date(b.joinedAt) - new Date(a.joinedAt)
-  );
+  const allParticipants = [...activeParticipants, ...submittedParticipants]
+    .sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt))
+    .slice(0, 100); // Keep dashboard snappy
 
   res.status(200).json({
     success: true,
     isActive: quiz.isActive,
-    participantCount: activeParticipants.length,
+    participantCount: await Participant.countDocuments({ quizId }), // Still need total count
     participants: allParticipants,
     totalQuestions,
     createdAt: quiz.createdAt,

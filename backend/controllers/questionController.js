@@ -1,6 +1,7 @@
 const Question = require('../models/Question');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
+const { clearQuestionCache } = require('../utils/quizUtils');
 
 // Fetch all questions for admin management
 exports.getAdminQuestions = asyncHandler(async (req, res, next) => {
@@ -12,6 +13,7 @@ exports.getAdminQuestions = asyncHandler(async (req, res, next) => {
 exports.addQuestion = asyncHandler(async (req, res, next) => {
   const { question, options, answer } = req.body;
   const newQuestion = await Question.create({ question, options, answer });
+  clearQuestionCache();
   res.status(201).json({ success: true, question: newQuestion });
 });
 
@@ -21,12 +23,14 @@ exports.updateQuestion = asyncHandler(async (req, res, next) => {
     runValidators: true,
   });
   if (!question) return next(new ErrorResponse('Question not found', 404));
+  clearQuestionCache();
   res.status(200).json({ success: true, question });
 });
 
 exports.deleteQuestion = asyncHandler(async (req, res, next) => {
   const question = await Question.findByIdAndDelete(req.params.id);
   if (!question) return next(new ErrorResponse('Question not found', 404));
+  clearQuestionCache();
   res.status(200).json({ success: true, message: 'Deleted' });
 });
 
@@ -51,6 +55,7 @@ exports.uploadQuestions = asyncHandler(async (req, res, next) => {
   // Atomically swap questions
   await Question.deleteMany({});
   const newQuestions = await Question.insertMany(questions);
+  clearQuestionCache();
 
   res.status(200).json({ 
     success: true, 

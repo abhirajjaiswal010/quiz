@@ -12,19 +12,35 @@ const isTimeExpired = (quiz) => {
 };
 
 /**
+ * Server-side Cache for Questions
+ * Avoids hitting the DB for every single student submission.
+ */
+let cachedQuestions = null;
+let lastCacheUpdate = 0;
+const CACHE_TTL = 60 * 60 * 1000; // 1 Hour
+
+const getCachedQuestions = async () => {
+  const now = Date.now();
+  if (!cachedQuestions || (now - lastCacheUpdate) > CACHE_TTL) {
+    console.log('📦 Refreshing Questions Cache...');
+    const questions = await Question.find({});
+    cachedQuestions = questions.reduce((acc, q) => {
+      acc[q._id.toString()] = q.answer;
+      return acc;
+    }, {});
+    cachedQuestions._totalCount = questions.length;
+    lastCacheUpdate = now;
+  }
+  return cachedQuestions;
+};
+
+/**
  * Standardized score calculation for student submissions.
- * @param {Object} answersMap - { questionId: selectedOption }
- * @returns {Object} { correctCount, wrongCount, totalCount }
  */
 const calculateScore = async (answersMap) => {
-  const questionsDB = await Question.find({});
+  const questionMap = await getCachedQuestions();
   let correctCount = 0;
   let wrongCount = 0;
-
-  const questionMap = questionsDB.reduce((acc, q) => {
-    acc[q._id.toString()] = q.answer;
-    return acc;
-  }, {});
 
   for (const [questionId, selected] of Object.entries(answersMap)) {
     if (selected) {
@@ -36,10 +52,23 @@ const calculateScore = async (answersMap) => {
     }
   }
 
-  return { correctCount, wrongCount, totalCount: questionsDB.length };
+  return { 
+    correctCount, 
+    wrongCount, 
+    totalCount: questionMap._totalCount 
+  };
+};
+
+/**
+ * Manual cache clearing (call when questions are edited)
+ */
+const clearQuestionCache = () => {
+  cachedQuestions = null;
+  lastCacheUpdate = 0;
 };
 
 module.exports = {
   isTimeExpired,
   calculateScore,
+  clearQuestionCache
 };
