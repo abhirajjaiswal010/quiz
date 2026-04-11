@@ -7,7 +7,7 @@ import Counter from '../counter';
 const SessionControlTab = ({
   quizId, setQuizId, duration, setDuration, allowTabSwitching, setAllowTabSwitching,
   fetchStatus, handleCreate, handleStart, handleStop, loading, status,
-  participantCount, participants, sessionInfo
+  participantCount, participants, sessionInfo, socketConnected
 }) => {
   const [pTab, setPTab] = useState('all'); // all | doing | done
 
