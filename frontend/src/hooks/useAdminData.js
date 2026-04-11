@@ -254,9 +254,15 @@ export const useAdminData = () => {
       joinRoom();
     };
     const onDisconnect = () => setSocketConnected(false);
+    const onConnectError = (err) => {
+      console.error('Socket Connection Error:', err);
+      // Only toast once to avoid spamming
+      toast.error(`Stream Error: ${err.message}`, { id: 'socket-error' });
+    };
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('connect_error', onConnectError);
 
     const handleParticipantJoined = (data) => {
       console.log('👤 Live Event: Participant Joined', data);
@@ -314,6 +320,7 @@ export const useAdminData = () => {
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.off('connect_error', onConnectError);
       socket.off('participantJoined', handleParticipantJoined);
       socket.off('participantLeft', handleParticipantLeft);
       socket.off('participantSubmitted', handleParticipantSubmitted);

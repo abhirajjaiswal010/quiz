@@ -8,8 +8,22 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Determine socket URL based on environment
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || window.location.origin;
-    console.log(`🔌 Connecting to Socket.io via Proxy at: ${socketUrl}`);
+    // PRODUCTION-READY URL DETECTION
+    let socketUrl = import.meta.env.VITE_SOCKET_URL;
+
+    if (!socketUrl) {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (apiUrl) {
+         // If VITE_API_URL is "https://domain.com/api", derive "https://domain.com"
+         socketUrl = apiUrl.replace(/\/api\/?$/, '');
+      } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+         socketUrl = 'http://localhost:5000';
+      } else {
+         socketUrl = window.location.origin;
+      }
+    }
+    
+    console.log(`🔌 Socket connecting to: ${socketUrl}`);
     
     const newSocket = io(socketUrl, {
       transports: ['polling', 'websocket'],

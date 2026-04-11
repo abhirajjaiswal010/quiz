@@ -12,9 +12,14 @@ const { initSocket } = require('./socket'); // Import our separate socket logic
 
 const quizRoutes = require('./routes/quizRoutes');
 
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5173',
+  'https://clubquiz.vercel.app',
+];
+
 const app = express();
 const server = http.createServer(app); // Create an HTTP server from express app
-initSocket(server); // Initialize socket.io with the server
+initSocket(server, allowedOrigins); // Initialize socket.io with the server and allowed origins
 
 // ─── Security Middleware ────────────────────────────────────────────────────
 app.use(helmet());
@@ -38,7 +43,7 @@ app.use(
 
       // Allow any subdomains of vercel.app during deployment
       if (!origin) return callback(null, true);
-      if (allowedOrigins.some((o) => origin.startsWith(o)) || origin.endsWith('.vercel.app')) {
+      if (allowedOrigins.some((o) => origin === o || origin.startsWith(o)) || origin.endsWith('.vercel.app')) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
