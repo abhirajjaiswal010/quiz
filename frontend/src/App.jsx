@@ -9,20 +9,46 @@ import AdminPanel from './pages/AdminPanel'
 import { Toaster } from 'react-hot-toast'
 
 function AppRoutes() {
-  const { phase, result, student } = useQuiz()
+  const { phase, result, student, questions } = useQuiz()
 
+  // ── Routing Guards ──
+  // 1. If result exists, always force to leaderboard
+  // 2. If quiz has started (questions loaded), force to quiz
+  // 3. If registered but no questions, force to waiting
+  
   return (
     <Routes>
-      <Route path="/" element={result ? <Navigate to="/leaderboard" replace /> : <RegistrationPage />} />
-      <Route path="/waiting" element={<WaitingPage />} />
-      <Route path="/quiz" element={result ? <Navigate to="/leaderboard" replace /> : <QuizPage />} />
-      <Route path="/leaderboard" element={<LeaderboardPage />} />
+      <Route path="/" element={
+        result ? <Navigate to="/leaderboard" replace /> :
+        questions.length > 0 ? <Navigate to="/quiz" replace /> :
+        student ? <Navigate to="/waiting" replace /> :
+        <RegistrationPage />
+      } />
+
+      <Route path="/waiting" element={
+        result ? <Navigate to="/leaderboard" replace /> :
+        questions.length > 0 ? <Navigate to="/quiz" replace /> :
+        student ? <WaitingPage /> : <Navigate to="/" replace />
+      } />
+
+      <Route path="/quiz" element={
+        result ? <Navigate to="/leaderboard" replace /> :
+        questions.length > 0 ? <QuizPage /> : 
+        student ? <Navigate to="/waiting" replace /> : <Navigate to="/" replace />
+      } />
+
+      <Route path="/leaderboard" element={
+        result ? <LeaderboardPage /> : 
+        questions.length > 0 ? <Navigate to="/quiz" replace /> :
+        student ? <Navigate to="/waiting" replace /> : <Navigate to="/" replace />
+      } />
+
       <Route path="/admin" element={<AdminPanel />} />
-      {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }
+
 
 export default function App() {
   return (

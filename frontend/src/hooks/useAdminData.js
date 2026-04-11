@@ -219,8 +219,19 @@ export const useAdminData = () => {
     }
   }, [adminKey, fetchQuestions]);
 
+  // Auto-fetch status when quizId changes to keep UI fresh
   useEffect(() => {
-    if (!socket || !isAuthorized || !quizId || status === null) return;
+    if (isAuthorized && quizId && quizId.trim().length >= 3) {
+      const timer = setTimeout(() => {
+        fetchStatus(quizId, true);
+      }, 500); // Small debounce to avoid spamming while typing
+      return () => clearTimeout(timer);
+    }
+  }, [isAuthorized, quizId, fetchStatus]);
+
+  useEffect(() => {
+    // Removed 'status === null' check to allow joining room before status is fetched
+    if (!socket || !isAuthorized || !quizId) return;
 
     const normalizedId = quizId.trim().toUpperCase();
 
@@ -273,10 +284,24 @@ export const useAdminData = () => {
       setLeaderboard(data.results);
     };
 
+    const handleQuizStarted = () => {
+      console.log('🚀 Live Event: Quiz Started');
+      setStatus(true);
+      fetchStatus(normalizedId, true);
+    };
+
+    const handleQuizStopped = () => {
+      console.log('🛑 Live Event: Quiz Stopped');
+      setStatus(false);
+      fetchStatus(normalizedId, true);
+    };
+
     socket.on('participantJoined', handleParticipantJoined);
     socket.on('participantLeft', handleParticipantLeft);
     socket.on('participantSubmitted', handleParticipantSubmitted);
     socket.on('leaderboardUpdateAdmin', handleLeaderboardUpdate);
+    socket.on('quizStarted', handleQuizStarted);
+    socket.on('quizStopped', handleQuizStopped);
 
     return () => {
       socket.off('connect', joinRoom);
@@ -284,8 +309,10 @@ export const useAdminData = () => {
       socket.off('participantLeft', handleParticipantLeft);
       socket.off('participantSubmitted', handleParticipantSubmitted);
       socket.off('leaderboardUpdateAdmin', handleLeaderboardUpdate);
+      socket.off('quizStarted', handleQuizStarted);
+      socket.off('quizStopped', handleQuizStopped);
     };
-  }, [socket, isAuthorized, quizId, status]);
+  }, [socket, isAuthorized, quizId, fetchStatus]);
 
   return {
     isAuthorized, loading, tab, setTab, quizId, setQuizId, status, participantCount,

@@ -7,9 +7,9 @@ export default function AntiCheatWarning({ strikes, setIsFullscreenWarning }) {
         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
           <span className="text-3xl">🚫</span>
         </div>
-        <h2 className="font-display text-2xl font-bold text-red-500 mb-2">Tab Switch Detected</h2>
+        <h2 className="font-display text-2xl font-bold text-red-500 mb-2">Security Violation Detected</h2>
         <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-          Switching tabs is strictly prohibited in this quiz. You have used <span className="text-red-500 font-bold">attempt {strikes} of 3</span>.
+          Switching tabs or attempting to navigate away is strictly prohibited. You have used <span className="text-red-500 font-bold">attempt {strikes} of 3</span>.
         </p>
         <div className="bg-red-500/5 rounded-xl p-4 mb-6 border border-red-500/10">
           <p className="text-xs text-red-400 font-medium italic">

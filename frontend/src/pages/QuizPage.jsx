@@ -35,9 +35,11 @@ export default function QuizPage() {
   const autoSubmitted = useRef(false)
   const [submitError, setSubmitError] = useState('')
   const [showConfirm, setShowConfirm] = useState(false)
-  const [isFullscreenWarning, setIsFullscreenWarning] = useState(false)
+  const [isFullscreenWarning, setIsFullscreenWarning] = useState(() => {
+    return localStorage.getItem('quiz_warn_pending') === 'true'
+  })
   const [showIntro, setShowIntro] = useState(true)
-  const [showRules, setShowRules] = useState(false)
+  const [showRules, setShowRules] = useState(false) // No longer blocking by default
 
   // ── ANTI-CHEAT STRIKES ──
   const [strikes, setStrikes] = useState(() => {
@@ -51,23 +53,34 @@ export default function QuizPage() {
 
   // ── Anti-Cheat Effect ───────────────────────────────────────────────────
   useEffect(() => {
-    if (allowTabSwitching) return;
+    const handleViolation = () => {
+       if (isSubmitting) return;
+       const newStrikes = strikes + 1
+       setStrikes(newStrikes)
+       localStorage.setItem('quiz_strikes', newStrikes.toString())
 
-    const handleVisibility = () => {
-      if (document.hidden && !isSubmitting) {
-        const newStrikes = strikes + 1
-        setStrikes(newStrikes)
-        localStorage.setItem('quiz_strikes', newStrikes.toString())
-
-        if (newStrikes >= 3) {
-          submitCurrentQuiz(true)
-        } else {
-          setIsFullscreenWarning(true)
-        }
-      }
+       if (newStrikes >= 3) {
+         submitCurrentQuiz(true)
+       } else {
+         localStorage.setItem('quiz_warn_pending', 'true')
+         setIsFullscreenWarning(true)
+       }
     }
-    document.addEventListener('visibilitychange', handleVisibility)
-    return () => document.removeEventListener('visibilitychange', handleVisibility)
+
+    if (!allowTabSwitching) {
+      const handleVisibility = () => {
+        if (document.hidden) handleViolation();
+      }
+      document.addEventListener('visibilitychange', handleVisibility)
+      
+      // Detect browser back/forward navigation attempts
+      window.addEventListener('popstate', handleViolation);
+
+      return () => {
+        document.removeEventListener('visibilitychange', handleVisibility)
+        window.removeEventListener('popstate', handleViolation);
+      };
+    }
   }, [strikes, isSubmitting, submitCurrentQuiz, allowTabSwitching])
 
   // ── Timer Effect ────────────────────────────────────────────────────────
@@ -119,7 +132,7 @@ export default function QuizPage() {
   return (
     <div className="min-h-screen flex flex-col animate-fade-in bg-[#0f0f0f] text-white">
 
-      {showIntro && <QuizIntro onComplete={() => { setShowIntro(false); setShowRules(true); }} />}
+      {showIntro && <QuizIntro onComplete={() => setShowIntro(false)} />}
 
       {showRules && <QuizRules onStart={() => setShowRules(false)} />}
 
@@ -127,7 +140,10 @@ export default function QuizPage() {
       {isFullscreenWarning && (
         <AntiCheatWarning
           strikes={strikes}
-          setIsFullscreenWarning={setIsFullscreenWarning}
+          setIsFullscreenWarning={(val) => {
+            if (!val) localStorage.removeItem('quiz_warn_pending');
+            setIsFullscreenWarning(val);
+          }}
         />
       )}
 

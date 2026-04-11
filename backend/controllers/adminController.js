@@ -44,13 +44,16 @@ exports.startQuiz = asyncHandler(async (req, res, next) => {
 
   const questions = await Question.find({}, { answer: 0 });
   
-  getIO().to(quizId).emit('quizStarted', {
+  const eventData = {
     quizId,
     questions,
     duration: quiz.duration,
     startTime: startedAt.getTime(),
     allowTabSwitching: quiz.allowTabSwitching,
-  });
+  };
+
+  getIO().to(quizId).emit('quizStarted', eventData);
+  getIO().to(`ADMIN_${quizId}`).emit('quizStarted', eventData);
 
   res.status(200).json({ success: true, isActive: true });
 });
@@ -66,6 +69,7 @@ exports.stopQuiz = asyncHandler(async (req, res, next) => {
   if (!quiz) return next(new ErrorResponse('Quiz not found', 404));
 
   getIO().to(quizId).emit('quizStopped', { quizId });
+  getIO().to(`ADMIN_${quizId}`).emit('quizStopped', { quizId });
   res.status(200).json({ success: true, isActive: false });
 });
 
