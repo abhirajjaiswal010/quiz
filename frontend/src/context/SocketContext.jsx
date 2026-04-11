@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }) => {
     console.log(`🔌 Socket connecting to: ${socketUrl}`);
     
     const newSocket = io(socketUrl, {
-      transports: ['polling', 'websocket'],
+      transports: ['websocket', 'polling'],
       reconnection: true,
       reconnectionAttempts: 10, // Increased for stability
       timeout: 20000 // Increased timeout
