@@ -139,7 +139,7 @@ const SessionControlTab = ({
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col gap-6 flex-1 h-full">
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col gap-6 flex-1 h-full min-h-[400px]">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[10px] text-white uppercase font-light mb-2 tracking-[0.2em]">Participant Pool</p>
@@ -171,8 +171,8 @@ const SessionControlTab = ({
               </div>
 
 
-              {/* Scrollable list of student sessions - Expanded Height */}
-              <div className="flex-1 h-0 overflow-y-auto pr-1 space-y-2 mt-2 custom-scrollbar">
+              {/* Scrollable list of student sessions - Fixed height to show scrollbar from 4 participants */}
+              <div className="h-[280px] overflow-y-auto pr-1 space-y-2 mt-2 custom-scrollbar">
                 {filteredParticipants.length > 0 ? filteredParticipants.map((p, idx) => (
                   <ParticipantRow key={p.studentId || idx} p={p} idx={idx} />
                 )) : (
