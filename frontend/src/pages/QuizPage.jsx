@@ -46,6 +46,10 @@ export default function QuizPage() {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
       elem.requestFullscreen().catch(err => console.warn("Fullscreen blocked:", err));
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
     }
   };
 
@@ -64,37 +68,65 @@ export default function QuizPage() {
   const progress = questions.length ? ((currentIndex + 1) / questions.length) * 100 : 0
   const canSubmit = true
 
-  // ── Anti-Cheat Effect ───────────────────────────────────────────────────
+  // ── Anti-Cheat Effect (Tab Switching & Global Fullscreen Lock) ──
   useEffect(() => {
-    const handleViolation = () => {
-       if (isSubmitting) return;
-       const newStrikes = strikes + 1
-       setStrikes(newStrikes)
-       localStorage.setItem('quiz_strikes', newStrikes.toString())
-
-       if (newStrikes >= 3) {
-         submitCurrentQuiz(true)
-       } else {
-         localStorage.setItem('quiz_warn_pending', 'true')
-         setIsFullscreenWarning(true)
+    const handleViolation = (isStrike = true) => {
+       if (isSubmitting || showIntro) return;
+       
+       if (isStrike) {
+         const newStrikes = strikes + 1
+         setStrikes(newStrikes)
+         localStorage.setItem('quiz_strikes', newStrikes.toString())
+         if (newStrikes >= 3) {
+           submitCurrentQuiz(true)
+           return;
+         }
        }
+       
+       // Always show warning and lock UI
+       localStorage.setItem('quiz_warn_pending', 'true')
+       setIsFullscreenWarning(true)
     }
 
+    // 1. Mandatory Fullscreen Lock (Show warning but NO strike)
+    const handleFSChange = () => {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        if (!isSubmitting && !showIntro && !result) {
+          handleViolation(false); // No strike for simple FS exit
+        }
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFSChange);
+    document.addEventListener('webkitfullscreenchange', handleFSChange);
+    document.addEventListener('mozfullscreenchange', handleFSChange);
+    document.addEventListener('MSFullscreenChange', handleFSChange);
+
+    // 2. Tab Switching Lock (Increments Strikes)
     if (!allowTabSwitching) {
       const handleVisibility = () => {
-        if (document.hidden) handleViolation();
+        if (document.hidden) handleViolation(true); // Strike for tab switch
       }
       document.addEventListener('visibilitychange', handleVisibility)
-      
-      // Detect browser back/forward navigation attempts
       window.addEventListener('popstate', handleViolation);
 
       return () => {
+        document.removeEventListener('fullscreenchange', handleFSChange);
+        document.removeEventListener('webkitfullscreenchange', handleFSChange);
+        document.removeEventListener('mozfullscreenchange', handleFSChange);
+        document.removeEventListener('MSFullscreenChange', handleFSChange);
         document.removeEventListener('visibilitychange', handleVisibility)
         window.removeEventListener('popstate', handleViolation);
       };
     }
-  }, [strikes, isSubmitting, submitCurrentQuiz, allowTabSwitching])
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFSChange);
+      document.removeEventListener('webkitfullscreenchange', handleFSChange);
+      document.removeEventListener('mozfullscreenchange', handleFSChange);
+      document.removeEventListener('MSFullscreenChange', handleFSChange);
+    };
+  }, [strikes, isSubmitting, submitCurrentQuiz, allowTabSwitching, showIntro, result])
 
   // ── Timer Effect ────────────────────────────────────────────────────────
   useEffect(() => {

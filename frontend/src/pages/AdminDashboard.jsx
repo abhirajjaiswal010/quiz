@@ -29,7 +29,7 @@ export default function AdminDashboard({
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 animate-fade-in">
 
         {/* Top Header & Identity */}
-        <AdminHeader handleLogout={handleLogout} />
+        <AdminHeader handleLogout={handleLogout} fetchStatus={fetchStatus} quizId={quizId} />
 
         {/* Dynamic Navigation Bar */}
         <AdminNav tab={tab} setTab={setTab} fetchQuizzes={fetchQuizzes} />
