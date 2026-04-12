@@ -44,20 +44,26 @@ export default function RegistrationPage() {
 
     setLoading(true);
 
-    // Auto-generate or retrieve a unique student identifier
-    let autoStudentId = localStorage.getItem('clubquiz_session_id');
-    if (!autoStudentId) {
-      autoStudentId = 'STU_' + Math.random().toString(36).substr(2, 9).toUpperCase();
-      localStorage.setItem('clubquiz_session_id', autoStudentId);
+    // Logic for Multi-User Testing/Reconnection support:
+    // 1. Check if we already have a student identity saved
+    const savedStudent = JSON.parse(localStorage.getItem('quiz_student') || 'null');
+    const savedId = localStorage.getItem('clubquiz_session_id');
+    
+    let finalStudentId;
+    
+    // If they are joining with the same name and quizId as before, reuse the ID (Reconnection)
+    if (savedStudent && savedStudent.name === form.name.trim() && savedStudent.quizId === form.quizId.replace(/[^A-Za-z0-9]/g, '').toUpperCase()) {
+      finalStudentId = savedStudent.studentId;
+    } else {
+      // If name is different or no saved student, generate a FRESH ID (New Student/Tester)
+      finalStudentId = 'STU_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+      localStorage.setItem('clubquiz_session_id', finalStudentId);
     }
-
-    // Strip any hyphens or spaces a student might type in the Session Code (e.g. '483-921' -> '483921')
-    const finalQuizId = form.quizId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 
     const studentData = {
       name: form.name.trim(),
-      studentId: autoStudentId,
-      quizId: finalQuizId,
+      studentId: finalStudentId,
+      quizId: form.quizId.replace(/[^A-Za-z0-9]/g, '').toUpperCase(),
     };
 
     try {
