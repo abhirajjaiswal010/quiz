@@ -8,27 +8,31 @@ import { CheckCircle2 } from 'lucide-react';
  */
 const ParticipantRow = React.memo(({ p, idx }) => {
   return (
-    <div className="flex justify-between items-center bg-white/5 hover:bg-white/[0.08] p-3 rounded-xl border border-white/5 transition-all group">
+    <div className="flex justify-between items-center bg-white/[0.02] hover:bg-white/[0.05] p-3 rounded-xl border border-white/5 transition-all group">
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-bold text-white truncate">{p.name}</p>
-        <div className="flex items-center gap-4 mt-0.5">
-          <p className="text-[12px] font-mono text-white/50  tracking-tighter">
-             <span className="text-white mr-1">ID:</span>{p.studentId}
+        <p className="text-sm font-medium text-white truncate">{p.name}</p>
+        <div className="flex items-center gap-4 mt-1.5">
+          <p className="text-xs font-mono text-white tracking-widest uppercase">
+             <span className="text-white mr-1 italic">SID:</span>{p.studentId}
           </p>
           {p.isSubmitted ? (
-            <span className="flex items-center gap-1 text-[8px] font-bold text-emerald-400 uppercase bg-emerald-400/10 px-1.5 py-0.5 rounded-md border border-emerald-400/20">
-              <CheckCircle2 size={8} /> Finalized
+            <span className="flex items-center gap-1.5 text-[9px] font-medium text-white uppercase bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
+              <div className="w-1 h-1 rounded-full bg-white shadow-[0_0_4px_white]" /> Finished
             </span>
           ) : p.isDisconnected ? (
-            <span className="flex items-center gap-1 text-[8px] font-bold text-white uppercase bg-red-400/10 px-1.5 py-0.5 rounded-md border border-red-400/20">
-              Left Quiz
+            <span className="flex items-center gap-1.5 text-[9px] font-medium text-white uppercase bg-white/[0.02] px-2 py-0.5 rounded-full border border-white/5">
+              Lost
             </span>
-          ) : null}
+          ) : (
+            <span className="flex items-center gap-1.5 text-[9px] font-medium text-white/60 uppercase animate-pulse">
+               Solving...
+            </span>
+          )}
         </div>
       </div>
       <div className="text-right shrink-0 ml-4">
-        <p className="text-[10px] font-mono text-white/30 group-hover:text-white/60 transition-colors">
-          <span className="text-white mr-1">Joined:</span>
+        <p className="text-[10px] font-mono text-white transition-colors uppercase tracking-tight">
+          <span className="mr-1 opacity-50 text-white">AT</span>
           {new Date(p.joinedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </p>
       </div>

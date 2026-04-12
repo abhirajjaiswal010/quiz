@@ -96,7 +96,7 @@ export default function LeaderboardPage() {
         {/* Table Title and Status Indicator */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
           <div className="flex-1">
-            <h2 className="font-display text-3xl font-black text-white flex items-center gap-3">
+            <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
               <Trophy className="text-[#4FB3FF]" />
               Global Rankings
             </h2>

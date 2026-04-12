@@ -8,9 +8,9 @@ import Beams from '../beams';
  */
 const AdminLogin = ({ handleLogin, loading, showKey, setShowKey }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0f0f0f] p-6 relative overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-30 pointer-events-none">
-        <Beams
+    <div className="admin-root min-h-screen flex items-center justify-center bg-[#0f0f0f] p-6 relative overflow-hidden text-white/90">
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+     <Beams
           beamWidth={3}
           beamHeight={30}
           beamNumber={20}
@@ -22,32 +22,31 @@ const AdminLogin = ({ handleLogin, loading, showKey, setShowKey }) => {
         />
       </div>
 
-      <div className="card relative z-10 bg-[#0f0f0f]/10 backdrop-blur-sm max-w-sm w-full p-8 text-center shadow-2xl border-white/20">
-        <div className="mx-auto w-16 h-16 bg-[#4FB3FF]/10 rounded-2xl flex items-center justify-center mb-6 text-[#4FB3FF] ">
-          <Lock size={32} />
+      <div className="relative z-10 bg-white/[0.03] border border-white/10 rounded-xl max-w-sm w-full p-10 text-center">
+        <div className="mx-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-6 text-white ">
+          <Lock size={24} strokeWidth={1.5} />
         </div>
-        <h1 className="font-display text-2xl font-bold text-white mb-2">Admin Access</h1>
-        <p className="text-white text-sm mb-8">Enter your Secret Key to manage the quiz</p>
-        <form onSubmit={handleLogin} className="space-y-4">
+        <h1 className="text-xl font-medium text-white mb-2 uppercase tracking-wide">Admin Access</h1>
+        <p className="text-white text-[11px] mb-8 font-light tracking-wider">Initialize secure schematic access</p>
+        <form onSubmit={handleLogin} className="space-y-5">
           <div className="relative">
             <input
               name="key"
               type={showKey ? "text" : "password"}
               placeholder="Admin Secret Key"
-              className="input-field bg-[#0f0f0f]/20 border border-white/20 uppercase text-white py-2 text-[10px] focus:border-white transition-colors w-full pr-10"
+              className="bg-transparent border-b border-white/10 focus:border-white uppercase text-white py-3 text-[10px] transition-all w-full pr-10 outline-none tracking-[0.3em] font-light"
               required
             />
             <button
               type="button"
               onClick={() => setShowKey(!showKey)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors"
-              title={showKey ? "Hide Secret Key" : "Show Secret Key"}
+              className="absolute right-0 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
             >
-              {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>
-          <button type="submit" disabled={loading} className="btn-primary bg-white w-full py-4 uppercase font-bold text-black hover:bg-white/90 transition-all">
-            {loading ? 'Verifying...' : 'Unlock Panel'}
+          <button type="submit" disabled={loading} className="w-full py-4 text-[10px] uppercase tracking-[0.2em] font-medium border border-white/20 hover:bg-white hover:text-black transition-all rounded-lg mt-4 bg-transparent text-white">
+            {loading ? 'Decrypting...' : 'Authenticate'}
           </button>
         </form>
       </div>

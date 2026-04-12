@@ -3,7 +3,7 @@ import { Rocket, ShieldCheck, Timer } from 'lucide-react';
 
 const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
   return (
-    <div className="border border-white/20 rounded-xl max-w-md p-6 animate-slide-up bg-[#0F0F0F]/10 backdrop-blur-xl shadow-2xl shadow-black/80 w-full mt-4">
+    <div className="border border-white/20 rounded-xl max-w-md p-6 animate-slide-up bg-[#0F0F0F]/10 backdrop-blur-xl w-full mt-4">
       <div className="mb-4">
         <h2 className="font-display text-lg font-bold text-white uppercase tracking-wider">Join Quiz </h2>
       </div>

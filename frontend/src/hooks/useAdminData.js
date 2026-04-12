@@ -24,7 +24,7 @@ export const useAdminData = () => {
   // Questions & Archive state
   const [questions, setQuestions] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
-  const [qForm, setQForm] = useState({ question: '', options: ['', '', '', ''], answer: 0 });
+  const [qForm, setQForm] = useState({ question: '', options: ['', '', '', ''], answer: '' });
   const [editingId, setEditingId] = useState(null);
 
   // Reset data when quizId changes to prevent leakage between sessions

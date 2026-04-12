@@ -16,7 +16,7 @@ import SessionControlTab from '../components/Admin/SessionControlTab';
  * Handles the state transitions between different management modules.
  */
 export default function AdminDashboard({
-  tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop, 
+  tab, setTab, quizId, setQuizId, fetchStatus, handleCreate, handleStart, handleStop,
   duration, setDuration, allowTabSwitching, setAllowTabSwitching,
   loading, status, participantCount, participants, sessionInfo, leaderboard, handleLogout,
   questions, quizzes, fetchQuizzes, qForm, setQForm, handleSaveQuestion, editingId, setEditingId, handleDeleteQuestion,
@@ -24,10 +24,10 @@ export default function AdminDashboard({
 }) {
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] relative overflow-hidden selection:bg-[#4fb3ff]/30">
+    <div className="admin-root min-h-screen bg-[#0f0f0f] relative overflow-hidden text-white/90">
       {/* Premium Dashboard Container */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-12 animate-fade-in">
-        
+
         {/* Top Header & Identity */}
         <AdminHeader handleLogout={handleLogout} />
 
@@ -39,7 +39,7 @@ export default function AdminDashboard({
           <React.Suspense fallback={<div className="py-20 text-center opacity-30 animate-pulse text-xs tracking-[0.3em] uppercase">Decoding Module...</div>}>
             {/* Tab: Session Control & Telemetry */}
             {tab === 'control' && (
-              <SessionControlTab 
+              <SessionControlTab
                 quizId={quizId} setQuizId={setQuizId} duration={duration} setDuration={setDuration}
                 allowTabSwitching={allowTabSwitching} setAllowTabSwitching={setAllowTabSwitching}
                 fetchStatus={fetchStatus} handleCreate={handleCreate} handleStart={handleStart} handleStop={handleStop}
@@ -53,20 +53,20 @@ export default function AdminDashboard({
               <LeaderboardTab leaderboard={leaderboard} quizId={quizId} />
             )}
 
-            {/* Tab: Question Master Vault */}
+            {/* Tab Master Vault */}
             {tab === 'questions' && (
-              <QuestionBankTab 
-                questions={questions} qForm={qForm} setQForm={setQForm} 
-                handleSaveQuestion={handleSaveQuestion} editingId={editingId} 
-                setEditingId={setEditingId} handleDeleteQuestion={handleDeleteQuestion} 
+              <QuestionBankTab
+                questions={questions} qForm={qForm} setQForm={setQForm}
+                handleSaveQuestion={handleSaveQuestion} editingId={editingId}
+                setEditingId={setEditingId} handleDeleteQuestion={handleDeleteQuestion}
                 handleBulkUpload={handleBulkUpload} loading={loading}
               />
             )}
 
             {/* Tab: Historical Archive */}
             {tab === 'history' && (
-              <SessionHistoryTab 
-                quizzes={quizzes} fetchQuizzes={fetchQuizzes} setQuizId={setQuizId} 
+              <SessionHistoryTab
+                quizzes={quizzes} fetchQuizzes={fetchQuizzes} setQuizId={setQuizId}
                 setTab={setTab} fetchStatus={fetchStatus} handleDeleteQuiz={handleDeleteQuiz}
               />
             )}
@@ -76,8 +76,8 @@ export default function AdminDashboard({
 
       {/* Decorative Branding Watermark */}
       <div className="fixed bottom-10 right-10 pointer-events-none opacity-5 flex flex-col items-end">
-        <h2 className="text-8xl font-bold italic uppercase tracking-tighter">Admin Panel</h2>
-        <p className="text-xs font-bold tracking-[0.5em] uppercase mt-2">V.1.0 Protocol Innovixus</p>
+        <h2 className="text-6xl font-medium uppercase tracking-tighter">Admin Panel</h2>
+        <p className="text-[10px] font-light tracking-[0.4em] uppercase mt-2">V.1.0 Protocol Innovixus</p>
       </div>
     </div>
   );
