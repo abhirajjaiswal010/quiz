@@ -85,7 +85,7 @@ export default function LeaderboardPage() {
     <div className="min-h-screen animate-fade-in bg-[#0F0F0F]">
       
       {/* ── Personal Achievement Banner ── */}
-      <PersonalStats result={result} myRank={myRank} />
+      <PersonalStats result={result} myRank={myRank} isQuizActive={isQuizActive} />
 
       {/* ── Podium Winners (Post-Quiz Glory View) ── */}
       {!isQuizActive && leaderboard.length >= 3 && (

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import CountUp from '../CountUp';
 import Counter from '../counter';
 
-const PersonalStats = ({ result, myRank }) => {
+const PersonalStats = ({ result, myRank, isQuizActive }) => {
   const navigate = useNavigate();
   if (!result) return null;
 
@@ -31,7 +31,7 @@ const PersonalStats = ({ result, myRank }) => {
         </p>
 
         {myRank && (
-          <div className="mb-8 animate-bounce-slow">
+          <div className="mb-2 animate-bounce-slow">
             <span className="text-white/50 text-[10px] font-bold uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
             <div className="flex items-center justify-center gap-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
               <span className="text-5xl md:text-7xl font-black text-white">#</span>
@@ -47,7 +47,7 @@ const PersonalStats = ({ result, myRank }) => {
         )}
 
         {/* Results Info Card */}
-        <div className="mb-5 animate-slide-up animation-delay-200">
+        <div className="mb-3 animate-slide-up animation-delay-200">
            <div className="inline-block bg-[#0F0F0F]/60 backdrop-blur-md border border-white/20 rounded-3xl px-12 py-8 border-t-white/40">
               <span className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Total Points Earned</span>
               <div className="text-6xl md:text-8xl font-black text-white flex items-center justify-center gap-2">
@@ -125,14 +125,29 @@ const PersonalStats = ({ result, myRank }) => {
           )}
         </div>
 
-        <div className="mt-8 mb-6 flex justify-center">
-            <button
-               onClick={() => navigate('/quiz')}
-               className="flex items-center gap-3 px-8 py-3 bg-white text-[#4FB3FF] rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
-            >
-               <BookOpenCheck size={16} strokeWidth={2.5} />
-               Review My Answers
-            </button>
+        <div className="mt-4 flex justify-center">
+            {isQuizActive ? (
+              <div className="flex flex-col items-center gap-2">
+                <button
+                   disabled
+                   className="flex items-center gap-3 px-8 py-3 bg-white/10 text-white/40 border border-white/5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] cursor-not-allowed"
+                >
+                   <span className="text-xs">🔒</span>
+                   Review Pending
+                </button>
+                <p className="text-[8px] text-white/30 uppercase tracking-widest font-bold">
+                   Available after session terminates
+                </p>
+              </div>
+            ) : (
+              <button
+                 onClick={() => navigate('/review')}
+                 className="flex items-center gap-3 px-8 py-3 bg-white text-[#4FB3FF] rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
+              >
+                 <BookOpenCheck size={16} strokeWidth={2.5} />
+                 Review My Answers
+              </button>
+            )}
         </div>
         
         <div className="mt-4 flex flex-col items-center opacity-40">

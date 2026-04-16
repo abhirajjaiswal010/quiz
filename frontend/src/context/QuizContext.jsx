@@ -140,6 +140,7 @@ export const QuizProvider = ({ children }) => {
     if (path === '/') setPhase('register')
     else if (path === '/waiting') setPhase('waiting')
     else if (path === '/quiz') setPhase('quiz')
+    else if (path === '/review') setPhase('review')
     else if (path === '/leaderboard') setPhase('leaderboard')
   }, [location.pathname])
 
