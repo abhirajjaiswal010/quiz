@@ -69,9 +69,10 @@ const SessionControlTab = ({
                 <label className="text-[9px] text-white uppercase font-light mb-7 tracking-[0.2em]">Anti-Cheat</label>
                 <button
                   onClick={() => setAllowTabSwitching(!allowTabSwitching)}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative border ${allowTabSwitching ? 'bg-white/10 border-white' : 'bg-white border-white'}`}
+                  className={`w-12 h-6 rounded-full transition-all duration-300 relative border ${!allowTabSwitching ? 'bg-white border-white' : 'bg-white/10 border-white/20'}`}
+                  title={!allowTabSwitching ? "Anti-Cheat: ACTIVE" : "Anti-Cheat: DISABLED"}
                 >
-                  <div className={`absolute top-1 w-3.5 h-3.5 rounded-full transition-all duration-300 ${allowTabSwitching ? 'left-7 bg-white' : 'left-1 bg-black'}`} />
+                  <div className={`absolute top-1 w-3.5 h-3.5 rounded-full transition-all duration-300 ${!allowTabSwitching ? 'left-7 bg-black' : 'left-1 bg-white'}`} />
                 </button>
               </div>
             </div>
