@@ -253,6 +253,7 @@ export const QuizProvider = ({ children }) => {
     // Admin started quiz → broadcast received by waiting students
     const handleQuizStarted = (data) => {
       console.log('🚀 quizStarted', data)
+      setIsQuizActive(true)            // CRITICAL: Prevent routing flicker
       setAllowTabSwitching(data.allowTabSwitching)
       setQuizDuration(data.duration || 15)
       initQuizFromServer(data, student, {})
@@ -262,6 +263,7 @@ export const QuizProvider = ({ children }) => {
     // Admin stopped quiz → force submit if in quiz
     const handleQuizStopped = () => {
       console.log('🛑 quizStopped')
+      setIsQuizActive(false)           // CRITICAL: Sync state immediately
       if (phase === 'quiz') {
         toast.error('Admin ended the quiz. Auto-submitting…', { id: 'quiz-stopped' })
         submitCurrentQuiz(true)
