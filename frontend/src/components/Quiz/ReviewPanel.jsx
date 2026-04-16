@@ -376,7 +376,9 @@ const ReviewPanel = ({ questions, answers, result, student, onFinish }) => {
                  <div key={idx} id={`pdf-q-${idx}`} className="pb-8 break-inside-avoid shadow-sm rounded-lg overflow-hidden">
                     <div className="bg-blue-50/50 p-5 border-l-2 border-blue-600 mb-4 rounded-r-md">
                        <p className="text-[9px] font-normal text-blue-400 mb-2 uppercase tracking-widest">Question {idx + 1}</p>
-                       <p className="text-sm font-normal text-blue-900">{q.question}</p>
+                       <div className="text-sm font-normal text-blue-900 leading-relaxed whitespace-pre-wrap font-sans">
+                         {renderQuestionContent(q.question)}
+                       </div>
                     </div>
                     <div className="ml-6 space-y-1.5 border-l border-slate-100 pl-4">
                        {q.options.map((opt, i) => {

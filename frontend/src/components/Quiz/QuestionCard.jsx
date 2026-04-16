@@ -3,8 +3,33 @@ import React, { memo } from 'react';
 const QuestionCard = memo(({ currentQuestion, currentIndex, answers, selectAnswer, isSubmitting }) => {
   if (!currentQuestion) return null;
   const labels = ['A', 'B', 'C', 'D'];
-
   const currentAnswer = answers[currentQuestion._id];
+
+  const renderQuestionContent = (text) => {
+    if (!text) return null;
+    const parts = text.split(/(```[\s\S]*?```)/g);
+    return parts.map((part, idx) => {
+      if (part.startsWith('```')) {
+        const inner = part.slice(3, -3);
+        const newlineIdx = inner.indexOf('\n');
+        const lang = newlineIdx > 0 ? inner.slice(0, newlineIdx).trim() : '';
+        const code = newlineIdx > 0 ? inner.slice(newlineIdx + 1) : inner;
+        return (
+          <div key={idx} className="my-4 rounded-xl overflow-hidden border border-white/10 bg-slate-900/50 shadow-inner">
+            {lang && (
+              <div className="px-3 py-1 bg-white/5 border-b border-white/5 text-[10px] uppercase tracking-wider text-brand-400 font-mono">
+                {lang}
+              </div>
+            )}
+            <pre className="p-4 overflow-x-auto text-sm leading-relaxed m-0 custom-scrollbar">
+              <code className="font-mono text-emerald-400/90 whitespace-pre">{code}</code>
+            </pre>
+          </div>
+        );
+      }
+      return part ? <span key={idx} className="whitespace-pre-wrap">{part}</span> : null;
+    });
+  };
 
   return (
     <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-[#0f0f0f] border-white/20 select-none">
@@ -12,9 +37,9 @@ const QuestionCard = memo(({ currentQuestion, currentIndex, answers, selectAnswe
         <span className="flex-shrink-0 w-20  h-10 rounded-xl bg-white/20 border border-white/20 flex items-center justify-center text-white font-normal text-sm">
           Que {currentIndex + 1}
         </span>
-        <p className="text-lg md:text-xl font-normal text-slate-100 leading-relaxed pt-1">
-          {currentQuestion.question}
-        </p>
+        <div className="text-lg md:text-xl font-normal text-slate-100 leading-relaxed pt-1 flex-1">
+          {renderQuestionContent(currentQuestion.question)}
+        </div>
       </div>
 
       {/* Options */}

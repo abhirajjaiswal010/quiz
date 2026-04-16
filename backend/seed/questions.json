@@ -1,127 +1,277 @@
 [
   {
-    "question": "Which data structure uses LIFO (Last In, First Out) order?",
-    "options": ["Queue", "Stack", "Linked List", "Tree"],
+    "question": "A flowchart checks a number n.\nIf n % 2 == 0 → process A, else process B.\nProcess A prints n/2, Process B prints 3n + 1.\nIf input is 5, what will be output?",
+    "options": ["2", "16", "8", "15"],
+    "answer": "16"
+  },
+  {
+    "question": "Consider:\n\nfor i = 1 to n:\n  for j = 1 to i:\n    print(i, j)\n\nTotal number of prints?",
+    "options": ["n", "n²", "n(n+1)/2", "log n"],
+    "answer": "n(n+1)/2"
+  },
+  {
+    "question": "Given array: [5, 1, 4, 2, 8]\nAfter first pass of Bubble Sort, what is array?",
+    "options": [
+      "[1, 5, 4, 2, 8]",
+      "[1, 4, 2, 5, 8]",
+      "[5, 1, 4, 2, 8]",
+      "[1, 2, 4, 5, 8]"
+    ],
+    "answer": "[1, 4, 2, 5, 8]"
+  },
+  {
+    "question": "In Quick Sort, worst-case occurs when:",
+    "options": [
+      "Pivot is always middle",
+      "Array is already sorted and pivot is first element",
+      "Pivot divides array equally",
+      "Array has random values"
+    ],
+    "answer": "Array is already sorted and pivot is first element"
+  },
+  {
+    "question": "Array: [2, 4, 6, 8, 10, 12]\nTarget = 8\nIndex (0-based) using binary search?",
+    "options": ["2", "3", "4", "Not found"],
+    "answer": "3"
+  },
+  {
+    "question": "Worst-case comparisons in binary search for n = 16?",
+    "options": ["16", "8", "4", "5"],
+    "answer": "5"
+  },
+  {
+    "question": "What will be output?\n\n```code\nvoid fun(int n){\n  if(n == 0) return;\n  fun(n-1);\n  System.out.print(n + \" \");\n}\nfun(3);\n```",
+    "options": ["3 2 1", "1 2 3", "3 1 2", "2 1 3"],
+    "answer": "1 2 3"
+  },
+  {
+    "question": "If a node is deleted from a singly linked list (not head), we need:",
+    "options": [
+      "Only current node",
+      "Only next node",
+      "Previous node pointer",
+      "Head pointer"
+    ],
+    "answer": "Previous node pointer"
+  },
+  {
+    "question": "What happens if you traverse linked list without checking null?",
+    "options": [
+      "Compile error",
+      "Infinite loop",
+      "Runtime error (NullPointerException)",
+      "No issue"
+    ],
+    "answer": "Runtime error (NullPointerException)"
+  },
+  {
+    "question": "Evaluate postfix: 2 3 * 4 +",
+    "options": ["10", "14", "20", "24"],
+    "answer": "10"
+  },
+  {
+    "question": "Top element after operations:\nPush(10), Push(20), Pop(), Push(30)",
+    "options": ["10", "20", "30", "Empty"],
+    "answer": "30"
+  },
+  {
+    "question": "What is output?\n\n```code\nint arr[] = {1,2,3,4};\nSystem.out.println(arr[arr.length - 2]);\n```",
+    "options": ["2", "3", "4", "Error"],
+    "answer": "3"
+  },
+  {
+    "question": "Which structure is best for implementing recursion internally?",
+    "options": ["Queue", "Stack", "Array", "Linked List"],
     "answer": "Stack"
   },
   {
-    "question": "What is the time complexity of binary search on a sorted array?",
-    "options": ["O(n)", "O(n²)", "O(log n)", "O(1)"],
-    "answer": "O(log n)"
-  },
-  {
-    "question": "Which of the following is NOT a JavaScript primitive type?",
-    "options": ["String", "Boolean", "Object", "Number"],
-    "answer": "Object"
-  },
-  {
-    "question": "What does SQL stand for?",
+    "question": "Which statement is correct?",
     "options": [
-      "Structured Query Language",
-      "Sequential Query Logic",
-      "Simple Query Layer",
-      "Standard Query List"
+      "Interpreter is faster than compiler",
+      "Compiler detects all errors at once",
+      "Interpreter produces executable file",
+      "Compiler executes line by line"
     ],
-    "answer": "Structured Query Language"
+    "answer": "Compiler detects all errors at once"
   },
   {
-    "question": "Which HTTP method is used to update a resource in REST APIs?",
-    "options": ["GET", "POST", "PUT", "DELETE"],
-    "answer": "PUT"
-  },
-  {
-    "question": "What does the \"DOM\" stand for in web development?",
+    "question": "Java uses both compiler and interpreter because:",
     "options": [
-      "Document Object Model",
-      "Data Object Map",
-      "Document Order Module",
-      "Dynamic Object Method"
+      "It directly runs machine code",
+      "It converts code to bytecode then JVM executes",
+      "It does not need compilation",
+      "It only interprets"
     ],
-    "answer": "Document Object Model"
+    "answer": "It converts code to bytecode then JVM executes"
   },
   {
-    "question": "Which sorting algorithm has the best average-case time complexity?",
-    "options": ["Bubble Sort", "Insertion Sort", "Merge Sort", "Selection Sort"],
-    "answer": "Merge Sort"
-  },
-  {
-    "question": "In OOP, what is encapsulation?",
+    "question": "Which statement is TRUE about time complexity?",
     "options": [
-      "Inheriting properties from parent class",
-      "Hiding internal details and exposing only necessary parts",
-      "Creating multiple methods with same name",
-      "Defining abstract methods"
+      "O(log n) > O(n)",
+      "O(n²) < O(n log n)",
+      "O(1) < O(log n)",
+      "O(n log n) < O(n²)"
     ],
-    "answer": "Hiding internal details and exposing only necessary parts"
+    "answer": "O(n log n) < O(n²)"
   },
   {
-    "question": "What is the output of: console.log(typeof null) in JavaScript?",
-    "options": ["null", "undefined", "object", "string"],
-    "answer": "object"
+    "question": "What will be output?\n\n```code\nint x = 5;\nif(x++ > 5)\n System.out.print(\"A\");\nelse\n System.out.print(\"B\");\n```",
+    "options": ["A", "B", "AB", "Error"],
+    "answer": "B"
   },
   {
-    "question": "Which protocol is used for secure data transfer on the web?",
-    "options": ["HTTP", "FTP", "HTTPS", "SMTP"],
-    "answer": "HTTPS"
-  },
-  {
-    "question": "Which layer of the OSI model is responsible for routing?",
-    "options": ["Physical", "Data Link", "Network", "Transport"],
-    "answer": "Network"
-  },
-  {
-    "question": "What does RAM stand for?",
+    "question": "Which statement is TRUE about recursion?",
     "options": [
-      "Random Access Memory",
-      "Read Access Memory",
-      "Rapid Application Module",
-      "Remote Access Method"
+      "Always faster than iteration",
+      "Uses stack internally",
+      "Cannot have base condition",
+      "Runs infinitely always"
     ],
-    "answer": "Random Access Memory"
+    "answer": "Uses stack internally"
   },
   {
-    "question": "Which of the following is an example of a NoSQL database?",
-    "options": ["MySQL", "PostgreSQL", "MongoDB", "SQLite"],
-    "answer": "MongoDB"
+    "question": "What will be output?\n\n```code\nint a = 10, b = 20;\nSystem.out.println(a > b ? a : b);\n```",
+    "options": ["10", "20", "true", "false"],
+    "answer": "20"
   },
   {
-    "question": "What command is used to initialize a Git repository?",
-    "options": ["git start", "git init", "git create", "git new"],
-    "answer": "git init"
+    "question": "Which condition correctly checks even number?",
+    "options": ["n % 2 == 1", "n / 2 == 0", "n % 2 == 0", "n * 2 == 0"],
+    "answer": "n % 2 == 0"
   },
   {
-    "question": "What does CSS stand for?",
+    "question": "What will be output?\n\n```code\nint sum = 0;\nfor(int i=1; i<=3; i++)\n sum += i;\nSystem.out.println(sum);\n```",
+    "options": ["3", "6", "9", "0"],
+    "answer": "6"
+  },
+  {
+    "question": "Which statement is TRUE about arrays?",
     "options": [
-      "Cascading Style Sheets",
-      "Computer Style System",
-      "Creative Style Syntax",
-      "Coded Style Selector"
+      "Size can change dynamically",
+      "Index starts from 1",
+      "Contiguous memory allocation",
+      "Cannot store integers"
     ],
-    "answer": "Cascading Style Sheets"
+    "answer": "Contiguous memory allocation"
   },
   {
-    "question": "What is 2^10 (2 to the power of 10)?",
-    "options": ["512", "1024", "2048", "256"],
-    "answer": "1024"
+    "question": "What will be output?\n\n```code\nint n = 4;\nwhile(n > 0){\n System.out.print(n + \" \");\n n -= 2;\n}\n```",
+    "options": ["4 3 2 1", "4 2", "4 2 0", "2 0"],
+    "answer": "4 2"
   },
   {
-    "question": "In Boolean algebra, what is the result of A AND (NOT A)?",
-    "options": ["1", "0", "A", "Undefined"],
+    "question": "Which statement is TRUE about binary search?",
+    "options": [
+      "Works on unsorted data",
+      "Time complexity is O(n)",
+      "Requires sorted array",
+      "Always finds element"
+    ],
+    "answer": "Requires sorted array"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint x = 3;\nif(x > 2)\n if(x > 5)\n System.out.print(\"A\");\n else\n System.out.print(\"B\");\n```",
+    "options": ["A", "B", "AB", "No output"],
+    "answer": "B"
+  },
+  {
+    "question": "Which statement is TRUE about stack?",
+    "options": ["FIFO structure", "LIFO structure", "Random access", "Uses queue internally"],
+    "answer": "LIFO structure"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint i = 1;\ndo{\n System.out.print(i + \" \");\n i++;\n}while(i <= 3);\n```",
+    "options": ["1 2 3", "0 1 2", "1 2", "Infinite"],
+    "answer": "1 2 3"
+  },
+  {
+    "question": "Which statement is TRUE about prime numbers?",
+    "options": [
+      "Divisible by 1 only",
+      "Divisible by itself only",
+      "Divisible by exactly two numbers",
+      "Divisible by all numbers"
+    ],
+    "answer": "Divisible by exactly two numbers"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint n = 5;\nfor(int i=0; i<n; i++){\n if(i == 3) break;\n System.out.print(i + \" \");\n}\n```",
+    "options": ["0 1 2", "0 1 2 3", "1 2 3", "0 1 2 3 4"],
+    "answer": "0 1 2"
+  },
+  {
+    "question": "Which statement is TRUE about compiler vs interpreter?",
+    "options": [
+      "Compiler executes line by line",
+      "Interpreter converts whole program at once",
+      "Compiler produces executable code",
+      "Interpreter is always faster"
+    ],
+    "answer": "Compiler produces executable code"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint x = 5;\nSystem.out.println(x++ + ++x);\n```",
+    "options": ["11", "12", "13", "14"],
+    "answer": "13"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint n = 0;\nif(n == 0 || n++ == 1)\n System.out.print(n);\n```",
+    "options": ["0", "1", "Error", "No output"],
     "answer": "0"
   },
   {
-    "question": "How many bits are in a byte?",
-    "options": ["4", "16", "8", "32"],
-    "answer": "8"
+    "question": "What will be output?\n\n```code\nint n = 4;\nfor(int i = 0; i < n; i++){\n for(int j = i; j >= 0; j--){\n System.out.print(\"*\");\n }\n}\n```",
+    "options": ["****", "**********", "********", "*****"],
+    "answer": "**********"
   },
   {
-    "question": "What is the hexadecimal equivalent of decimal 255?",
-    "options": ["FE", "FA", "FF", "EF"],
-    "answer": "FF"
+    "question": "Which statement is TRUE?",
+    "options": [
+      "Binary search can work on linked list efficiently",
+      "Recursion always uses heap memory",
+      "Stack overflow occurs due to deep recursion",
+      "Quick sort is always stable"
+    ],
+    "answer": "Stack overflow occurs due to deep recursion"
   },
   {
-    "question": "Which of these is a primary key property in a database?",
-    "options": ["Can be NULL", "Must be Unique", "Can repeat", "Optional field"],
-    "answer": "Must be Unique"
+    "question": "What will be output?\n\n```code\nint n = 10;\nint count = 0;\nfor(int i = 2; i*i <= n; i++){\n if(n % i == 0){\n count++;\n }\n}\nSystem.out.println(count);\n```",
+    "options": ["1", "2", "3", "0"],
+    "answer": "1"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint[] arr = {1, 2, 3, 4};\nint sum = 0;\nfor(int i = 0; i < arr.length; i++){\n arr[i] = arr[i] * 2;\n sum += arr[i];\n}\nSystem.out.println(sum);\n```",
+    "options": ["10", "20", "15", "8"],
+    "answer": "20"
+  },
+  {
+    "question": "Which is TRUE about time complexity?",
+    "options": [
+      "O(n log n) is always slower than O(n²)",
+      "O(log n) grows faster than O(n)",
+      "O(n²) grows faster than O(n log n)",
+      "O(1) is worst case"
+    ],
+    "answer": "O(n²) grows faster than O(n log n)"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint n = 3;\nwhile(n--){\n System.out.print(n + \" \");\n}\n```",
+    "options": ["3 2 1", "2 1 0", "2 1", "3 2 1 0"],
+    "answer": "2 1 0"
+  },
+  {
+    "question": "What will be output?\n\n```code\nint low = 0, high = 5;\nwhile(low <= high){\n int mid = (low + high) / 2;\n if(mid == 2) break;\n low = mid + 1;\n}\nSystem.out.println(low);\n```",
+    "options": ["2", "3", "1", "5"],
+    "answer": "2"
+  },
+  {
+    "question": "Which statement is TRUE?",
+    "options": [
+      "A prime number has exactly one factor",
+      "1 is a prime number",
+      "Checking prime till n/2 is optimal",
+      "Checking prime till √n is optimal"
+    ],
+    "answer": "Checking prime till √n is optimal"
   }
 ]
