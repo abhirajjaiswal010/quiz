@@ -223,7 +223,7 @@ const QuestionBankTab = ({
   return (
     <div className="space-y-8 animate-slide-up">
       {/* Header Utilities */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="bg-white/[0.03] border border-white/10 rounded-xl p-8 flex items-center justify-between">
           <div className="flex items-center gap-5">
             <div className="bg-white/5 p-4 rounded-full text-white border border-white/10">
@@ -231,7 +231,7 @@ const QuestionBankTab = ({
             </div>
             <div>
               <h3 className="text-xl font-medium text-white uppercase tracking-wider">Vault Core</h3>
-              <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] mt-2 font-light">{questions.length} Units Online</p>
+              <p className="text-[10px] text-white uppercase tracking-[0.2em] mt-2 font-light">{questions.length} Units Online</p>
             </div>
           </div>
           <button
@@ -267,15 +267,15 @@ const QuestionBankTab = ({
                 <div className="flex justify-between items-start gap-12">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="text-[10px] font-medium text-white/20 uppercase tracking-[0.3em]">
+                      <span className="text-[10px] font-medium text-white uppercase tracking-[0.3em]">
                         Sequence {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                       </span>
                     </div>
                     <h4 className="text-white font-medium text-xl leading-relaxed mb-8 group-hover:text-white transition-colors">{q.question}</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {q.options.map((opt, i) => (
-                        <div key={i} className={`px-5 py-3 rounded-lg text-[10px] font-bold border transition-all flex items-center gap-3 ${opt === q.answer ? 'bg-white text-black border-white' : 'bg-transparent border-white/5 text-white/20'}`}>
-                          <span className="opacity-30">{String.fromCharCode(65 + i)}</span>
+                        <div key={i} className={`px-5 py-3 rounded-lg text-sm border transition-all flex items-center gap-3 ${opt === q.answer ? 'bg-green-500/10 text-green-500 font-bold border-green-500/50' : 'bg-transparent border-white text-white'}`}>
+                          <span className="">{String.fromCharCode(65 + i)}</span>
                           <span className="truncate">{opt}</span>
                         </div>
                       ))}
@@ -291,7 +291,7 @@ const QuestionBankTab = ({
                     </button>
                     <button
                       onClick={() => handleDeleteQuestion(q._id)}
-                      className="p-3 text-white/10 hover:text-red-400 hover:bg-red-400/5 rounded-full transition-all"
+                      className="p-3 text-white hover:text-red-400 hover:bg-red-400rounded-full transition-all"
                       title="Decommission"
                     >
                       <Trash2 size={18} strokeWidth={1.5} />
