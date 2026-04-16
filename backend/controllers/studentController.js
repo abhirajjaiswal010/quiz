@@ -140,7 +140,7 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   const remainingSeconds = Math.max(0, Math.floor((endTimeMs - submissionTime) / 1000));
   const timeTakenSeconds = Math.round((submissionTime - startTimeMs) / 1000);
 
-  const { correctCount, wrongCount, totalCount } = await calculateScore(answersMap);
+  const { correctCount, wrongCount, totalCount, correctAnswers } = await calculateScore(answersMap);
   // Fairness Guard: If no correct answers, total score is 0 regardless of speed.
   // We use a 1000x multiplier so that even 1 correct answer (1000 pts) 
   // beats 0 correct answers with max speed bonus (~900 pts).
@@ -170,5 +170,5 @@ exports.submitQuiz = asyncHandler(async (req, res, next) => {
   const { throttledBroadcastLeaderboard } = require('../utils/broadcastUtils');
   throttledBroadcastLeaderboard(quizId);
 
-  res.status(201).json({ success: true, result, totalQuestions: totalCount });
+  res.status(201).json({ success: true, result, totalQuestions: totalCount, correctAnswers });
 });

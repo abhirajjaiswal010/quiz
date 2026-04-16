@@ -55,7 +55,8 @@ const calculateScore = async (answersMap) => {
   return { 
     correctCount, 
     wrongCount, 
-    totalCount: questionMap._totalCount 
+    totalCount: questionMap._totalCount,
+    correctAnswers: questionMap
   };
 };
 

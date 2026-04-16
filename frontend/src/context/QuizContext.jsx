@@ -173,6 +173,7 @@ export const QuizProvider = ({ children }) => {
     setStudent(studentData)
     setQuestions(finalQuestions)
     setAnswers(savedAnswers)           // Restore previous answers if reconnecting
+    setResult(null)                    // CRITICAL: Clear previous results when starting a new quiz session
     setStartTime(serverStartTime)      // Authoritative server time
     setQuizDuration(duration || 15)
     setAllowTabSwitching(!!allowTabs)
@@ -203,8 +204,12 @@ export const QuizProvider = ({ children }) => {
         answers: answersPayload,
         timeTaken,
       })
-      setResult({ ...data.result, total: data.result?.totalQuestions || data.totalQuestions })
-      updatePhase('leaderboard')
+      setResult({ 
+        ...data.result, 
+        total: data.result?.totalQuestions || data.totalQuestions,
+        correctAnswersMap: data.correctAnswers 
+      })
+      navigate('/review')
     } catch (err) {
       console.error('Submission failed:', err)
       if (isAuto) {

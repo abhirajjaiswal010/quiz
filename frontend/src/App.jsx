@@ -5,6 +5,7 @@ import RegistrationPage from './pages/RegistrationPage'
 import QuizPage from './pages/QuizPage'
 import WaitingPage from './pages/WaitingPage'
 import LeaderboardPage from './pages/LeaderboardPage'
+import ReviewPage from './pages/ReviewPage'
 import AdminPanel from './pages/AdminPanel'
 import { Toaster } from 'react-hot-toast'
 import WelcomePreloader from './components/WelcomePreloader'
@@ -34,10 +35,13 @@ function AppRoutes() {
       } />
 
       <Route path="/quiz" element={
-        (result || !isQuizActive) ? <Navigate to="/leaderboard" replace /> :
+        result ? <Navigate to="/review" replace /> :
+        !isQuizActive ? <Navigate to="/leaderboard" replace /> :
         questions.length > 0 ? <QuizPage /> : 
         student ? <Navigate to="/waiting" replace /> : <Navigate to="/" replace />
       } />
+
+      <Route path="/review" element={<ReviewPage />} />
 
       <Route path="/leaderboard" element={
         (result || !isQuizActive) ? <LeaderboardPage /> : 

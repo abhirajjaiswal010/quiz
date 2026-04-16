@@ -23,13 +23,6 @@ export default function QuizPage() {
     submitCurrentQuiz, isSubmitting, quizDuration, startTime, allowTabSwitching, result
   } = useQuiz()
 
-  // ── Redirect Logic ───────────────────────────────────────────────────────
-  useEffect(() => {
-    if (result) {
-      window.location.href = '/leaderboard'
-    }
-  }, [result])
-
   const [currentIndex, setCurrentIndex] = useState(0)
   const [timeLeft, setTimeLeft] = useState(() => computeRemaining(startTime, quizDuration))
   const autoSubmitted = useRef(false)

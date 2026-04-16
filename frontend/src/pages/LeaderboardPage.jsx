@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuiz } from '../context/QuizContext';
 import { getLeaderboard } from '../api/quizApi';
 import confetti from 'canvas-confetti';
@@ -15,6 +16,7 @@ import Podium from '../components/Leaderboard/Podium';
  * Includes automated polling and celebratory confetti for submissions.
  */
 export default function LeaderboardPage() {
+  const navigate = useNavigate();
   const { result, student, reset, questions, isQuizActive } = useQuiz();
   
   // State for total question count and rankings

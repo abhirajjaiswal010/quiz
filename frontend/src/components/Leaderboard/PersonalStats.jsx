@@ -1,9 +1,10 @@
-import React from 'react';
-import { Trophy, PartyPopper, BarChart3, Flame, Star, ThumbsUp, BookOpen as BookIcon, ChevronDown } from 'lucide-react';
+import { Trophy, PartyPopper, BarChart3, Flame, Star, ThumbsUp, BookOpen as BookIcon, ChevronDown, BookOpenCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import CountUp from '../CountUp';
 import Counter from '../counter';
 
 const PersonalStats = ({ result, myRank }) => {
+  const navigate = useNavigate();
   if (!result) return null;
 
   const totalQuestions = result.totalQuestions || result.total || 0;
@@ -122,6 +123,16 @@ const PersonalStats = ({ result, myRank }) => {
               <BookIcon size={16} /> Better luck next time! Attend more carefully.
             </span>
           )}
+        </div>
+
+        <div className="mt-8 mb-6 flex justify-center">
+            <button
+               onClick={() => navigate('/quiz')}
+               className="flex items-center gap-3 px-8 py-3 bg-white text-[#4FB3FF] rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
+            >
+               <BookOpenCheck size={16} strokeWidth={2.5} />
+               Review My Answers
+            </button>
         </div>
         
         <div className="mt-4 flex flex-col items-center opacity-40">

@@ -184,6 +184,37 @@ const QuestionModal = ({
   );
 };
 
+// Renders a question string that may contain fenced code blocks (```lang\n...\n```)
+const renderQuestionContent = (text) => {
+  // Split on fenced code blocks
+  const parts = text.split(/(```[\s\S]*?```)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith('```')) {
+      // Extract optional language tag and body
+      const inner = part.slice(3, -3); // strip outer ```
+      const newlineIdx = inner.indexOf('\n');
+      const lang = newlineIdx > 0 ? inner.slice(0, newlineIdx).trim() : '';
+      const code = newlineIdx > 0 ? inner.slice(newlineIdx + 1) : inner;
+      return (
+        <div key={idx} className="my-4 rounded-lg overflow-hidden border border-white/10">
+          {lang && (
+            <div className="px-4 py-1 bg-white/5 border-b border-white/10 text-[9px] uppercase tracking-[0.2em] text-white/30 font-mono">
+              {lang}
+            </div>
+          )}
+          <pre className="bg-[#0d0d0d] p-5 overflow-x-auto text-[13px] leading-relaxed m-0">
+            <code className="font-mono text-green-400 whitespace-pre">{code}</code>
+          </pre>
+        </div>
+      );
+    }
+    // Plain text – preserve newlines
+    return part ? (
+      <span key={idx} className="whitespace-pre-wrap">{part}</span>
+    ) : null;
+  });
+};
+
 const QuestionBankTab = ({
   questions, qForm, setQForm, handleSaveQuestion,
   editingId, setEditingId, handleDeleteQuestion,
@@ -271,7 +302,9 @@ const QuestionBankTab = ({
                         Sequence {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                       </span>
                     </div>
-                    <h4 className="text-white font-medium text-xl leading-relaxed mb-8 group-hover:text-white transition-colors">{q.question}</h4>
+                    <div className="text-white font-medium text-xl leading-relaxed mb-8 group-hover:text-white transition-colors">
+                      {renderQuestionContent(q.question)}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {q.options.map((opt, i) => (
                         <div key={i} className={`px-5 py-3 rounded-lg text-sm border transition-all flex items-center gap-3 ${opt === q.answer ? 'bg-green-500/10 text-green-500 font-bold border-green-500/50' : 'bg-transparent border-white text-white'}`}>
