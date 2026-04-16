@@ -1,8 +1,8 @@
 import React from 'react';
 import { ArrowBigLeftDashIcon, ArrowBigRightDashIcon } from 'lucide-react';
 
-export default function QuestionNavigation({ 
-  questions, currentIndex, setCurrentIndex, answers, isSubmitting, canSubmit, confirmSubmit 
+export default function QuestionNavigation({
+  questions, currentIndex, setCurrentIndex, answers, isSubmitting, canSubmit, confirmSubmit
 }) {
   return (
     <>

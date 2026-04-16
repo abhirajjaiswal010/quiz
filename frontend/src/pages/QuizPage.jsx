@@ -64,21 +64,21 @@ export default function QuizPage() {
   // ── Anti-Cheat Effect (Tab Switching & Global Fullscreen Lock) ──
   useEffect(() => {
     const handleViolation = (isStrike = true) => {
-       if (isSubmitting || showIntro) return;
-       
-       if (isStrike) {
-         const newStrikes = strikes + 1
-         setStrikes(newStrikes)
-         localStorage.setItem('quiz_strikes', newStrikes.toString())
-         if (newStrikes >= 3) {
-           submitCurrentQuiz(true)
-           return;
-         }
-       }
-       
-       // Always show warning and lock UI
-       localStorage.setItem('quiz_warn_pending', 'true')
-       setIsFullscreenWarning(true)
+      if (isSubmitting || showIntro) return;
+
+      if (isStrike) {
+        const newStrikes = strikes + 1
+        setStrikes(newStrikes)
+        localStorage.setItem('quiz_strikes', newStrikes.toString())
+        if (newStrikes >= 3) {
+          submitCurrentQuiz(true)
+          return;
+        }
+      }
+
+      // Always show warning and lock UI
+      localStorage.setItem('quiz_warn_pending', 'true')
+      setIsFullscreenWarning(true)
     }
 
     // 1. Mandatory Fullscreen Lock (Show warning but NO strike)
@@ -168,7 +168,7 @@ export default function QuizPage() {
     timeLeft > 300 ? 'text-emerald-400' : timeLeft > 60 ? 'text-amber-400' : 'text-red-400'
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col animate-fade-in bg-[#0f0f0f] text-white select-none"
       onContextMenu={(e) => e.preventDefault()}
     >
