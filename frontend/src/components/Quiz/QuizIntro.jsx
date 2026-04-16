@@ -125,8 +125,8 @@ export default function QuizIntro({ onComplete }) {
             style={{ color: interpolateHex('#FFFFFF', '#10B981', progress / 100) }}
           >
              <div className="flex items-baseline ">
-                <CountUp from={0} to={100} duration={3} className="text-[70px] font-bold tracking-tighter leading-none" />
-                <span className="text-3xl font-medium opacity-60 ml-1"> %</span>
+                <CountUp from={0} to={100} duration={3} className="text-[70px] font-normal tracking-tighter leading-none" />
+                <span className="text-3xl font-normal opacity-60 ml-1"> %</span>
              </div>
              {progress >= 100 && (
                <div className="absolute inset-0 flex items-center justify-center">

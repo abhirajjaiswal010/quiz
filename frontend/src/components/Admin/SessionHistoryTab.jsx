@@ -11,7 +11,7 @@ const SessionHistoryTab = ({ quizzes, fetchQuizzes, setQuizId, setTab, fetchStat
               <LayoutDashboard size={28} strokeWidth={1} />
             </div>
             <div>
-              <h2 className="text-2xl font-medium text-white tracking-widest uppercase">Archive Vault</h2>
+              <h2 className="text-2xl font-normal text-white tracking-widest uppercase">Archive Vault</h2>
               <p className="text-white/20 text-[10px] mt-2 tracking-[0.2em] uppercase font-light">Historical Session Registry</p>
             </div>
           </div>
@@ -61,7 +61,7 @@ const SessionHistoryTab = ({ quizzes, fetchQuizzes, setQuizId, setTab, fetchStat
                       </div>
                     </td>
                     <td className="px-8 py-8">
-                      <div className={`px-4 py-1.5 rounded-full text-[9px] uppercase tracking-widest inline-flex items-center gap-2 border font-bold ${q.isActive ? 'bg-white text-black border-white' : 'bg-transparent text-white/20 border-white/5'}`}>
+                      <div className={`px-4 py-1.5 rounded-full text-[9px] uppercase tracking-widest inline-flex items-center gap-2 border font-normal ${q.isActive ? 'bg-white text-black border-white' : 'bg-transparent text-white/20 border-white/5'}`}>
                         <div className={`w-1 h-1 rounded-full ${q.isActive ? 'bg-black animate-pulse' : 'bg-white/20'}`} />
                         {q.isActive ? 'Live' : 'Archived'}
                       </div>

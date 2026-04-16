@@ -12,7 +12,7 @@ const AdminHeader = ({ handleLogout, fetchStatus, quizId }) => {
           className="w-10 h-10 object-contain grayscale opacity-80"
         />
         <div>
-          <h1 className="text-2xl font-medium text-white tracking-wide flex items-center gap-3 uppercase">
+          <h1 className="text-2xl font-normal text-white tracking-wide flex items-center gap-3 uppercase">
             Admin Dashboard
           </h1>
           <p className="text-white/30 text-[11px] mt-1 uppercase tracking-widest font-light">

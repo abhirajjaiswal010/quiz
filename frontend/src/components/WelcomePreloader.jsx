@@ -99,7 +99,7 @@ export default function WelcomePreloader({ onComplete }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-2xl md:text-3xl font-bold text-white tracking-widest uppercase mb-1"
+              className="text-2xl md:text-3xl font-normal text-white tracking-widest uppercase mb-1"
             >
               Innovixus <span className="text-white/40">Quiz</span>
             </motion.h1>
@@ -107,7 +107,7 @@ export default function WelcomePreloader({ onComplete }) {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-[10px] text-white/20 uppercase tracking-[0.6em] font-medium mb-12"
+              className="text-[10px] text-white/20 uppercase tracking-[0.6em] font-normal mb-12"
             >
               Initializing Secure Environment
             </motion.p>
@@ -116,7 +116,7 @@ export default function WelcomePreloader({ onComplete }) {
           {/* Progress Counter & Modern Bar */}
           <div className="flex flex-col items-center w-72">
             <div className="flex justify-between items-end w-full mb-3 px-1">
-               <span className="text-[10px] text-white/30 uppercase tracking-widest font-bold">Process State</span>
+               <span className="text-[10px] text-white/30 uppercase tracking-widest font-normal">Process State</span>
                <motion.span 
                  className="text-white text-3xl font-light font-mono"
                >

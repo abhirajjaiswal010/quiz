@@ -149,7 +149,7 @@ export default function QuizPage() {
       <div className="min-h-screen flex items-center justify-center bg-slate-950 px-4 text-center">
         <div className="card max-w-sm p-8 animate-fade-in">
           <div className="text-5xl mb-6">⏳</div>
-          <h2 className="text-2xl font-display font-bold text-white mb-2">Quiz not ready</h2>
+          <h2 className="text-2xl font-display font-normal text-white mb-2">Quiz not ready</h2>
           <p className="text-slate-400 text-sm mb-6">
             We couldn't find any questions. Make sure the quiz has started and you've joined correctly.
           </p>

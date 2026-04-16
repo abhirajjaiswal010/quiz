@@ -12,7 +12,7 @@ export default function WaitingTips({ student }) {
         ].map(t => (
           <div key={t.label} className="py-4 px-3 rounded-2xl bg-slate-900/50 border border-slate-800/60 flex flex-col items-center justify-center">
             <div className="text-2xl mb-2">{t.icon}</div>
-            <div className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">{t.label}</div>
+            <div className="text-[10px] text-slate-500 font-normal uppercase tracking-wider">{t.label}</div>
           </div>
         ))}
       </div>
@@ -20,7 +20,7 @@ export default function WaitingTips({ student }) {
       {/* Session PIN */}
       {student?.quizId && (
         <p className="mt-5 text-[11px] text-white/50 tracking-widest uppercase">
-          Session Code · <span className="text-white/80 font-bold">{student.quizId.length === 6 && /^\d+$/.test(student.quizId) ? `${student.quizId.substring(0,3)}-${student.quizId.substring(3)}` : student.quizId}</span>
+          Session Code · <span className="text-white/80 font-normal">{student.quizId.length === 6 && /^\d+$/.test(student.quizId) ? `${student.quizId.substring(0,3)}-${student.quizId.substring(3)}` : student.quizId}</span>
         </p>
       )}
     </>

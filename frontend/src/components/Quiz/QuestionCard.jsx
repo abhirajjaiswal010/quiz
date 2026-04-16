@@ -9,10 +9,10 @@ const QuestionCard = memo(({ currentQuestion, currentIndex, answers, selectAnswe
   return (
     <div key={currentQuestion._id} className="card p-6 md:p-8 mb-6 animate-slide-up bg-[#0f0f0f] border-white/20 select-none">
       <div className="flex items-start gap-4 mb-6">
-        <span className="flex-shrink-0 w-20  h-10 rounded-xl bg-white/20 border border-white/20 flex items-center justify-center text-white font-bold text-sm">
+        <span className="flex-shrink-0 w-20  h-10 rounded-xl bg-white/20 border border-white/20 flex items-center justify-center text-white font-normal text-sm">
           Que {currentIndex + 1}
         </span>
-        <p className="text-lg md:text-xl font-medium text-slate-100 leading-relaxed pt-1">
+        <p className="text-lg md:text-xl font-normal text-slate-100 leading-relaxed pt-1">
           {currentQuestion.question}
         </p>
       </div>
@@ -38,7 +38,7 @@ const QuestionCard = memo(({ currentQuestion, currentIndex, answers, selectAnswe
                   : 'bg-slate-700/50 text-white'}`}>
                 {labels[idx]}
               </span>
-              <span className="font-medium tracking-tight">{option}</span>
+              <span className="font-normal tracking-tight">{option}</span>
             </button>
           );
         })}

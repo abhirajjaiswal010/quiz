@@ -11,7 +11,7 @@ const LeaderboardTab = ({ leaderboard, quizId }) => {
                <Trophy size={42} strokeWidth={1} />
             </div>
             <div>
-              <h3 className="text-2xl font-medium text-white tracking-widest uppercase">Live Standings</h3>
+              <h3 className="text-2xl font-normal text-white tracking-widest uppercase">Live Standings</h3>
               <p className="text-white/20 text-[10px] mt-2 flex items-center gap-2 tracking-[0.2em] uppercase font-light">
                 Session ID: <span className="text-white ml-1 font-mono">{quizId || 'UNDEFINED'}</span>
               </p>
@@ -23,14 +23,14 @@ const LeaderboardTab = ({ leaderboard, quizId }) => {
                 <Users size={14} className="text-white/20" />
                 <div>
                    <p className="text-[9px] text-white/30 uppercase tracking-widest mb-1 font-light">Total Pool</p>
-                   <p className="text-sm text-white font-medium">{leaderboard.length}</p>
+                   <p className="text-sm text-white font-normal">{leaderboard.length}</p>
                 </div>
              </div>
              <div className="bg-white/[0.02] px-5 py-3 rounded-xl border border-white/5 flex items-center gap-4">
                 <Target size={14} className="text-white/20" />
                 <div>
                    <p className="text-[9px] text-white/30 uppercase tracking-widest mb-1 font-light">Efficiency</p>
-                   <p className="text-sm text-white font-medium">100%</p>
+                   <p className="text-sm text-white font-normal">100%</p>
                 </div>
              </div>
           </div>
@@ -54,28 +54,28 @@ const LeaderboardTab = ({ leaderboard, quizId }) => {
                   return (
                     <tr key={r.studentId} className={`group hover:bg-white/[0.02] transition-all`}>
                       <td className="py-8 px-4">
-                        <div className={`w-10 h-10 flex items-center justify-center rounded-full border text-base  font-bold ${isTop3 ? 'bg-white text-black border-white' : 'bg-transparent text-white/20 border-white/5'}`}>
+                        <div className={`w-10 h-10 flex items-center justify-center rounded-full border text-base  font-normal ${isTop3 ? 'bg-white text-black border-white' : 'bg-transparent text-white/20 border-white/5'}`}>
                            {i + 1}
                         </div>
                       </td>
                       <td className="py-8 px-4">
-                        <div className="text-white text-lg group-hover:text-white transition-colors uppercase tracking-tight font-medium">{r.name}</div>
+                        <div className="text-white text-lg group-hover:text-white transition-colors uppercase tracking-tight font-normal">{r.name}</div>
                         <div className="text-[10px] text-white/20 font-mono mt-1 uppercase tracking-widest font-light">{r.studentId}</div>
                       </td>
                       <td className="py-8 px-4 text-center">
                         <div className="flex flex-col items-center">
-                          <span className="text-white text-lg font-medium">{r.correctAnswers || 0}</span>
+                          <span className="text-white text-lg font-normal">{r.correctAnswers || 0}</span>
                           <span className="text-white/10 text-[8px] uppercase tracking-widest font-light">Correct Vectors</span>
                         </div>
                       </td>
                       <td className="py-8 px-4 text-center">
-                        <span className="text-white px-5 py-2.5 rounded-lg border border-white/10 inline-block font-mono text-xl font-medium">
+                        <span className="text-white px-5 py-2.5 rounded-lg border border-white/10 inline-block font-mono text-xl font-normal">
                           {r.score}
                         </span>
                       </td>
                       <td className="py-8 px-4 text-right">
                         <div className="flex flex-col items-end">
-                           <div className="flex items-center gap-1.5 text-white text-lg font-medium">
+                           <div className="flex items-center gap-1.5 text-white text-lg font-normal">
                               <Timer size={14} className="text-white/20" />
                               {r.timeTaken}s
                            </div>

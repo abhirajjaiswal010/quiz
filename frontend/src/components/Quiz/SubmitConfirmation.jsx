@@ -24,9 +24,9 @@ export default function SubmitConfirmation({ questions, answeredCount, setShowCo
             <div className="text-4xl">🤔</div>
           )}
         </div>
-        <h3 className="font-display text-xl font-bold text-white mb-2">Submit Quiz?</h3>
+        <h3 className="font-display text-xl font-normal text-white mb-2">Submit Quiz?</h3>
         <p className="text-slate-400 text-sm mb-1">
-          You have <span className="text-amber-400 font-semibold">{questions.length - answeredCount} unanswered</span> question(s).
+          You have <span className="text-amber-400 font-normal">{questions.length - answeredCount} unanswered</span> question(s).
         </p>
         <p className="text-slate-500 text-xs mb-6">Unanswered questions will count as wrong.</p>
         <div className="flex gap-3">

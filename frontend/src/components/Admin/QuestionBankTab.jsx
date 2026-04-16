@@ -77,7 +77,7 @@ const QuestionModal = ({
                 {editingId ? <Pencil size={18} strokeWidth={1.5} /> : <Plus size={18} strokeWidth={1.5} />}
               </div>
               <div>
-                <h3 className="text-xl font-medium text-white uppercase tracking-wider leading-none">
+                <h3 className="text-xl font-normal text-white uppercase tracking-wider leading-none">
                   {editingId ? 'Edit Blueprint' : 'New Question'}
                 </h3>
                 <p className="text-[10px] text-white/30 uppercase tracking-[0.2em] mt-2 font-light">Question Configuration Matrix</p>
@@ -153,7 +153,7 @@ const QuestionModal = ({
                         type="button"
                         disabled={!opt || !opt.trim()}
                         onClick={() => setQForm({ ...qForm, answer: opt })}
-                        className={`flex-1 py-3 px-4 rounded-lg border text-[10px] transition-all uppercase tracking-[0.2em] font-bold ${qForm.answer === opt && opt !== '' ? 'bg-white text-black border-white' : 'bg-transparent border-white/10 text-white hover:border-white/30'}`}
+                        className={`flex-1 py-3 px-4 rounded-lg border text-[10px] transition-all uppercase tracking-[0.2em] font-normal ${qForm.answer === opt && opt !== '' ? 'bg-white text-black border-white' : 'bg-transparent border-white/10 text-white hover:border-white/30'}`}
                       >
                         {String.fromCharCode(65 + i)}
                       </button>
@@ -168,7 +168,7 @@ const QuestionModal = ({
             <button
               onClick={handleModalSave}
               disabled={loading}
-              className="w-full py-5 text-[11px] uppercase tracking-[0.3em] font-medium border border-white/20 hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3 rounded-lg"
+              className="w-full py-5 text-[11px] uppercase tracking-[0.3em] font-normal border border-white/20 hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3 rounded-lg"
             >
               {loading ? 'Processing...' : (
                 <>
@@ -261,13 +261,13 @@ const QuestionBankTab = ({
               <LayoutPanelLeft size={24} strokeWidth={1} />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-white uppercase tracking-wider">Vault Core</h3>
+              <h3 className="text-xl font-normal text-white uppercase tracking-wider">Vault Core</h3>
               <p className="text-[10px] text-white uppercase tracking-[0.2em] mt-2 font-light">{questions.length} Units Online</p>
             </div>
           </div>
           <button
             onClick={openAddModal}
-            className="px-6 py-3 border border-white/20 text-white rounded-lg text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-white hover:text-black transition-all"
+            className="px-6 py-3 border border-white/20 text-white rounded-lg text-[10px] uppercase tracking-[0.2em] font-normal hover:bg-white hover:text-black transition-all"
           >
             Create Unit
           </button>
@@ -279,11 +279,11 @@ const QuestionBankTab = ({
               <FileJson size={24} strokeWidth={1} />
             </div>
             <div>
-              <h3 className="text-xl font-medium text-white uppercase tracking-wider">Mass Injection</h3>
+              <h3 className="text-xl font-normal text-white uppercase tracking-wider">Mass Injection</h3>
               <p className="text-[10px] text-white/20 uppercase tracking-[0.2em] mt-2 font-light">Transmission Protocol</p>
             </div>
           </div>
-          <label className="px-6 py-3 bg-white/5 border border-white/10 text-white/60 rounded-lg text-[10px] uppercase tracking-[0.2em] font-medium hover:bg-white/[0.08] hover:text-white cursor-pointer transition-all">
+          <label className="px-6 py-3 bg-white/5 border border-white/10 text-white/60 rounded-lg text-[10px] uppercase tracking-[0.2em] font-normal hover:bg-white/[0.08] hover:text-white cursor-pointer transition-all">
             Upload Base
             <input type="file" accept=".json" className="hidden" onChange={handleFileSelect} />
           </label>
@@ -298,16 +298,16 @@ const QuestionBankTab = ({
                 <div className="flex justify-between items-start gap-12">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-4">
-                      <span className="text-[10px] font-medium text-white uppercase tracking-[0.3em]">
+                      <span className="text-[10px] font-normal text-white uppercase tracking-[0.3em]">
                         Sequence {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                       </span>
                     </div>
-                    <div className="text-white font-medium text-xl leading-relaxed mb-8 group-hover:text-white transition-colors">
+                    <div className="text-white font-normal text-xl leading-relaxed mb-8 group-hover:text-white transition-colors">
                       {renderQuestionContent(q.question)}
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                       {q.options.map((opt, i) => (
-                        <div key={i} className={`px-5 py-3 rounded-lg text-sm border transition-all flex items-center gap-3 ${opt === q.answer ? 'bg-green-500/10 text-green-500 font-bold border-green-500/50' : 'bg-transparent border-white text-white'}`}>
+                        <div key={i} className={`px-5 py-3 rounded-lg text-sm border transition-all flex items-center gap-3 ${opt === q.answer ? 'bg-green-500/10 text-green-500 font-normal border-green-500/50' : 'bg-transparent border-white text-white'}`}>
                           <span className="">{String.fromCharCode(65 + i)}</span>
                           <span className="truncate">{opt}</span>
                         </div>
@@ -338,7 +338,7 @@ const QuestionBankTab = ({
               <div className="bg-white/[0.02] p-10 rounded-full mb-8">
                 <BookOpen size={48} strokeWidth={1} className="text-white/10" />
               </div>
-              <h4 className="text-white/20 font-medium uppercase tracking-[0.4em] text-lg">Repository Void</h4>
+              <h4 className="text-white/20 font-normal uppercase tracking-[0.4em] text-lg">Repository Void</h4>
               <p className="text-white/10 text-[10px] mt-6 font-light tracking-[0.2em] max-w-[300px] mx-auto uppercase leading-relaxed">System awaiting data injection</p>
             </div>
           )}

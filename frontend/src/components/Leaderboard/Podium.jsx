@@ -14,10 +14,10 @@ const PodiumStep = ({ participant, rank, height, color, delay }) => {
     >
       {/* Participant Name & Score */}
       <div className="absolute -top-16 flex flex-col items-center w-full">
-         <p className="text-white font-black text-xs uppercase tracking-widest truncate max-w-[120px] mb-1">
+         <p className="text-white font-normal text-xs uppercase tracking-widest truncate max-w-[120px] mb-1">
            {participant.name}
          </p>
-         <div className="text-[10px] text-white/40 font-mono font-bold">
+         <div className="text-[10px] text-white/40 font-mono font-normal">
            <CountUp to={participant.score} duration={2} /> pts
          </div>
       </div>
@@ -38,7 +38,7 @@ const PodiumStep = ({ participant, rank, height, color, delay }) => {
             >
               <Icon size={24} style={{ color: color }} />
             </div>
-            <span className="text-4xl font-black  opacity-20" style={{ color: color }}>
+            <span className="text-4xl font-normal  opacity-20" style={{ color: color }}>
               {rank}
             </span>
         </div>

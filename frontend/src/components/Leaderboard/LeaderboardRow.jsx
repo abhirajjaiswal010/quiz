@@ -39,16 +39,16 @@ const LeaderboardRow = React.memo(({ entry, student, rank, totalQuestions }) => 
       </td>
       <td className="px-4 py-3.5">
         <div className="flex items-center gap-3">
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-normal flex-shrink-0
         ${isCurrentUser ? 'bg-brand-600 text-white' : 'bg-slate-700 text-slate-400'}`}>
             {entry.name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0">
-            <p className={`text-sm font-medium truncate ${isCurrentUser ? 'text-brand-300' : 'text-slate-200'}`}>
+            <p className={`text-sm font-normal truncate ${isCurrentUser ? 'text-brand-300' : 'text-slate-200'}`}>
               {entry.name}
               {isCurrentUser && <span className="ml-1.5 text-xs text-brand-500">(You)</span>}
             </p>
-            <p className="text-xs text-white font-medium truncate">{entry.studentId}</p>
+            <p className="text-xs text-white font-normal truncate">{entry.studentId}</p>
           </div>
         </div>
       </td>

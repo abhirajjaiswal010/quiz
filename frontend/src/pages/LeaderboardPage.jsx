@@ -18,11 +18,11 @@ import Podium from '../components/Leaderboard/Podium';
 export default function LeaderboardPage() {
   const navigate = useNavigate();
   const { result, student, reset, questions, isQuizActive } = useQuiz();
-  
+
   // State for total question count and rankings
   const [total, setTotal] = useState(0);
   const totalQuestions = total || result?.total || questions.length || 0;
-  
+
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -83,7 +83,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen animate-fade-in bg-[#0F0F0F]">
-      
+
       {/* ── Personal Achievement Banner ── */}
       <PersonalStats result={result} myRank={myRank} isQuizActive={isQuizActive} />
 
@@ -94,27 +94,27 @@ export default function LeaderboardPage() {
 
       {/* ── Global Rankings Module ── */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        
+
         {/* Table Title and Status Indicator */}
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
           <div className="flex-1">
-            <h2 className="font-display text-3xl font-bold text-white flex items-center gap-3">
+            <h2 className="font-display text-3xl font-normal text-white flex items-center gap-3">
               <Trophy className="text-[#4FB3FF]" />
               Global Rankings
             </h2>
-            <p className="text-slate-500 text-sm mt-1 uppercase tracking-tight text-xs font-bold font-mono">
+            <p className="text-slate-500 text-sm mt-1 uppercase tracking-tight text-xs font-normal font-mono">
               {isQuizActive ? 'Live calculation in progress...' : `${leaderboard.length} submissions finalized`}
             </p>
           </div>
         </div>
 
         {/* The Core Rankings Table Component */}
-        <LeaderboardTable 
-          leaderboard={leaderboard} 
-          student={student} 
-          loading={loading} 
-          error={error} 
-          totalQuestions={totalQuestions} 
+        <LeaderboardTable
+          leaderboard={leaderboard}
+          student={student}
+          loading={loading}
+          error={error}
+          totalQuestions={totalQuestions}
           onRefresh={fetchLeaderboard}
         />
 
@@ -123,9 +123,9 @@ export default function LeaderboardPage() {
           <button
             id="back-to-home-btn"
             onClick={reset}
-            className="btn-secondary mx-auto font-montserrat uppercase px-10 py-4 tracking-widest text-[10px] font-bold border-none"
+            className="btn-secondary mx-auto font-montserrat uppercase px-10 py-4 tracking-widest text-[10px] font-normal border-none"
           >
-            <ArrowBigLeftDashIcon/> Exit to Portal
+            <ArrowBigLeftDashIcon /> Exit to Portal
           </button>
         </div>
       </div>

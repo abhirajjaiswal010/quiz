@@ -93,10 +93,10 @@ export default function WaitingPage() {
       {/* Phase Metadata Header/Timer */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-3 mb-1">
-          <span className="text-xl font-bold tracking-tight transition-colors duration-500" style={{ color: phase.color }}>
+          <span className="text-xl font-normal tracking-tight transition-colors duration-500" style={{ color: phase.color }}>
             {phase.label}
           </span>
-          <span className="text-xl font-bold text-white tabular-nums leading-none transition-all duration-300">
+          <span className="text-xl font-normal text-white tabular-nums leading-none transition-all duration-300">
             {phaseSeconds}
           </span>
         </div>
@@ -122,7 +122,7 @@ export default function WaitingPage() {
 
       {/* Motivational message */}
       <div className="h-7 flex items-center justify-center mb-4">
-        <p key={msgKey} className="motivational-text text-slate-400 text-sm italic font-medium text-center">
+        <p key={msgKey} className="motivational-text text-slate-400 text-sm italic font-normal text-center">
           "{MOTIVATIONAL_MESSAGES[msgIndex]}"
         </p>
       </div>
@@ -133,7 +133,7 @@ export default function WaitingPage() {
       <div className="absolute bottom-6 right-6 z-10">
         <button
           onClick={() => setShowRules(true)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/80 transition-all text-[10px] font-bold uppercase tracking-[0.2em]"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-700/80 transition-all text-[10px] font-normal uppercase tracking-[0.2em]"
         >
           <ShieldCheck size={14} className="text-brand-400" />
           View Rules
@@ -142,7 +142,7 @@ export default function WaitingPage() {
 
       {/* Live Joining Feed */}
       <div className="absolute top-6 right-6 w-48 z-10 hidden md:block">
-        <h3 className="text-[9px] text-slate-500 uppercase font-bold tracking-[0.2em] mb-3 flex items-center gap-1.5">
+        <h3 className="text-[9px] text-slate-500 uppercase font-normal tracking-[0.2em] mb-3 flex items-center gap-1.5">
           <Users size={12} className="text-emerald-400" />
           Live Join Feed
         </h3>
@@ -150,7 +150,7 @@ export default function WaitingPage() {
           {recentJoiners && recentJoiners.length > 0 ? recentJoiners.map((rj) => (
             <div key={rj.id} className="flex items-center gap-2 bg-slate-800/30 border border-slate-700/50 px-3 py-1.5 rounded-lg animate-slide-up">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
-              <p className="text-[11px] text-white/80 font-bold font-montserrat truncate">{rj.name}</p>
+              <p className="text-[11px] text-white/80 font-normal font-montserrat truncate">{rj.name}</p>
             </div>
           )) : (
              <p className="text-[10px] text-slate-600 italic">New participants will appear here...</p>

@@ -28,7 +28,7 @@ const LeaderboardTable = ({ leaderboard, student, loading, error, totalQuestions
   if (error) {
     return (
       <div className="card p-10 text-center border-red-500/20">
-        <p className="text-red-400 mb-6 font-medium">{error}</p>
+        <p className="text-red-400 mb-6 font-normal">{error}</p>
         <button onClick={onRefresh} className="btn-primary mx-auto">Try Again</button>
       </div>
     );
@@ -40,7 +40,7 @@ const LeaderboardTable = ({ leaderboard, student, loading, error, totalQuestions
         <div className="flex justify-center mb-6 opacity-50">
           <Flag className="text-white" size={64} />
         </div>
-        <h3 className="text-xl font-bold text-white mb-2">No Results Found</h3>
+        <h3 className="text-xl font-normal text-white mb-2">No Results Found</h3>
         <p className="text-slate-500">Wait for the quiz session to be stopped!</p>
       </div>
     );
@@ -52,10 +52,10 @@ const LeaderboardTable = ({ leaderboard, student, loading, error, totalQuestions
         <table className="w-full">
           <thead>
             <tr className="border-b border-slate-800">
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider w-16">Rank</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Student</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Score</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Time</th>
+              <th className="text-left px-4 py-3 text-xs font-normal text-slate-500 uppercase tracking-wider w-16">Rank</th>
+              <th className="text-left px-4 py-3 text-xs font-normal text-slate-500 uppercase tracking-wider">Student</th>
+              <th className="text-left px-4 py-3 text-xs font-normal text-slate-500 uppercase tracking-wider">Score</th>
+              <th className="text-left px-4 py-3 text-xs font-normal text-slate-500 uppercase tracking-wider hidden md:table-cell">Time</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/50">

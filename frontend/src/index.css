@@ -22,12 +22,12 @@
   }
 
   body {
-    @apply font-montserrat text-[#e0e9ff] antialiased min-h-screen;
+    @apply font-montserrat text-[#e0e9ff] antialiased min-h-screen font-normal;
     background-color: #0f0f0f;
   }
 
   h1, h2, h3, h4 {
-    @apply font-display;
+    @apply font-display font-light;
   }
 
   .admin-root {
@@ -44,7 +44,7 @@
   .admin-root h2, 
   .admin-root h3, 
   .admin-root h4 {
-    font-weight: 500 !important;
+    font-weight: 400 !important;
   }
 
   .admin-root .font-medium {
@@ -52,11 +52,11 @@
   }
 
   .admin-root .font-semibold {
-    font-weight: 600 !important;
+    font-weight: 500 !important;
   }
 
   .admin-root .font-bold {
-    font-weight: 700 !important;
+    font-weight: 500 !important;
   }
 
   /* Ensure icons inherit parent text color */
@@ -76,7 +76,7 @@
   @apply inline-flex items-center justify-center gap-2 
   px-6 py-3 rounded-xl 
   bg-[#4fb3ff] text-[#0e0929] 
-  font-bold text-sm 
+  font-medium text-sm 
   transition-all duration-200 
   active:scale-95 
   disabled:opacity-50 disabled:cursor-not-allowed 
@@ -92,11 +92,11 @@
 }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-200 font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-600 text-slate-200 font-normal text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .btn-accent {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-semibold text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-accent-500 hover:bg-accent-400 text-white font-normal text-sm transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
   .card {
@@ -104,19 +104,19 @@
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl bg-[#0f0f0f] border-white/10 focus:border-[#4fb3ff] focus:ring-2 focus:ring-[#4fb3ff]/10 outline-none text-[#4fb3ff] placeholder-[#5e5e6e] transition-all duration-200 text-sm;
+    @apply w-full px-4 py-3 rounded-xl bg-[#0f0f0f] border-white/10 focus:border-[#4fb3ff] focus:ring-2 focus:ring-[#4fb3ff]/10 outline-none text-[#4fb3ff] placeholder-[#5e5e6e] transition-all duration-200 text-sm font-normal;
   }
 
   .label {
-    @apply block text-sm font-medium text-slate-300 mb-1.5;
+    @apply block text-sm font-normal text-slate-300 mb-1.5;
   }
 
   .error-text {
-    @apply text-xs text-red-400 mt-1.5 flex items-center gap-1;
+    @apply text-xs text-red-400 mt-1.5 flex items-center gap-1 font-normal;
   }
 
   .badge {
-    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-normal;
   }
 
   .glass-card {

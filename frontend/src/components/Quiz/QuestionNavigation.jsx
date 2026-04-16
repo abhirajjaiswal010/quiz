@@ -28,7 +28,7 @@ export default function QuestionNavigation({
                 key={q._id}
                 id={`jump-q-${i}-btn`}
                 onClick={() => setCurrentIndex(i)}
-                className={`w-7 h-7 rounded-lg text-xs font-semibold transition-all duration-150
+                className={`w-7 h-7 rounded-lg text-xs font-normal transition-all duration-150
                   ${isCurrent
                     ? 'bg-brand-600 text-white scale-110 ring-2 ring-brand-500 ring-offset-2 ring-offset-slate-950'
                     : isAnswered
@@ -80,7 +80,7 @@ export default function QuestionNavigation({
 
       {/* Mobile question grid */}
       <div className="md:hidden mt-6 card p-4 bg-slate-900/50 border-slate-800">
-        <p className="text-xs text-slate-500 mb-3 font-medium uppercase tracking-wider">Jump to:</p>
+        <p className="text-xs text-slate-500 mb-3 font-normal uppercase tracking-wider">Jump to:</p>
         <div className="flex flex-wrap gap-2">
           {questions.map((q, i) => {
             const isCurrent = i === currentIndex;
@@ -92,7 +92,7 @@ export default function QuestionNavigation({
                 key={q._id}
                 id={`mobile-jump-q-${i}-btn`}
                 onClick={() => setCurrentIndex(i)}
-                className={`w-10 h-10 rounded-lg text-xs font-semibold transition-all
+                className={`w-10 h-10 rounded-lg text-xs font-normal transition-all
                   ${isCurrent
                     ? 'bg-brand-600 text-white'
                     : isAnswered

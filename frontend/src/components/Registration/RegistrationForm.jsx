@@ -5,12 +5,12 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
   return (
     <div className="border border-white/20 rounded-xl max-w-md p-6 animate-slide-up bg-[#0F0F0F]/10 backdrop-blur-xl w-full mt-4">
       <div className="mb-4">
-        <h2 className="font-display text-lg font-bold text-white uppercase tracking-wider">Join Quiz </h2>
+        <h2 className="font-display text-lg font-normal text-white uppercase tracking-wider">Join Quiz </h2>
       </div>
 
       <form onSubmit={onSubmit} noValidate className="space-y-4">
         <div>
-          <label htmlFor="quizId" className="text-xs font-semibold text-white uppercase tracking-widest mb-1.5 block">
+          <label htmlFor="quizId" className="text-xs font-normal text-white uppercase tracking-widest mb-1.5 block">
             Session Code
           </label>
           <input
@@ -27,7 +27,7 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
         </div>
 
         <div>
-          <label htmlFor="name" className="text-xs font-semibold text-white uppercase tracking-widest mb-1.5 block">
+          <label htmlFor="name" className="text-xs font-normal text-white uppercase tracking-widest mb-1.5 block">
             Full Name
           </label>
           <input
@@ -45,7 +45,7 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary cursor-target bg-[#4fb3ff] w-full py-4 text-sm font-bold text-white flex items-center justify-center gap-2 rounded-lg   mt-4 uppercase tracking-widest "
+          className="btn-primary cursor-target bg-[#4fb3ff] w-full py-4 text-sm font-normal text-white flex items-center justify-center gap-2 rounded-lg   mt-4 uppercase tracking-widest "
         >
           {loading ? (
             <div className="flex items-center gap-2">
@@ -62,11 +62,11 @@ const RegistrationForm = ({ form, onChange, onSubmit, loading }) => {
       </form>
 
       <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-center gap-4 text-[10px] text-white/40">
-        <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider">
+        <span className="flex items-center gap-1.5 font-normal uppercase tracking-wider">
           <ShieldCheck size={14} className="text-[#4fb3ff]" /> Single Attempt
         </span>
         <span className="opacity-30">•</span>
-        <span className="flex items-center gap-1.5 font-bold uppercase tracking-wider">
+        <span className="flex items-center gap-1.5 font-normal uppercase tracking-wider">
           <Timer size={14} className="text-[#4fb3ff]" /> Live Ranking
         </span>
       </div>

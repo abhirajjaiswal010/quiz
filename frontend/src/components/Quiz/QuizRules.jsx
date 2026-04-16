@@ -23,7 +23,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
               <ShieldCheck className="text-brand-400" size={28} />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white font-display">Quiz Guidelines</h2>
+              <h2 className="text-2xl font-normal text-white font-display">Quiz Guidelines</h2>
               <p className="text-slate-500 text-sm">Please read carefully before proceeding</p>
             </div>
           </div>
@@ -33,10 +33,10 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
             <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
               <ShieldAlert className="text-red-400 shrink-0" size={24} />
               <div>
-                <h3 className="text-white font-bold text-sm mb-1 uppercase tracking-wider">Anti-Cheat Mode</h3>
+                <h3 className="text-white font-normal text-sm mb-1 uppercase tracking-wider">Anti-Cheat Mode</h3>
                 <p className="text-slate-400 text-xs leading-relaxed">
                   Switching tabs or minimizing the browser will trigger a strike.<br />
-                  <span className="text-red-400 font-bold ml-1">3 Strikes = Auto-Submission.</span>
+                  <span className="text-red-400 font-normal ml-1">3 Strikes = Auto-Submission.</span>
                 </p>
               </div>
             </div>
@@ -45,7 +45,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
             <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
               <Zap className="text-amber-400 shrink-0" size={24} />
               <div>
-                <h3 className="text-white font-bold text-sm mb-1 uppercase tracking-wider">Dynamic Scoring</h3>
+                <h3 className="text-white font-normal text-sm mb-1 uppercase tracking-wider">Dynamic Scoring</h3>
                 <p className="text-slate-400 text-xs leading-relaxed">
                   Earn <span className="text-emerald-400">100 points</span> per correct answer.
                   Get <span className="text-[#4fb3ff]">Bonus points</span> for answering quickly.
@@ -57,7 +57,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
             <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
               <Timer className="text-brand-400 shrink-0" size={24} />
               <div>
-                <h3 className="text-white font-bold text-sm mb-1 uppercase tracking-wider">Session Timer</h3>
+                <h3 className="text-white font-normal text-sm mb-1 uppercase tracking-wider">Session Timer</h3>
                 <p className="text-slate-400 text-xs leading-relaxed">
                   The quiz will end automatically when the timer reaches zero. Partial answers will be saved.
                 </p>
@@ -68,7 +68,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
             <div className="flex gap-4 p-4 rounded-2xl bg-white/5 border border-white/5">
               <CheckCircle2 className="text-emerald-400 shrink-0" size={24} />
               <div>
-                <h3 className="text-white font-bold text-sm mb-1 uppercase tracking-wider">Final Submission</h3>
+                <h3 className="text-white font-normal text-sm mb-1 uppercase tracking-wider">Final Submission</h3>
                 <p className="text-slate-400 text-xs leading-relaxed">
                   Ensure all questions are answered before submitting. Once submitted, you cannot edit your answers.
                 </p>
@@ -80,7 +80,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
           <div className="mb-10 text-center bg-[#4fb3ff]/5 p-5 rounded-2xl border border-[#4fb3ff]/10">
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full bg-[#4fb3ff]/10 border border-[#4fb3ff]/20">
               <Star className="text-[#4fb3ff]" size={14} />
-              <span className="text-[10px] font-black text-[#4fb3ff] uppercase tracking-widest">Master Tip</span>
+              <span className="text-[10px] font-normal text-[#4fb3ff] uppercase tracking-widest">Master Tip</span>
             </div>
             <p className="text-sm text-slate-300 italic">
               "Ranking is decided by Accuracy first, then Speed. Maintain your streak!"
@@ -90,7 +90,7 @@ export default function QuizRules({ onStart, buttonText = "I'VE READ THE RULES -
           <button
             id="start-quiz-now-btn"
             onClick={onStart}
-            className="w-full btn-primary bg-brand-600 hover:bg-brand-500 py-4 font-black flex items-center justify-center gap-3 group transition-all"
+            className="w-full btn-primary bg-brand-600 hover:bg-brand-500 py-4 font-normal flex items-center justify-center gap-3 group transition-all"
           >
             {buttonText}
             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />

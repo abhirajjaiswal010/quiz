@@ -11,7 +11,7 @@ const AdminNav = ({ tab, setTab, fetchQuizzes }) => {
         }`}
     >
       <Icon size={14} className={tab === id ? "text-black" : "text-white"} />
-      <span className="tracking-[0.2em] font-bold">{label}</span>
+      <span className="tracking-[0.2em] font-normal">{label}</span>
     </button>
   );
 

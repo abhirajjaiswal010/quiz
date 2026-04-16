@@ -23,18 +23,18 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
           )}
         </div>
 
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-2">
+        <h1 className="font-display text-3xl md:text-4xl font-normal text-white mb-2">
           Quiz Completed!
         </h1>
-        <p className="text-white font-semibold mb-4 text-sm">
-          Well done, <span className="text-white font-semibold">{result.name}</span>!
+        <p className="text-white font-normal mb-4 text-sm">
+          Well done, <span className="text-white font-normal">{result.name}</span>!
         </p>
 
         {myRank && (
           <div className="mb-2 animate-bounce-slow">
-            <span className="text-white/50 text-[10px] font-bold uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
+            <span className="text-white/50 text-[10px] font-normal uppercase tracking-[0.3em] block mb-1">Your Global Rank</span>
             <div className="flex items-center justify-center gap-1 drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-              <span className="text-5xl md:text-7xl font-black text-white">#</span>
+              <span className="text-5xl md:text-7xl font-normal text-white">#</span>
               <Counter 
                 value={myRank} 
                 fontSize={64} 
@@ -49,15 +49,15 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
         {/* Results Info Card */}
         <div className="mb-3 animate-slide-up animation-delay-200">
            <div className="inline-block bg-[#0F0F0F]/60 backdrop-blur-md border border-white/20 rounded-3xl px-12 py-8 border-t-white/40">
-              <span className="text-white/50 text-[10px] font-black uppercase tracking-[0.4em] block mb-2">Total Points Earned</span>
-              <div className="text-6xl md:text-8xl font-black text-white flex items-center justify-center gap-2">
+              <span className="text-white/50 text-[10px] font-normal uppercase tracking-[0.4em] block mb-2">Total Points Earned</span>
+              <div className="text-6xl md:text-8xl font-normal text-white flex items-center justify-center gap-2">
                 <span className="gradient-text"><CountUp to={result.score || 0} duration={2} /></span>
               </div>
               <div className="mt-4 flex items-center justify-center gap-4 text-xs">
-                  <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-bold">
+                  <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full border border-emerald-500/20 font-normal">
                     <CountUp to={(result.correctAnswers || 0) * 1000} duration={1.5} /> Acc Points
                   </span>
-                  <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-bold">
+                  <span className="bg-amber-500/10 text-amber-400 px-3 py-1 rounded-full border border-amber-500/20 font-normal">
                     +<CountUp to={result.remainingTime || 0} duration={1.5} /> Speed Bonus
                   </span>
               </div>
@@ -67,7 +67,7 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
         {/* Stats Grid */}
         <div className="inline-flex flex-wrap items-center justify-center gap-4 md:gap-8 bg-[#0F0F0F]/60 backdrop-blur-sm border border-white/10 rounded-2xl px-6 py-5">
           <div className="text-center px-1">
-            <div className="font-display text-4xl font-black text-[#98E19A]">
+            <div className="font-display text-4xl font-normal text-[#98E19A]">
               <CountUp to={result.correctAnswers || 0} duration={1.5} />
               <span className="text-white/20 text-xl font-normal ml-0.5">/{totalQuestions}</span>
             </div>
@@ -75,21 +75,21 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
           </div>
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
-            <div className="font-display text-4xl font-black text-[#FF7575]">
+            <div className="font-display text-4xl font-normal text-[#FF7575]">
               <CountUp to={result.wrongAnswers || 0} duration={1.5} />
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Wrong</div>
           </div>
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
-            <div className="font-display text-4xl font-black text-[#4FB3FF]">
+            <div className="font-display text-4xl font-normal text-[#4FB3FF]">
               <CountUp to={(result.correctAnswers || 0) + (result.wrongAnswers || 0)} duration={1.5} />
             </div>
             <div className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest mt-1">Attempted</div>
           </div>
           <div className="w-px h-10 bg-white/10" />
           <div className="text-center px-1">
-            <div className="font-display text-4xl font-black text-amber-400">
+            <div className="font-display text-4xl font-normal text-amber-400">
               { totalQuestions > 0 ? <CountUp to={Math.round(((result.correctAnswers || 0) / totalQuestions) * 100)} duration={1.5} /> : '—' }
               <span className="text-xl font-normal ml-0.5">%</span>
             </div>
@@ -99,27 +99,27 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
 
         <div className="mt-4 text-sm text-slate-500 flex flex-col items-center gap-2">
           {result.correctAnswers === totalQuestions && totalQuestions > 0 && (
-            <span className="flex items-center gap-2 text-amber-500 font-bold uppercase tracking-widest animate-pulse">
+            <span className="flex items-center gap-2 text-amber-500 font-normal uppercase tracking-widest animate-pulse">
               <Flame size={16} /> Perfect Score! Outstanding!
             </span>
           )}
           {result.correctAnswers >= totalQuestions * 0.8 && result.correctAnswers < totalQuestions && (
-            <span className="flex items-center gap-2 text-white font-semibold">
+            <span className="flex items-center gap-2 text-white font-normal">
               <Star size={16} /> Excellent work!
             </span>
           )}
           {result.correctAnswers >= totalQuestions * 0.6 && result.correctAnswers < totalQuestions * 0.8 && (
-            <span className="flex items-center gap-2 text-white font-semibold">
+            <span className="flex items-center gap-2 text-white font-normal">
               <ThumbsUp size={16} /> Good job!
             </span>
           )}
           {result.correctAnswers > 0 && result.correctAnswers < totalQuestions * 0.6 && (
-            <span className="flex items-center gap-2 text-white font-semibold text-xs">
+            <span className="flex items-center gap-2 text-white font-normal text-xs">
               <BookIcon size={16} /> Keep practicing!
             </span>
           )}
           {result.correctAnswers === 0 && (
-            <span className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-widest animate-pulse">
+            <span className="flex items-center gap-2 text-white font-normal text-xs uppercase tracking-widest animate-pulse">
               <BookIcon size={16} /> Better luck next time! Attend more carefully.
             </span>
           )}
@@ -130,19 +130,19 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
               <div className="flex flex-col items-center gap-2">
                 <button
                    disabled
-                   className="flex items-center gap-3 px-8 py-3 bg-white/10 text-white/40 border border-white/5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] cursor-not-allowed"
+                   className="flex items-center gap-3 px-8 py-3 bg-white/10 text-white/40 border border-white/5 rounded-full font-normal uppercase tracking-[0.2em] text-[10px] cursor-not-allowed"
                 >
                    <span className="text-xs">🔒</span>
                    Review Pending
                 </button>
-                <p className="text-[8px] text-white/30 uppercase tracking-widest font-bold">
+                <p className="text-[8px] text-white/30 uppercase tracking-widest font-normal">
                    Available after session terminates
                 </p>
               </div>
             ) : (
               <button
                  onClick={() => navigate('/review')}
-                 className="flex items-center gap-3 px-8 py-3 bg-white text-[#4FB3FF] rounded-full font-bold uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
+                 className="flex items-center gap-3 px-8 py-3 bg-white text-[#4FB3FF] rounded-full font-normal uppercase tracking-[0.2em] text-[10px] hover:scale-105 active:scale-95 transition-all shadow-xl shadow-black/10"
               >
                  <BookOpenCheck size={16} strokeWidth={2.5} />
                  Review My Answers
@@ -151,7 +151,7 @@ const PersonalStats = ({ result, myRank, isQuizActive }) => {
         </div>
         
         <div className="mt-4 flex flex-col items-center opacity-40">
-           <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white mb-1">Scroll for Rankings</span>
+           <span className="text-[10px] font-normal uppercase tracking-[0.3em] text-white mb-1">Scroll for Rankings</span>
            <ChevronDown size={15} className="text-white animate-bounce mb-[-10px]" />
            <ChevronDown size={20} className="text-white animate-bounce" />
         </div>

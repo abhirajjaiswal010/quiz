@@ -24,7 +24,7 @@ const SessionControlTab = ({
   return (
     <div className="space-y-6 animate-slide-up text-white">
       <div className="bg-white/[0.03] border border-white/10 rounded-xl p-8">
-        <h2 className="text-xl font-medium text-white mb-6 uppercase tracking-wide">Session Console</h2>
+        <h2 className="text-xl font-normal text-white mb-6 uppercase tracking-wide">Session Console</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
           {/* Socket Connection Status */}
           <div className="lg:col-span-2 flex items-center gap-3 bg-white/5 p-3 px-4 rounded-lg border border-white/5">
@@ -78,15 +78,15 @@ const SessionControlTab = ({
             </div>
 
             <div className="pt-4 grid grid-cols-1 gap-3 pb-6">
-              <button onClick={handleCreate} disabled={loading} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-medium border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl">Init Session</button>
-              <button onClick={handleStart} disabled={loading || status === true || status === null} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-medium border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl disabled:opacity-20">Activate</button>
-              <button onClick={handleStop} disabled={loading || status === false || status === null} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-medium border border-white/10 hover:bg-red-500 hover:text-white transition-all rounded-xl disabled:opacity-20">Terminate</button>
+              <button onClick={handleCreate} disabled={loading} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-normal border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl">Init Session</button>
+              <button onClick={handleStart} disabled={loading || status === true || status === null} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-normal border border-white/10 hover:bg-white hover:text-black transition-all rounded-xl disabled:opacity-20">Activate</button>
+              <button onClick={handleStop} disabled={loading || status === false || status === null} className="w-full py-4 text-[11px] uppercase tracking-[0.2em] font-normal border border-white/10 hover:bg-red-500 hover:text-white transition-all rounded-xl disabled:opacity-20">Terminate</button>
             </div>
 
             {sessionInfo && (
               <div className="p-6 rounded-xl bg-white/5 border border-white/10 space-y-4 animate-slide-up">
                 <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                  <p className="text-[10px] text-white uppercase font-bold tracking-[0.2em]">Live Session Telemetry</p>
+                  <p className="text-[10px] text-white uppercase font-normal tracking-[0.2em]">Live Session Telemetry</p>
                   <Radio size={14} className="text-white" />
                 </div>
 
@@ -104,18 +104,18 @@ const SessionControlTab = ({
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5">
-                    <span className="text-white text-[8px] uppercase font-bold block mb-1">Total Vectors</span>
-                    <span className="text-white font-medium text-lg font-mono">{sessionInfo.totalQuestions}</span>
+                    <span className="text-white text-[8px] uppercase font-normal block mb-1">Total Vectors</span>
+                    <span className="text-white font-normal text-lg font-mono">{sessionInfo.totalQuestions}</span>
                   </div>
                   <div className="bg-white/[0.02] p-3 rounded-lg border border-white/5">
-                    <span className="text-white text-[8px] uppercase font-bold block mb-1">Allocated Time</span>
-                    <span className="text-white font-medium text-lg font-mono">{sessionInfo.quizDetails.duration}M</span>
+                    <span className="text-white text-[8px] uppercase font-normal block mb-1">Allocated Time</span>
+                    <span className="text-white font-normal text-lg font-mono">{sessionInfo.quizDetails.duration}M</span>
                   </div>
                 </div>
 
                 <div className={`p-3 rounded-lg border flex items-center justify-between ${allowTabSwitching ? 'bg-amber-500/5 border-amber-500/10' : 'bg-emerald-500/5 border-emerald-500/10'}`}>
-                  <span className="text-white text-[9px] uppercase font-bold">ANTI-CHEAT LOCK</span>
-                  <span className={`text-[8px] font-bold uppercase ${allowTabSwitching ? 'text-amber-500' : 'text-emerald-400'}`}>
+                  <span className="text-white text-[9px] uppercase font-normal">ANTI-CHEAT LOCK</span>
+                  <span className={`text-[8px] font-normal uppercase ${allowTabSwitching ? 'text-amber-500' : 'text-emerald-400'}`}>
                     {allowTabSwitching ? 'Inactive' : 'Secured'}
                   </span>
                 </div>
@@ -127,10 +127,10 @@ const SessionControlTab = ({
           <div className="space-y-6 flex flex-col h-full">
             <div className={`p-6 rounded-2xl border transition-all duration-500 flex items-center justify-between ${status === true ? 'bg-white text-black border-white' : 'bg-white/5 border-white/10'}`}>
               <div>
-                <p className={`text-[10px] uppercase font-bold mb-1 tracking-[0.2em] ${status === true ? 'text-black' : 'text-white'}`}>Session Status</p>
+                <p className={`text-[10px] uppercase font-normal mb-1 tracking-[0.2em] ${status === true ? 'text-black' : 'text-white'}`}>Session Status</p>
                 <div className="flex items-center gap-3">
                   <span className={`w-1.5 h-1.5 rounded-full ${status === true ? 'bg-black animate-pulse' : 'bg-white'}`} />
-                  <p className="text-xl font-bold tracking-tight">
+                  <p className="text-xl font-normal tracking-tight">
                     {status === true ? 'ACTIVE' : status === false ? 'STANDBY' : 'PENDING'}
                   </p>
                 </div>
@@ -164,7 +164,7 @@ const SessionControlTab = ({
                   <button
                     key={b.id}
                     onClick={() => setPTab(b.id)}
-                    className={`flex-1 py-2 rounded-lg text-[9px] uppercase tracking-[0.2em] transition-all font-bold ${pTab === b.id ? 'bg-white text-black' : 'text-white hover:text-white'}`}
+                    className={`flex-1 py-2 rounded-lg text-[9px] uppercase tracking-[0.2em] transition-all font-normal ${pTab === b.id ? 'bg-white text-black' : 'text-white hover:text-white'}`}
                   >
                     {b.label} ({b.count})
                   </button>

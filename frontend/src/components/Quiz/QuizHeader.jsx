@@ -15,13 +15,13 @@ export default function QuizHeader({ timeLeft, timerColor, student, answeredCoun
             🧠
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">ClubQuiz Session</p>
-            <p className="text-md font-bold text-white truncate">{student?.name}</p>
+            <p className="text-sm font-normal text-white/40 uppercase tracking-[0.2em] leading-none mb-1">ClubQuiz Session</p>
+            <p className="text-md font-normal text-white truncate">{student?.name}</p>
           </div>
         </div>
 
         {/* Timer */}
-        <div className={`px-4 py-2 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-3 font-mono font-black text-2xl ${timerColor} tabular-nums transition-colors duration-500 shadow-inner`}>
+        <div className={`px-4 py-2 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center gap-3 font-mono font-normal text-2xl ${timerColor} tabular-nums transition-colors duration-500 shadow-inner`}>
           <div className={`w-2 h-2 rounded-full ${timeLeft <= 60 ? 'bg-red-500 animate-ping' : 'bg-current opacity-50'}`} />
           {formatTime(timeLeft)}
         </div>
@@ -38,7 +38,7 @@ export default function QuizHeader({ timeLeft, timerColor, student, answeredCoun
             <div className="absolute right-0 top-0 bottom-0 w-8 bg-white/20 blur-sm" />
           </div>
         </div>
-        <div className="flex justify-between text-[10px] font-bold text-slate-500 mt-2 uppercase tracking-widest">
+        <div className="flex justify-between text-[10px] font-normal text-slate-500 mt-2 uppercase tracking-widest">
           <span>Item {currentIndex + 1} / {questions.length}</span>
           <span className="text-brand-400">{Math.round(progress)}% Processed</span>
         </div>

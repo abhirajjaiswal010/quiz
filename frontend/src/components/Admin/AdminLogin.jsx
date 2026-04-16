@@ -26,7 +26,7 @@ const AdminLogin = ({ handleLogin, loading, showKey, setShowKey }) => {
         <div className="mx-auto w-12 h-12 bg-white/5 rounded-full flex items-center justify-center mb-6 text-white ">
           <Lock size={24} strokeWidth={1.5} />
         </div>
-        <h1 className="text-xl font-medium text-white mb-2 uppercase tracking-wide">Admin Access</h1>
+        <h1 className="text-xl font-normal text-white mb-2 uppercase tracking-wide">Admin Access</h1>
         <p className="text-white text-[11px] mb-8 font-light tracking-wider">Initialize secure schematic access</p>
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="relative">
@@ -45,7 +45,7 @@ const AdminLogin = ({ handleLogin, loading, showKey, setShowKey }) => {
               {showKey ? <EyeOff size={14} /> : <Eye size={14} />}
             </button>
           </div>
-          <button type="submit" disabled={loading} className="w-full py-4 text-[10px] uppercase tracking-[0.2em] font-medium border border-white/20 hover:bg-white hover:text-black transition-all rounded-lg mt-4 bg-transparent text-white">
+          <button type="submit" disabled={loading} className="w-full py-4 text-[10px] uppercase tracking-[0.2em] font-normal border border-white/20 hover:bg-white hover:text-black transition-all rounded-lg mt-4 bg-transparent text-white">
             {loading ? 'Decrypting...' : 'Authenticate'}
           </button>
         </form>

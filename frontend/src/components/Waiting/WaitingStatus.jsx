@@ -13,12 +13,12 @@ export default function WaitingStatus({ student, participantCount }) {
         <span className="h-3 w-px bg-charcoal-700" />
         <span className="flex items-center gap-3 text-brand-200">
           <Users className="text-sm" />
-          <span className="font-semibold text-xl">{participantCount || 1}</span>
+          <span className="font-normal text-xl">{participantCount || 1}</span>
         </span>
       </div>
 
       {/* Greeting */}
-      <h1 className="font-display text-3xl md:text-4xl font-bold text-white text-center mb-1 flex items-center gap-3">
+      <h1 className="font-display text-3xl md:text-4xl font-normal text-white text-center mb-1 flex items-center gap-3">
         Hey, <span className="gradient-text">{student?.name?.split(' ')[0] || 'there'}</span>
       </h1>
       <p className="text-slate-500 text-sm text-center mb-1">

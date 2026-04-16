@@ -136,7 +136,7 @@ export default function RegistrationPage() {
         />
 
         {/* Simplified Footer attribution */}
-        <p className="mt-8 text-[10px] font-bold text-white/20 uppercase tracking-[0.3em]">
+        <p className="mt-8 text-[10px] font-normal text-white/20 uppercase tracking-[0.3em]">
           Innovixus Secure Portal
         </p>
       </main>

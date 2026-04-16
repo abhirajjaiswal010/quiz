@@ -7,12 +7,12 @@ export default function AntiCheatWarning({ strikes, setIsFullscreenWarning }) {
         <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/20">
           <span className="text-3xl">🚫</span>
         </div>
-        <h2 className="font-display text-2xl font-bold text-red-500 mb-2">Protocol Breach Detected</h2>
+        <h2 className="font-display text-2xl font-normal text-red-500 mb-2">Protocol Breach Detected</h2>
         <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-          Exiting fullscreen, switching tabs, or navigating away is strictly prohibited. You are on <span className="text-red-500 font-bold">strike {strikes} of 3</span>.
+          Exiting fullscreen, switching tabs, or navigating away is strictly prohibited. You are on <span className="text-red-500 font-normal">strike {strikes} of 3</span>.
         </p>
         <div className="bg-red-500/5 rounded-xl p-4 mb-6 border border-red-500/10">
-          <p className="text-xs text-red-400 font-medium italic">
+          <p className="text-xs text-red-400 font-normal italic">
             {strikes === 1
               ? "To exit this session properly, you must SUBMIT or COMPLETE the quiz. Protocol must be maintained."
               : "FINAL WARNING: Your session will be AUTO-TERMINATED on the next breach."}
